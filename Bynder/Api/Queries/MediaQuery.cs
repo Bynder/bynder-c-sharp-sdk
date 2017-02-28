@@ -42,6 +42,12 @@ namespace Bynder.Api.Queries
         public string Keyword { get; set; }
 
         /// <summary>
+        /// The type of the asset
+        /// </summary>
+        [APIField("type")]
+        public string Type { get; set; }
+
+        /// <summary>
         /// Metaproperty option ids that the asset has to have
         /// </summary>
         [APIField("propertyOptionId", Converter = typeof(ListConverter))]
