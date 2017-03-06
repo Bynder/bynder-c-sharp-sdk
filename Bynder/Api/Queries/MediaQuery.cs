@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Bynder.Api.Converters;
+using Bynder.Models;
 
 namespace Bynder.Api.Queries
 {
@@ -44,8 +45,8 @@ namespace Bynder.Api.Queries
         /// <summary>
         /// The type of the asset
         /// </summary>
-        [APIField("type")]
-        public string Type { get; set; }
+        [APIField("type", Converter = typeof(LowerCaseConverter))]
+        public AssetType? Type { get; set; }
 
         /// <summary>
         /// Metaproperty option ids that the asset has to have
