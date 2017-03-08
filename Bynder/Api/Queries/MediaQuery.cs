@@ -45,7 +45,7 @@ namespace Bynder.Api.Queries
         /// <summary>
         /// The type of the asset
         /// </summary>
-        [APIField("type", Converter = typeof(LowerCaseConverter))]
+        [APIField("type", Converter = typeof(LowerCaseEnumConverter))]
         public AssetType? Type { get; set; }
 
         /// <summary>
