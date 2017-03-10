@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="BynderApiFactory.cs" />
     <Compile Include="BynderUploadException.cs" />
+    <Compile Include="Converters\LowerCaseEnumConverter.cs" />
     <Compile Include="Impl\Oauth\IOauthRequestSender.cs" />
     <Compile Include="Impl\Oauth\OAuthBase.cs">
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>

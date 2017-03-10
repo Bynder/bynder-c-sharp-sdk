@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssetType.cs" />
     <Compile Include="Brand.cs" />
     <Compile Include="Converter\BooleanJsonConverter.cs" />
     <Compile Include="DownloadFileUrl.cs" />

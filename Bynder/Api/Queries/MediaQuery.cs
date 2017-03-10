@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Bynder.Api.Converters;
+using Bynder.Models;
 
 namespace Bynder.Api.Queries
 {
@@ -40,6 +41,12 @@ namespace Bynder.Api.Queries
         /// </summary>
         [APIField("keyword")]
         public string Keyword { get; set; }
+
+        /// <summary>
+        /// The type of the asset
+        /// </summary>
+        [APIField("type", Converter = typeof(LowerCaseEnumConverter))]
+        public AssetType? Type { get; set; }
 
         /// <summary>
         /// Metaproperty option ids that the asset has to have
