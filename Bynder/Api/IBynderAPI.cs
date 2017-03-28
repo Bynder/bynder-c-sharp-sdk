@@ -64,5 +64,11 @@ namespace Bynder.Api
         /// </summary>
         /// <returns>instance of asset manager.</returns>
         IAssetBankManager GetAssetBankManager();
+
+        /// <summary>
+        /// Get collection manager to perform collections operations
+        /// </summary>
+        /// <returns>instance of collections manager</returns>
+        ICollectionsManager GetCollectionsManager();
     }
 }

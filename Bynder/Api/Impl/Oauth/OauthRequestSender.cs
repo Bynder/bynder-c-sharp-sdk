@@ -114,8 +114,13 @@ namespace Bynder.Api.Impl.Oauth
 
             using (var httpResponseMessage = await SendOauthRequestAsync(method, uploadUri, requestParams).ConfigureAwait(false))
             {
-                httpResponseMessage.EnsureSuccessStatusCode();
-                return await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                var content = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    return content;
+                }
+
+                throw new HttpRequestException(content);
             }
         }
 
@@ -130,7 +135,7 @@ namespace Bynder.Api.Impl.Oauth
         {
             string parametersUrlEncoded = ConvertToUrlQuery(requestParams);
             uri = new Uri(uri, $"?{parametersUrlEncoded}");
-            using (HttpRequestMessage request = new HttpRequestMessage(method, uri.ToString()))
+            using (HttpRequestMessage request = new HttpRequestMessage(method, uri))
             {
                 if (method == HttpMethod.Post)
                 {
@@ -151,7 +156,7 @@ namespace Bynder.Api.Impl.Oauth
         {
             var encodedValues = parameters.AllKeys
                 .OrderBy(key => key)
-                .Select(key => $"{HttpUtility.UrlEncode(key)}={HttpUtility.UrlEncode(parameters[key])}");
+                .Select(key => $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(parameters[key])}");
             var queryUri = string.Join("&", encodedValues);
 
             // We need encoded values to be uppercase.

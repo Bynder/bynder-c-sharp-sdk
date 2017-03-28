@@ -38,6 +38,11 @@ namespace Bynder.Api.Impl
         private IAssetBankManager _assetBankManager;
 
         /// <summary>
+        /// Instance of the collections manager
+        /// </summary>
+        private ICollectionsManager _mediaCollectionsManager;
+
+        /// <summary>
         /// Initializes a new instance of the class
         /// </summary>
         /// <param name="credentials">Credentials to use to call the API</param>
@@ -112,6 +117,20 @@ namespace Bynder.Api.Impl
             }
 
             return _assetBankManager;
+        }
+
+        /// <summary>
+        /// Check <see cref="IBynderApi"/> for more information
+        /// </summary>
+        /// <returns>Check <see cref="IBynderApi"/> for more information</returns>
+        public ICollectionsManager GetCollectionsManager()
+        {
+            if (_mediaCollectionsManager == null)
+            {
+                _mediaCollectionsManager = new CollectionsManager(_requestSender);
+            }
+
+            return _mediaCollectionsManager;
         }
 
         /// <summary>

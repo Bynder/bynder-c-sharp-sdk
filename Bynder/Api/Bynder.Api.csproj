@@ -57,7 +57,11 @@
   <ItemGroup>
     <Compile Include="BynderApiFactory.cs" />
     <Compile Include="BynderUploadException.cs" />
+    <Compile Include="Converters\DateTimeOffsetConverter.cs" />
+    <Compile Include="Converters\JsonConverter.cs" />
+    <Compile Include="ICollectionsManager.cs" />
     <Compile Include="Converters\LowerCaseEnumConverter.cs" />
+    <Compile Include="Impl\CollectionsManager.cs" />
     <Compile Include="Impl\Oauth\IOauthRequestSender.cs" />
     <Compile Include="Impl\Oauth\OAuthBase.cs">
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
@@ -67,6 +71,13 @@
     <Compile Include="Impl\AssetBankManager.cs" />
     <Compile Include="Impl\Upload\IAmazonApi.cs" />
     <Compile Include="Queries\APIField.cs" />
+    <Compile Include="Queries\Collections\PermissionOptions\SharingPermssion.cs" />
+    <Compile Include="Queries\Collections\CreateCollectionQuery.cs" />
+    <Compile Include="Queries\Collections\GetCollectionsQuery.cs" />
+    <Compile Include="Queries\Collections\AddMediaQuery.cs" />
+    <Compile Include="Queries\Collections\RemoveMediaQuery.cs" />
+    <Compile Include="Queries\Collections\GetMediaQuery.cs" />
+    <Compile Include="Queries\Collections\ShareQuery.cs" />
     <Compile Include="Queries\DownloadMediaQuery.cs" />
     <Compile Include="Queries\MediaInformationQuery.cs" />
     <Compile Include="Settings.cs" />

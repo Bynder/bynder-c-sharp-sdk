@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="AssetType.cs" />
     <Compile Include="Brand.cs" />
+    <Compile Include="Collection.cs" />
+    <Compile Include="CollectionCover.cs" />
     <Compile Include="Converter\BooleanJsonConverter.cs" />
     <Compile Include="DownloadFileUrl.cs" />
     <Compile Include="FinalizeResponse.cs" />

@@ -26,6 +26,17 @@ Task<Media> RequestMediaInfoAsync(MediaInformationQuery query);
 Task<IList<Media>> RequestMediaListAsync(MediaQuery query);
 Task UploadFileAsync(UploadQuery query);
 ```
+### Collection management operations
+```c#
+Task<IList<Collection>> GetCollectionsAsync(GetCollectionsQuery query);
+Task<Collection> GetCollectionAsync(string id);
+Task CreateCollectionAsync(CreateCollectionQuery query);
+Task DeleteCollectionAsync(string id);
+Task<IList<string>> GetMediaAsync(GetMediaQuery query);
+Task AddMediaAsync(AddMediaQuery query);
+Task RemoveMediaAsync(RemoveMediaQuery query);
+Task ShareCollectionAsync(ShareQuery query);
+```
 
 ## Sample
 

@@ -72,9 +72,12 @@
   <ItemGroup>
     <Compile Include="AssetBank\AssetBankTest.cs" />
     <Compile Include="BynderApiTest.cs" />
+    <Compile Include="Collections\CollectionsManagerTest.cs" />
     <Compile Include="Converters\ListConverterTest.cs" />
     <Compile Include="AssetBank\FileUploaderTest.cs" />
+    <Compile Include="Converters\LowerCaseEnumConverterTest.cs" />
     <Compile Include="Converters\QueryDecoderTest.cs" />
+    <Compile Include="Converters\DateTimeOffsetConverterTest.cs" />
     <Compile Include="Oauth\OauthRequestSenderTest.cs" />
     <Compile Include="Utils\HttpListenerRequestEventArgs.cs" />
     <Compile Include="Utils\TestHttpListener.cs" />
