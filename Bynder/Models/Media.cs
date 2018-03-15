@@ -131,5 +131,18 @@ namespace Bynder.Models
         /// </summary>
         [JsonProperty("tags")]
         public IList<string> Tags { get; set; }
+
+        /// <summary>
+        /// Indicates if the media item is public
+        /// </summary>
+        [JsonProperty("isPublic")]
+        public bool IsPublic { get; set; }
+
+        /// <summary>
+        /// URL to Bynder CDN for the original
+        /// </summary>
+        [JsonProperty("original")]
+        public string Original { get; set; }
+
     }
 }
