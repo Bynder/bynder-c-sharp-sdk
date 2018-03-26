@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Bynder.Models.Converter;
 
 namespace Bynder.Models
 {
@@ -135,7 +136,7 @@ namespace Bynder.Models
         /// <summary>
         /// Indicates if the media item is public
         /// </summary>
-        [JsonProperty("isPublic")]
+        [JsonProperty("isPublic", ItemConverterType = typeof(BooleanJsonConverter))]
         public bool IsPublic { get; set; }
 
         /// <summary>
