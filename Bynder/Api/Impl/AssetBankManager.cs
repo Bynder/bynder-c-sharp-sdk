@@ -137,5 +137,23 @@ namespace Bynder.Api.Impl
 
             return _requestSender.SendRequestAsync(request);
         }
+
+        /// <summary>
+        /// Check <see cref="IAssetBankManager"/> for more information
+        /// </summary>
+        /// <param name="query">Check <see cref="IAssetBankManager"/> for more information</param>
+        /// <returns>Check <see cref="IAssetBankManager"/> for more information</returns>
+        public Task ModifyMediaAsync(ModifyMediaQuery query)
+        {
+            var request = new Request<string>
+            {
+                Uri = $"/api/v4/media/{query.MediaId}/",
+                HTTPMethod = HttpMethod.Post,
+                Query = query,
+                DeserializeResponse = false
+            };
+
+            return _requestSender.SendRequestAsync(request);
+        }
     }
 }

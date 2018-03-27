@@ -154,7 +154,7 @@ namespace Bynder.Test.Collections
         {
             IList<string> recipients = emailAddresses.Split(',');
 
-            var query = new ShareQuery(id, recipients, SharingPermssion.View);
+            var query = new ShareQuery(id, recipients, SharingPermission.View);
 
             IList<string> mediaList = new List<string>();
             var mock = new Mock<IOauthRequestSender>();
@@ -167,7 +167,7 @@ namespace Bynder.Test.Collections
                 => reqSenderMock.SendRequestAsync(It.Is<Request<string>>(req => req.Uri == $"/api/v4/collections/{id}/share/"
                 && req.HTTPMethod == HttpMethod.Post
                 && ((ShareQuery)req.Query).Recipients.Count == recipients.Count
-                && ((ShareQuery)req.Query).Permission == SharingPermssion.View)));
+                && ((ShareQuery)req.Query).Permission == SharingPermission.View)));
         }
     }
 }
