@@ -6,7 +6,7 @@ namespace Bynder.Api.Queries.Collections.PermissionOptions
     /// <summary>
     /// Enum for Permission Options for sharing a collection
     /// </summary>
-    public enum SharingPermssion
+    public enum SharingPermission
     {
         /// <summary>
         /// Allows only viewing the collection

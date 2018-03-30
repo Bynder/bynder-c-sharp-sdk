@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Bynder.Api</RootNamespace>
     <AssemblyName>Bynder.Api</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -71,7 +71,7 @@
     <Compile Include="Impl\AssetBankManager.cs" />
     <Compile Include="Impl\Upload\IAmazonApi.cs" />
     <Compile Include="Queries\APIField.cs" />
-    <Compile Include="Queries\Collections\PermissionOptions\SharingPermssion.cs" />
+    <Compile Include="Queries\Collections\PermissionOptions\SharingPermission.cs" />
     <Compile Include="Queries\Collections\CreateCollectionQuery.cs" />
     <Compile Include="Queries\Collections\GetCollectionsQuery.cs" />
     <Compile Include="Queries\Collections\AddMediaQuery.cs" />
@@ -80,6 +80,7 @@
     <Compile Include="Queries\Collections\ShareQuery.cs" />
     <Compile Include="Queries\DownloadMediaQuery.cs" />
     <Compile Include="Queries\MediaInformationQuery.cs" />
+    <Compile Include="Queries\ModifyMediaQuery.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Converters\ITypeToStringConverter.cs" />
     <Compile Include="Converters\ListConverter.cs" />

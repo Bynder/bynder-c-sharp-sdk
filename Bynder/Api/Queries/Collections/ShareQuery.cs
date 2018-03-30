@@ -19,7 +19,7 @@ namespace Bynder.Api.Queries.Collections
         /// <param name="collectionId">The collection to be shared</param>
         /// <param name="recipients">Email addresses of the people to share the collection with</param>
         /// <param name="permission">permission rights of the recipients</param>
-        public ShareQuery(string collectionId, IList<string> recipients, SharingPermssion permission)
+        public ShareQuery(string collectionId, IList<string> recipients, SharingPermission permission)
         {
             CollectionId = collectionId;
             Recipients = recipients;
@@ -41,7 +41,7 @@ namespace Bynder.Api.Queries.Collections
         /// Permission rights of the recipients
         /// </summary>
         [APIField("collectionOptions", Converter = typeof(LowerCaseEnumConverter))]
-        public SharingPermssion Permission { get; private set; }
+        public SharingPermission Permission { get; private set; }
 
         /// <summary>
         /// Flags if the recipients should login to view the collection

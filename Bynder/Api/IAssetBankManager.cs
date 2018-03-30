@@ -63,5 +63,13 @@ namespace Bynder.Api
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         /// <exception cref="BynderUploadException">Can be thrown when upload does not finish within expected time</exception>
         Task UploadFileAsync(UploadQuery query);
+
+        /// <summary>
+        /// Modifies a media
+        /// </summary>
+        /// <param name="query">Information needed to modify a media</param>
+        /// <returns>Task</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task ModifyMediaAsync(ModifyMediaQuery query);
     }
 }

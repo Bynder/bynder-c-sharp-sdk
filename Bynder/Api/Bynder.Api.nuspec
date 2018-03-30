@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Bynder.Sdk</id>
-    <version>1.1.0.0</version>
+    <version>1.2.0.0</version>
     <title>Bynder.Sdk</title>
     <authors>Bynder B.V.</authors>
     <owners>Bynder B.V.</owners>
@@ -12,7 +12,7 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io) and executing requests on it.</description>
     <releaseNotes>First version of the Bynder SDK</releaseNotes>
-    <copyright>Copyright 2017 Bynder B.V.</copyright>
+    <copyright>Copyright 2018 Bynder B.V.</copyright>
     <tags>Bynder Api C# Sdk</tags>
   </metadata>
 </package>
