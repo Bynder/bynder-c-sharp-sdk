@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -51,7 +52,9 @@ namespace Bynder.Api.Impl.Oauth
             _baseUrl = baseUrl;
             _httpClient = new HttpClient(new OAuthMessageHandler(credentials, new HttpClientHandler()));
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        }
+			// Set the security protocol used by the ServicePoint
+			ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+		}
 
         /// <summary>
         /// Disposes httpClient instance
