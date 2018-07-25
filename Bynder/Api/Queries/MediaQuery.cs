@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using Bynder.Api.Converters;
 using Bynder.Models;
@@ -53,5 +54,11 @@ namespace Bynder.Api.Queries
         /// </summary>
         [APIField("propertyOptionId", Converter = typeof(ListConverter))]
         public IList<string> PropertyOptionId { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Retrieve assets modified after this date.
+        /// </summary>
+        [APIField("dateModified", Converter = typeof(DateTimeOffsetConverter))]
+        public DateTime DateModified { get; set; }
     }
 }
