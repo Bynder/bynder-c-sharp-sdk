@@ -59,6 +59,6 @@ namespace Bynder.Api.Queries
         /// Retrieve assets modified after this date.
         /// </summary>
         [APIField("dateModified", Converter = typeof(DateTimeOffsetConverter))]
-        public DateTime DateModified { get; set; }
+        public DateTimeOffset DateModified { get; set; }
     }
 }
