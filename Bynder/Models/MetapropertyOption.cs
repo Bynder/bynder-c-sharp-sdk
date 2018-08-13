@@ -47,5 +47,11 @@ namespace Bynder.Models
         /// </summary>
         [JsonProperty("options")]
         public List<MetapropertyOption> Options { get; set; }
+        
+        /// <summary>
+        /// Id's of the linked metaproperty options
+        /// </summary>
+        [JsonProperty("linkedOptionIds")]
+        public List<string> LinkedOptionIds { get; set; }
     }
 }
