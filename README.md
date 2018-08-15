@@ -25,6 +25,7 @@ Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync();
 Task<Media> RequestMediaInfoAsync(MediaInformationQuery query);
 Task<IList<Media>> RequestMediaListAsync(MediaQuery query);
 Task UploadFileAsync(UploadQuery query);
+Task ModifyMediaAsync(ModifyMediaQuery query);
 ```
 ### Collection management operations
 ```c#
