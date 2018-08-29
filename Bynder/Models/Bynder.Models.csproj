@@ -63,7 +63,7 @@
     <Compile Include="Media.cs" />
     <Compile Include="MediaItem.cs" />
     <Compile Include="MetapropertyOption.cs" />
-    <Compile Include="Metaproperty.cs" />
+    <Compile Include="MetaProperty.cs" />
     <Compile Include="MultipartParameters.cs" />
     <Compile Include="PollStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
