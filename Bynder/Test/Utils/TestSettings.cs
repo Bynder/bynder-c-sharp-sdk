@@ -20,11 +20,11 @@ namespace Bynder.Test.Utils
         {
             return new Settings
             {
-                URL = ConfigurationManager.AppSettings["API_BASE_URL"],
-                TOKEN = ConfigurationManager.AppSettings["TOKEN"],
-                TOKEN_SECRET = ConfigurationManager.AppSettings["TOKEN_SECRET"],
-                CONSUMER_KEY = ConfigurationManager.AppSettings["CONSUMER_KEY"],
-                CONSUMER_SECRET = ConfigurationManager.AppSettings["CONSUMER_SECRET"]
+                URL = "http://localhost:8890/",
+                TOKEN = "LOGIN_TOKEN",
+                TOKEN_SECRET = "LOGIN_TOKEN_SECRET",
+                CONSUMER_KEY = "CONSUMER_KEY",
+                CONSUMER_SECRET = "CONSUMER_SECRET"
             };
         }
 

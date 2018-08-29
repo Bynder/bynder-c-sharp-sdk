@@ -4,6 +4,14 @@ sudo: false
 
 solution: byndercsharpsdk.sln
 
+install:
+  - nuget restore byndercsharpsdk.sln
+  - nuget install NUnit.Runners -Version 3.8.0 -OutputDirectory testrunner
+
+script:
+  - msbuild /p:Configuration=Release byndercsharpsdk.sln
+  - mono ./testrunner/NUnit.ConsoleRunner.3.8.0/tools/nunit3-console.exe ./Bynder/Test/bin/Release/Bynder.Test.dll
+
 notifications:
   email:
     recipients:
