@@ -45,16 +45,19 @@ namespace Bynder.Api.Converters
             var mediaProperties = new Dictionary<string, List<string>>();
             foreach (var property in jsonObject.Properties().Where(p => p.Name.StartsWith(PROPERTY_PREFX)).ToList())
             {
-                var propertyName = property.Name.Replace(PROPERTY_PREFX, string.Empty);
-                if (!mediaProperties.Keys.Contains(propertyName))
+                if (property.HasValues)
                 {
-                    mediaProperties[propertyName] = new List<string>();
+                    var propertyName = property.Name.Replace(PROPERTY_PREFX, string.Empty);
+                    if (!mediaProperties.Keys.Contains(propertyName))
+                    {
+                        mediaProperties[propertyName] = new List<string>();
+                    }
+                    property.Value.Values().ToList().ForEach(item => mediaProperties[propertyName].Add(item.Value<string>()));
                 }
-                property.Children().ToList().ForEach(item => mediaProperties[propertyName].Add(item.ToString()));
             }
             if (mediaObject is Media)
             {
-                (mediaObject as Media).Properties = mediaProperties;
+                (mediaObject as Media).PropertyOptionsDictionary = mediaProperties;
             }
             return mediaObject;
         }

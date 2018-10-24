@@ -150,7 +150,7 @@ namespace Bynder.Models
         /// </summary>
         /// <remarks>The properties are initialized by <see cref="T:MediaConverter"/> </remarks>
         [JsonIgnore]
-        public Dictionary<string, List<string>> Properties { get; set; }
+        public Dictionary<string, List<string>> PropertyOptionsDictionary { get; set; }
 
     }
 }
