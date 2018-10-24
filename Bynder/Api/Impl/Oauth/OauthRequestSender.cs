@@ -97,8 +97,12 @@ namespace Bynder.Api.Impl.Oauth
                     // We can't return responseString directly. 
                     return (T)Convert.ChangeType(responseString, typeof(T));
                 }
-
-                return JsonConvert.DeserializeObject<T>(responseString, converters);
+                if (converters?.Length > 0)
+                {
+                    var jsonSerializerSettings = new JsonSerializerSettings() {DateParseHandling = DateParseHandling.None,Converters = converters.ToList()};
+                    return JsonConvert.DeserializeObject<T>(responseString, jsonSerializerSettings);
+                }
+                return JsonConvert.DeserializeObject<T>(responseString);
             }
 
             return default(T);

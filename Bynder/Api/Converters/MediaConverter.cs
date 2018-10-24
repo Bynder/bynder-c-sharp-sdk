@@ -36,7 +36,7 @@ namespace Bynder.Api.Converters
         /// <param name="existingValue">The existing value of object being read.</param>
         /// <param name="serializer">The calling serializer.</param>
         /// <returns>
-        /// The Media with the Properties populated.
+        /// The Media with the <see cref="T:PropertyOptionsDictionary" /> populated.
         /// </returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
