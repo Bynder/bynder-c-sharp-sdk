@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Bynder.Api.Converters;
 using Bynder.Api.Impl.Oauth;
 using Bynder.Api.Impl.Upload;
 using Bynder.Api.Queries;
@@ -81,7 +82,7 @@ namespace Bynder.Api.Impl
                 Query = query
             };
 
-            return _requestSender.SendRequestAsync(request);
+            return _requestSender.SendRequestAsync(request, new MediaConverter());
         }
 
         /// <summary>
@@ -135,7 +136,7 @@ namespace Bynder.Api.Impl
                 Query = query
             };
 
-            return _requestSender.SendRequestAsync(request);
+            return _requestSender.SendRequestAsync(request, new MediaConverter());
         }
 
         /// <summary>
