@@ -16,6 +16,10 @@ namespace Bynder.Api.Converters
     public class MediaConverter : CustomCreationConverter<Media>
     {
         private const string PROPERTY_PREFX = "property_";
+        private const string THUMBNAIL_PREFX = "thumbnails";
+        private readonly Type[] _types;
+
+
         /// <summary>
         /// Creates an object which will then be populated by the serializer.
         /// </summary>
@@ -26,6 +30,26 @@ namespace Bynder.Api.Converters
         public override Media Create(Type objectType)
         {
             return new Media();
+        }
+
+        public override bool CanConvert(Type typeToConvert)
+        {
+            return typeToConvert is Media;
+        }
+
+        public override bool CanRead => true;
+        public override bool CanWrite => false;
+
+        /// <summary>
+        /// Writes the JSON representation of the object.
+        /// </summary>
+        /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="serializer">The calling serializer.</param>
+        /// <exception cref="NotImplementedException">Unnecessary because CanWrite is false. The type will skip the converter.</exception>
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException("Unnecessary because CanWrite is false. The type will skip the converter.");
         }
 
         /// <summary>
@@ -41,7 +65,20 @@ namespace Bynder.Api.Converters
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var jsonObject = JObject.Load(reader);
-            var mediaObject = base.ReadJson(jsonObject.CreateReader(), objectType, existingValue, serializer);
+            var media = serializer.Deserialize<Media>(jsonObject.CreateReader());
+            media = ConvertMediaProperties(jsonObject, media);
+            media = ConvertMediaThumbnails(jsonObject, media);
+            return media;
+        }
+
+        /// <summary>
+        /// Converts the media properties into a dictionary.
+        /// </summary>
+        /// <param name="jsonObject">The json object.</param>
+        /// <param name="mediaObject">The media object.</param>
+        /// <returns></returns>
+        private Media ConvertMediaProperties(JObject jsonObject, Media mediaObject)
+        {
             var mediaProperties = new Dictionary<string, List<string>>();
             foreach (var property in jsonObject.Properties().Where(p => p.Name.StartsWith(PROPERTY_PREFX)).ToList())
             {
@@ -55,10 +92,32 @@ namespace Bynder.Api.Converters
                     property.Value.Values().ToList().ForEach(item => mediaProperties[propertyName].Add(item.Value<string>()));
                 }
             }
-            if (mediaObject is Media)
+            mediaObject.PropertyOptionsDictionary = mediaProperties;
+            return mediaObject;
+        }
+
+        /// <summary>
+        /// Converts the thumbnails inside the media.
+        /// </summary>
+        /// <param name="jsonObject">The json object.</param>
+        /// <param name="mediaObject">The media object.</param>
+        /// <returns></returns>
+        private Media ConvertMediaThumbnails(JObject jsonObject, Media mediaObject)
+        {
+            var thumbnailProperties = new Dictionary<string, string>();
+
+            var thumbnailsProperty = jsonObject.Properties().FirstOrDefault(p => p.Name.StartsWith(THUMBNAIL_PREFX));
+            if (thumbnailsProperty != null)
             {
-                (mediaObject as Media).PropertyOptionsDictionary = mediaProperties;
+                foreach (var jToken in thumbnailsProperty.Values())
+                {
+                    if (jToken is JProperty item)
+                    {
+                        thumbnailProperties[item.Name] = item.Value.Value<string>();
+                    }
+                }
             }
+            mediaObject.Thumbnails.All = thumbnailProperties;
             return mediaObject;
         }
     }
