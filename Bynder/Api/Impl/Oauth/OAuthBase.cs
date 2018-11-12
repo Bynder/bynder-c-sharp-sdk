@@ -172,12 +172,16 @@ namespace Bynder.Api.Impl.Oauth
 
                     StringBuilder auth = new StringBuilder();
                     auth.AppendFormat("{0}=\"{1}\", ", OAuthConsumerKeyKey, UrlEncode(consumerKey));
-                    auth.AppendFormat("{0}=\"{1}\", ", OAuthNonceKey, UrlEncode(nonce));
-                    auth.AppendFormat("{0}=\"{1}\", ", OAuthSignatureKey, UrlEncode(signature));
+                    if (!string.IsNullOrEmpty(token))
+                    {
+                        auth.AppendFormat("{0}=\"{1}\", ", OAuthTokenKey, UrlEncode(token));
+                    }
                     auth.AppendFormat("{0}=\"{1}\", ", OAuthSignatureMethodKey, "HMAC-SHA1");
                     auth.AppendFormat("{0}=\"{1}\", ", OAuthTimestampKey, timeStamp);
-                    auth.AppendFormat("{0}=\"{1}\", ", OAuthTokenKey, UrlEncode(token));
-                    auth.AppendFormat("{0}=\"{1}\"", OAuthVersionKey, "1.0");
+                    auth.AppendFormat("{0}=\"{1}\", ", OAuthNonceKey, UrlEncode(nonce));
+                    auth.AppendFormat("{0}=\"{1}\", ", OAuthVersionKey, "1.0");
+                    auth.AppendFormat("{0}=\"{1}\"", OAuthSignatureKey, UrlEncode(signature));
+                    
                     authHeader = auth.ToString();
 
                     return signature;
