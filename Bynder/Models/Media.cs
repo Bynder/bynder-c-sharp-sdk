@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Bynder.Models.Converter;
+using Newtonsoft.Json.Linq;
 
 namespace Bynder.Models
 {
@@ -144,6 +145,13 @@ namespace Bynder.Models
         /// </summary>
         [JsonProperty("original")]
         public string Original { get; set; }
+
+        /// <summary>
+        /// A dictionary representation of properties
+        /// </summary>
+        /// <remarks>The properties are initialized by <see cref="T:MediaConverter"/> </remarks>
+        [JsonExtensionData]
+        public Dictionary<string, JToken> PropertyOptionsDictionary { get; set; }
 
     }
 }
