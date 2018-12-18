@@ -4,7 +4,6 @@
 using System;
 using System.Threading.Tasks;
 using Bynder.Api.Queries;
-using Newtonsoft.Json;
 
 namespace Bynder.Api.Impl.Oauth
 {
@@ -19,8 +18,7 @@ namespace Bynder.Api.Impl.Oauth
         /// </summary>
         /// <typeparam name="T">Type we want to deserialize response to</typeparam>
         /// <param name="request">Request with the information to do the API call</param>
-        /// <param name="converters">params of custom <see cref="JsonConverter"/> implementations</param>
         /// <returns>Task returning T</returns>
-        Task<T> SendRequestAsync<T>(Request<T> request, params JsonConverter[] converters);
+        Task<T> SendRequestAsync<T>(Request<T> request);
     }
 }

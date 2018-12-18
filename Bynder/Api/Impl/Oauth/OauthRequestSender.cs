@@ -68,12 +68,11 @@ namespace Bynder.Api.Impl.Oauth
         /// </summary>
         /// <typeparam name="T">Check <see cref="IOauthRequestSender"/></typeparam>
         /// <param name="request">Check <see cref="IOauthRequestSender"/></param>
-        /// <param name="converters">params of custom <see cref="JsonConverter"/> implementations</param>
         /// <returns>Check <see cref="IOauthRequestSender"/></returns>
-        public Task<T> SendRequestAsync<T>(Request<T> request, params JsonConverter[] converters)
+        public Task<T> SendRequestAsync<T>(Request<T> request)
         {
             var parameters = _queryDecoder.GetParameters(request.Query);
-            return BynderRestCallAsync<T>(request.HTTPMethod, request.Uri, parameters, request.DeserializeResponse, converters);
+            return BynderRestCallAsync<T>(request.HTTPMethod, request.Uri, parameters, request.DeserializeResponse);
         }
 
         /// <summary>
@@ -84,9 +83,8 @@ namespace Bynder.Api.Impl.Oauth
         /// <param name="uri">Uri to be appended to <see cref="_baseUrl"/> to do the request</param>
         /// <param name="requestParams">Parameters to be used for the request</param>
         /// <param name="deserializeToJson">if T is a string we maybe don't want to deserialize to JSON. If T is string and this parameter is false, response is not deserialized</param>
-        /// <param name="converters">params of custom <see cref="JsonConverter"/> implementations</param>
         /// <returns>Task with response as T</returns>
-        private async Task<T> BynderRestCallAsync<T>(HttpMethod method, string uri, NameValueCollection requestParams, bool deserializeToJson, params JsonConverter[] converters)
+        private async Task<T> BynderRestCallAsync<T>(HttpMethod method, string uri, NameValueCollection requestParams, bool deserializeToJson)
         {
             var responseString = await BynderRestCallAsync(method, uri, requestParams).ConfigureAwait(false);
             if (!string.IsNullOrEmpty(responseString))
@@ -96,11 +94,6 @@ namespace Bynder.Api.Impl.Oauth
                 {
                     // We can't return responseString directly. 
                     return (T)Convert.ChangeType(responseString, typeof(T));
-                }
-                if (converters?.Length > 0)
-                {
-                    var jsonSerializerSettings = new JsonSerializerSettings() {DateParseHandling = DateParseHandling.None,Converters = converters.ToList()};
-                    return JsonConvert.DeserializeObject<T>(responseString, jsonSerializerSettings);
                 }
                 return JsonConvert.DeserializeObject<T>(responseString);
             }

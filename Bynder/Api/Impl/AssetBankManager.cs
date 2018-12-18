@@ -82,7 +82,7 @@ namespace Bynder.Api.Impl
                 Query = query
             };
 
-            return _requestSender.SendRequestAsync(request, new MediaConverter());
+            return _requestSender.SendRequestAsync(request);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Bynder.Api.Impl
                 Query = query
             };
 
-            return _requestSender.SendRequestAsync(request, new MediaConverter());
+            return _requestSender.SendRequestAsync(request);
         }
 
         /// <summary>

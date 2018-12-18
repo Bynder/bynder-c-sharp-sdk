@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Bynder.Models
 {
@@ -29,7 +30,7 @@ namespace Bynder.Models
         [JsonProperty("webimage")]
         public string WebImage { get; set; }
 
-        [JsonIgnore]
-        public Dictionary<string,string> All { get; set; }
+        [JsonExtensionData]
+        public Dictionary<string, JToken> All { get; set; }
     }
 }
