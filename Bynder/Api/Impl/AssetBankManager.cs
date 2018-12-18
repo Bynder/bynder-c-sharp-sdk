@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Bynder.Api.Converters;
 using Bynder.Api.Impl.Oauth;
 using Bynder.Api.Impl.Upload;
 using Bynder.Api.Queries;
