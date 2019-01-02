@@ -30,6 +30,9 @@ namespace Bynder.Models
         [JsonProperty("webimage")]
         public string WebImage { get; set; }
 
+        /// <summary>
+        /// A dictionary representation of all other derivatives
+        /// </summary>
         [JsonExtensionData]
         public Dictionary<string, JToken> All { get; set; }
     }

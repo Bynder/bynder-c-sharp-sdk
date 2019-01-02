@@ -149,7 +149,6 @@ namespace Bynder.Models
         /// <summary>
         /// A dictionary representation of properties
         /// </summary>
-        /// <remarks>The properties are initialized by <see cref="T:MediaConverter"/> </remarks>
         [JsonExtensionData]
         public Dictionary<string, JToken> PropertyOptionsDictionary { get; set; }
 
