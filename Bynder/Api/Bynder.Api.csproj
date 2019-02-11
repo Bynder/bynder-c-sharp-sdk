@@ -1,125 +1,28 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3C667FDB-9143-4F33-8E16-6AFBEFCC335A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bynder.Api</RootNamespace>
-    <AssemblyName>Bynder.Api</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TransformOnBuild>true</TransformOnBuild>
-    <!-- Other properties can be inserted here -->
+    <TargetFramework>net461</TargetFramework>
+    <AssemblyVersion>1.2.2.0</AssemblyVersion>
+    <FileVersion>1.2.2.0</FileVersion>
+    <Company>Bynder</Company>
+    <Product>Bynder.Api</Product>
+    <Copyright>Copyright © Bynder</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Models\Bynder.Models.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BynderApiFactory.cs" />
-    <Compile Include="BynderUploadException.cs" />
-    <Compile Include="Converters\DateTimeOffsetConverter.cs" />
-    <Compile Include="Converters\JsonConverter.cs" />
-    <Compile Include="ICollectionsManager.cs" />
-    <Compile Include="Converters\LowerCaseEnumConverter.cs" />
-    <Compile Include="Impl\CollectionsManager.cs" />
-    <Compile Include="Impl\Oauth\IOauthRequestSender.cs" />
-    <Compile Include="Impl\Oauth\OAuthBase.cs">
-      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
-    </Compile>
-    <Compile Include="Impl\Oauth\OAuthMessageHandler.cs" />
-    <Compile Include="Impl\Upload\AmazonApi.cs" />
-    <Compile Include="Impl\AssetBankManager.cs" />
-    <Compile Include="Impl\Upload\IAmazonApi.cs" />
-    <Compile Include="Queries\APIField.cs" />
-    <Compile Include="Queries\Collections\PermissionOptions\SharingPermission.cs" />
-    <Compile Include="Queries\Collections\CreateCollectionQuery.cs" />
-    <Compile Include="Queries\Collections\GetCollectionsQuery.cs" />
-    <Compile Include="Queries\Collections\AddMediaQuery.cs" />
-    <Compile Include="Queries\Collections\RemoveMediaQuery.cs" />
-    <Compile Include="Queries\Collections\GetMediaQuery.cs" />
-    <Compile Include="Queries\Collections\ShareQuery.cs" />
-    <Compile Include="Queries\DownloadMediaQuery.cs" />
-    <Compile Include="Queries\MediaInformationQuery.cs" />
-    <Compile Include="Queries\ModifyMediaQuery.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="Converters\ITypeToStringConverter.cs" />
-    <Compile Include="Converters\ListConverter.cs" />
-    <Compile Include="Impl\Upload\FileUploader.cs" />
-    <Compile Include="IAssetBankManager.cs" />
-    <Compile Include="IBynderAPI.cs" />
-    <Compile Include="Impl\BynderAPI.cs" />
-    <Compile Include="Impl\Oauth\OauthRequestSender.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Queries\FinalizeUploadQuery.cs" />
-    <Compile Include="Queries\MediaQuery.cs" />
-    <Compile Include="Queries\PollQuery.cs" />
-    <Compile Include="Queries\LoginQuery.cs" />
-    <Compile Include="Queries\RegisterChunkQuery.cs" />
-    <Compile Include="Queries\Request.cs" />
-    <Compile Include="Queries\QueryDecoder.cs" />
-    <Compile Include="Queries\RequestUploadQuery.cs" />
-    <Compile Include="Queries\SaveMediaQuery.cs" />
-    <Compile Include="Queries\UploadQuery.cs" />
-    <Compile Include="Impl\Oauth\Credentials.cs" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Bynder.Test</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Models\Bynder.Models.csproj">
-      <Project>{6d0798e3-cd6f-40e5-9bbb-838a69bd84f7}</Project>
-      <Name>Bynder.Models</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
