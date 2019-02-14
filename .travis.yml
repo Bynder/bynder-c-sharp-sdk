@@ -10,7 +10,7 @@ install:
 
 script:
   - msbuild /p:Configuration=Release byndercsharpsdk.sln
-  - mono ./testrunner/NUnit.ConsoleRunner.3.8.0/tools/nunit3-console.exe ./Bynder/Test/bin/Release/Bynder.Test.dll
+  - mono ./testrunner/NUnit.ConsoleRunner.3.8.0/tools/nunit3-console.exe ./Bynder/Test/bin/Release/net461/Bynder.Test.dll
 
 notifications:
   email:
