@@ -22,13 +22,13 @@ namespace Bynder.Api
         Task<User> LoginAsync(string email, string password);
 
         /*
-         * To Login using the browser so only consumer key/secret are needed. Client has to do the following:
-         * 1. Request temporary Tokens -> GetRequestTokenAsync
-         * 2. Get Authorized Url to open the browser -> GetAuthorizeUrl
-         * 3. Wait until user enters credentials and browser is redirected to callback Url.
-         * 4. Request final access tokens -> GetAccessTokenAsync
-         * 
-         * Example can be found in Bynder.Sample project
+         To Login using the browser so only consumer key/secret are needed. Client has to do the following:
+         1. Request temporary Tokens -> GetRequestTokenAsync
+         2. Get Authorized Url to open the browser -> GetAuthorizeUrl
+         3. Wait until user enters credentials and browser is redirected to callback Url.
+         4. Request final access tokens -> GetAccessTokenAsync
+
+         Example can be found in Bynder.Sample project
          */
 
         /// <summary>
