@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build_sample",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/Bynder/Sample/Bynder.Sample.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    }
+  ]
+}

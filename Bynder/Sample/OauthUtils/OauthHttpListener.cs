@@ -3,6 +3,7 @@
 
 using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Bynder.Sample.OauthUtils
 {
@@ -18,24 +19,16 @@ namespace Bynder.Sample.OauthUtils
         private readonly HttpListener _listener;
 
         /// <summary>
-        /// We use this class to notify waiting threads that a call with oauth_token is done 
-        /// to the Url we are listening to.
-        /// </summary>
-        private readonly WaitForToken _waitForTokenHandle;
-
-        /// <summary>
-        /// Creates a new OauthHttpListener that will listen to the Url and will notify waiting threads 
+        /// Creates a new OauthHttpListener that will listen to the Url and will notify waiting threads
         /// when oauth login has completed
         /// </summary>
         /// <param name="url">Url we want to listen to</param>
         /// <param name="waitForTokenHandle">instance to pass token back and to notify waiting threads</param>
-        public OauthHttpListener(string url, WaitForToken waitForTokenHandle)
+        public OauthHttpListener(string url)
         {
             _listener = new HttpListener();
             _listener.Prefixes.Add(url);
-            _waitForTokenHandle = waitForTokenHandle;
             _listener.Start();
-            _listener.BeginGetContext(new AsyncCallback(BeginContextCallback), _listener);
         }
 
         /// <summary>
@@ -47,41 +40,21 @@ namespace Bynder.Sample.OauthUtils
         }
 
         /// <summary>
-        /// Function callback that is called when we start receiving data. 
+        /// Function that waits utils we start receiving data.
         /// We keep listening until we find oauth_token parameter in the Url.
         /// </summary>
         /// <param name="result">async result</param>
-        private void BeginContextCallback(IAsyncResult result)
+        public async Task<string> WaitForToken()
         {
-            HttpListener listener = (HttpListener)result.AsyncState;
+            string token = null;
+            HttpListenerContext context = null;
 
-            // Call EndGetContext to complete the asynchronous operation.
-            HttpListenerContext context;
-            try
-            {
-                context = listener.EndGetContext(result);
-            }
-            catch (ObjectDisposedException)
-            {
-                // When Close this method is called with disposed object. Just swallow the exception
-                return;
-            }
-
-            HttpListenerRequest request = context.Request;
-
-            // Need to check if we are being requested with oauth_token. Because sometimes we 
+            // Need to check if we are being requested with oauth_token. Because sometimes we
             // would recieve the favicon call before, so we have to continue listening.
-            if (!request.RawUrl.Contains("oauth_token"))
+            while (token == null)
             {
-                _listener.BeginGetContext(new AsyncCallback(BeginContextCallback), _listener);
-                return;
-            }
-
-            var token = request.QueryString["oauth_token"];
-            _waitForTokenHandle.Success = token != null;
-            if (token != null)
-            {
-                _waitForTokenHandle.Token = token;
+                context = await _listener.GetContextAsync();
+                token = context.Request.QueryString.Get("oauth_token");
             }
 
             // Obtain a response object.
@@ -92,7 +65,7 @@ namespace Bynder.Sample.OauthUtils
             response.StatusCode = (int)HttpStatusCode.Redirect;
             response.Close();
 
-            _waitForTokenHandle.WaitHandle.Set();
+            return token;
         }
     }
 }

@@ -1,0 +1,19 @@
+{
+  // https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Sample",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build_sample",
+      "program": "${workspaceFolder}/Bynder/Sample/bin/Debug/netcoreapp2.0/Bynder.Sample.dll",
+      "cwd": "${workspaceFolder}/Bynder/Sample",
+      "console": "internalConsole",
+      "internalConsoleOptions": "openOnSessionStart",
+      "logging": {
+        "moduleLoad": false
+      }
+    }
+  ]
+}
