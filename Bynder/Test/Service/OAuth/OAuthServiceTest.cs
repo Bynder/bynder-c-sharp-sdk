@@ -30,7 +30,7 @@ namespace Bynder.Test.Service.OAuth
 
             var authorisationUrl = oauth.GetAuthorisationUrl("state example", "openid offline");
 
-            Assert.Equal("https://example.bynder.com:443/v6/authentication/oauth2/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.bynder.com&response_type=code&scope=openid%20offline&scope=openid%20offline&state=state%20example",
+            Assert.Equal("https://example.bynder.com:443/v6/authentication/oauth2/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.bynder.com&response_type=code&scope=openid%20offline&state=state%20example",
                 authorisationUrl);
         }
 
