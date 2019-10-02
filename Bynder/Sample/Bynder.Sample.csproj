@@ -2,8 +2,8 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyVersion>1.3.0</AssemblyVersion>
-    <FileVersion>1.3.0</FileVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
     <Company>Bynder</Company>
     <Product>Bynder.Sample</Product>
     <Copyright>Copyright © Bynder</Copyright>
@@ -12,7 +12,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Api\Bynder.Api.csproj" />
+    <ProjectReference Include="..\Sdk\Bynder.Sdk.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Config.json">

@@ -7,10 +7,8 @@ test:
 
 clean:
 	rm -rf \
-		Bynder/Api/bin \
-		Bynder/Api/obj \
-		Bynder/Models/bin \
-		Bynder/Models/obj \
+		Bynder/Sdk/bin \
+		Bynder/Sdk/obj \
 		Bynder/Sample/bin \
 		Bynder/Sample/obj \
 		Bynder/Test/bin \

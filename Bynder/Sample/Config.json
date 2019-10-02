@@ -1,5 +1,6 @@
 {
-  "api_base_url": "",
-  "consumer_key": "",
-  "consumer_secret": ""
+  "base_url": "https://example.bynder.com",
+  "client_id": "your oauth app client id",
+  "client_secret": "your oauth app client secret",
+  "redirect_uri": "your oauth app redirect uri"
 }

@@ -1,2 +1,0 @@
-{"tokenSecret":"TOKENSCRETT","userId":"USERID","access":true,"tokenKey":"TOKENKEY"}
-

@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bynder.Api", "Bynder\Api\Bynder.Api.csproj", "{3C667FDB-9143-4F33-8E16-6AFBEFCC335A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bynder.Models", "Bynder\Models\Bynder.Models.csproj", "{6D0798E3-CD6F-40E5-9BBB-838A69BD84F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bynder.Sdk", "Bynder\Sdk\Bynder.Sdk.csproj", "{3C667FDB-9143-4F33-8E16-6AFBEFCC335A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bynder.Sample", "Bynder\Sample\Bynder.Sample.csproj", "{29FFFA5A-7215-49C4-8C41-81FD6A6A7857}"
 EndProject
@@ -21,10 +19,6 @@ Global
 		{3C667FDB-9143-4F33-8E16-6AFBEFCC335A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C667FDB-9143-4F33-8E16-6AFBEFCC335A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C667FDB-9143-4F33-8E16-6AFBEFCC335A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D0798E3-CD6F-40E5-9BBB-838A69BD84F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D0798E3-CD6F-40E5-9BBB-838A69BD84F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D0798E3-CD6F-40E5-9BBB-838A69BD84F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D0798E3-CD6F-40E5-9BBB-838A69BD84F7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{29FFFA5A-7215-49C4-8C41-81FD6A6A7857}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{29FFFA5A-7215-49C4-8C41-81FD6A6A7857}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29FFFA5A-7215-49C4-8C41-81FD6A6A7857}.Release|Any CPU.ActiveCfg = Release|Any CPU
