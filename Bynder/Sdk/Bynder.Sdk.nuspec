@@ -4,15 +4,15 @@
     <id>Bynder.Sdk</id>
     <version>2.1.0</version>
     <title>Bynder.Sdk</title>
-    <authors>Bynder B.V.</authors>
-    <owners>Bynder B.V.</owners>
+    <authors>BynderDevops</authors>
+    <owners>BynderDevops</owners>
     <iconUrl>https://bynder.com/static/3.0/img/favicon-black.ico</iconUrl>
     <licenseUrl>https://github.com/Bynder/bynder-c-sharp-sdk/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/Bynder/bynder-c-sharp-sdk</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io) and executing requests on it.</description>
     <releaseNotes></releaseNotes>
-    <copyright>Copyright 2019 Bynder B.V.</copyright>
+    <copyright>Copyright © Bynder</copyright>
     <tags>Bynder API C# SDK</tags>
   </metadata>
 </package>
