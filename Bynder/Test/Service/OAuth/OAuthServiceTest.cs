@@ -28,9 +28,9 @@ namespace Bynder.Test.Service.OAuth
                     RedirectUri = "https://redirect.bynder.com"
                 }, null, null);
 
-            var authorisationUrl = oauth.GetAuthorisationUrl("state example", "openid offline");
+            var authorisationUrl = oauth.GetAuthorisationUrl("state example", "offline");
 
-            Assert.Equal("https://example.bynder.com:443/v6/authentication/oauth2/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.bynder.com&response_type=code&scope=openid%20offline&state=state%20example",
+            Assert.Equal("https://example.bynder.com:443/v6/authentication/oauth2/auth?client_id=clientId&redirect_uri=https%3A%2F%2Fredirect.bynder.com&response_type=code&scope=offline&state=state%20example",
                 authorisationUrl);
         }
 
@@ -52,7 +52,7 @@ namespace Bynder.Test.Service.OAuth
                 credentials.Object,
                 apiRequestSender.Object);
             
-            await oauthService.GetAccessTokenAsync("code", "openid offline").ConfigureAwait(false);
+            await oauthService.GetAccessTokenAsync("code", "offline").ConfigureAwait(false);
 
             apiRequestSender.Verify(sender => sender.SendRequestAsync(
                 It.Is<OAuthRequest<Token>>(

@@ -27,13 +27,6 @@ namespace Bynder.Sdk.Model
         public int ExpiresIn { get; set; }
 
         /// <summary>
-        /// Gets or sets the id of the token.
-        /// </summary>
-        /// <value>The id of the token.</value>
-        [JsonProperty("id_token")]
-        public string TokenId { get; set; }
-
-        /// <summary>
         /// Gets or sets the type of the token.
         /// </summary>
         /// <value>The type of the token.</value>
@@ -68,7 +61,6 @@ namespace Bynder.Sdk.Model
         /// <summary>
         /// Sets the access token expiration according to its ExpiresIn value.
         /// </summary>
-        /// <param name="value">The access token expiration.</param>
         public void SetAccessTokenExpiration()
         {
             AccessTokenExpiration = DateTimeOffset.Now.AddSeconds(ExpiresIn);

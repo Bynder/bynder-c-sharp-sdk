@@ -45,6 +45,12 @@ namespace Bynder.Sdk.Settings
         public Token Token { get; set; }
 
         /// <summary>
+        /// Permanent token
+        /// </summary>
+        [JsonProperty("permanent_token")]
+        public string PermanentToken { get; set; }
+
+        /// <summary>
         /// Create a <see cref="Configuration"/> using the given filepath
         /// </summary>
         /// <param name="filepath">JSON file path</param>

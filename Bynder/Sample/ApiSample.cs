@@ -25,18 +25,35 @@ namespace Bynder.Sample
         /// <param name="args">arguments to main</param>
         public static void Main(string[] args)
         {
-            using(var waitForToken = new WaitForToken())
+            using (var client = ClientFactory.Create(Configuration.FromJson("Config.json")))
+            {
+                var mediaList = client.GetAssetService().GetMediaListAsync(new MediaQuery()).Result;
+
+                foreach (var media in mediaList)
+                {
+                    Console.WriteLine(media.Name);
+                }
+
+                var collectionList = client.GetCollectionService().GetCollectionsAsync(new GetCollectionsQuery()).Result;
+
+                foreach (var collection in collectionList)
+                {
+                    Console.WriteLine(collection.Name);
+                }
+            }
+
+            using (var waitForToken = new WaitForToken())
             {
                 using (var listener = new UrlHttpListener("http://localhost:8888/", waitForToken))
                 {
                     using (var client = ClientFactory.Create(Configuration.FromJson("Config.json")))
                     {
-                        Browser.Launch(client.GetOAuthService().GetAuthorisationUrl("state example", "openid offline"));
+                        Browser.Launch(client.GetOAuthService().GetAuthorisationUrl("state example", "offline asset:read collection:read"));
                         waitForToken.WaitHandle.WaitOne(50000);
 
                         if (waitForToken.Success)
                         {
-                            client.GetOAuthService().GetAccessTokenAsync(waitForToken.Token, "openid offline").Wait();
+                            client.GetOAuthService().GetAccessTokenAsync(waitForToken.Token, "offline asset:read collection:read").Wait();
 
                             var mediaList = client.GetAssetService().GetMediaListAsync(new MediaQuery()).Result;
 

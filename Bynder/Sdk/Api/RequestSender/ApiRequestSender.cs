@@ -131,7 +131,7 @@ namespace Bynder.Sdk.Api.RequestSender
             {
                 Authenticated = false,
                 Query = query,
-                Path = $"/oauth2/token",
+                Path = $"/v6/authentication/oauth2/token",
                 HTTPMethod = HttpMethod.Post
             };
 

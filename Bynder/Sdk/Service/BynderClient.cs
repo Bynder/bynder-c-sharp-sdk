@@ -33,7 +33,14 @@ namespace Bynder.Sdk.Service
         {
             new ConfigurationValidator().Validate(configuration);
             _configuration = configuration;
-            _credentials = new Credentials(configuration.Token);
+            if (configuration.PermanentToken != null)
+            {
+                _credentials = new Credentials(configuration.PermanentToken);
+            }
+            else
+            {
+                _credentials = new Credentials(configuration.Token);
+            }
             _requestSender = ApiRequestSender.Create(_configuration, _credentials);
         }
 
