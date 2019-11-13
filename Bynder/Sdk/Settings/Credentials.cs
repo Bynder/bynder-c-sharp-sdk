@@ -15,12 +15,21 @@ namespace Bynder.Sdk.Settings
         private Token _token;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:Credentials"/> class.
+        /// Initializes a new instance of the <see cref="T:Credentials"/> class with a OAuth token.
         /// </summary>
-        /// <param name="token">Token passed in the configuration.</param>
+        /// <param name="token">OAuth token passed in the configuration.</param>
         public Credentials(Token token)
         {
             _token = token;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Credentials"/> class with a permanent token.
+        /// </summary>
+        /// <param name="permanentToken">Permanent token passed in the configuration.</param>
+        public Credentials(string permanentToken)
+        {
+            PermanentToken = permanentToken;
         }
 
         /// <summary>
@@ -32,7 +41,7 @@ namespace Bynder.Sdk.Settings
         /// Check <see cref="t:ICredentials"/>.
         /// </summary>
         /// <value>Check <see cref="t:ICredentials"/>.</value>
-        public string AccessToken => _token?.AccessToken;
+        public string AccessToken => PermanentToken ?? _token?.AccessToken;
 
         /// <summary>
         /// Check <see cref="t:ICredentials"/>.
@@ -56,7 +65,7 @@ namespace Bynder.Sdk.Settings
         /// Check <see cref="t:ICredentials"/>.
         /// </summary>
         /// <value>Check <see cref="t:ICredentials"/>.</value>
-        public string TokenType => _token?.TokenType;
+        public string TokenType => _token?.TokenType ?? "Bearer";
 
         /// <summary>
         /// Gets or sets the token that will be used to authenticate API calls.
@@ -79,12 +88,19 @@ namespace Bynder.Sdk.Settings
             }
         }
 
+        private string PermanentToken { get; set; }
+
         /// <summary>
         /// Check <see cref="t:ICredentials"/>.
         /// </summary>
         /// <returns>Check <see cref="t:ICredentials"/>.</returns>
         public bool AreValid()
         {
+            if (PermanentToken != null)
+            {
+                return true;
+            }
+
             if (_token != null
                 && _token.AccessToken != null)
             {
@@ -101,7 +117,16 @@ namespace Bynder.Sdk.Settings
         /// <param name="token">Check <see cref="t:ICredentials"/>.</param>
         public void Update(Token token)
         {
-            Token = token;
+            if (Token == null)
+            {
+                Token = token;
+            }
+            else
+            {
+                token.RefreshToken = Token.RefreshToken;
+                Token = token;
+            }
+            
         }
     }
 }
