@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -24,6 +24,24 @@ namespace Bynder.Sdk.Query.Asset
         /// </summary>
         [ApiField("subBrandId")]
         public string SubBrandId { get; set; }
+
+        /// <summary>
+        /// Category id. Specify this property if you want only media for specific category.
+        /// </summary>
+        [ApiField("categoryId")]
+        public string CategoryId { get; set; }
+
+        /// <summary>
+        /// Collection id. Specify this property if you want only media for specific collection.
+        /// </summary>
+        [ApiField("collectionId")]
+        public string CollectionId { get; set; }
+
+        /// <summary>
+        /// List of asset ids. Will return an asset for each existing id.
+        /// </summary>
+        [ApiField("ids", Converter = typeof(ListConverter))]
+        public IEnumerable<string> Ids { get; set; }
 
         /// <summary>
         /// Limit of results per request. Max 1000. Default 50.
