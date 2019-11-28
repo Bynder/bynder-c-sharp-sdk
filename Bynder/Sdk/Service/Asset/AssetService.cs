@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -130,6 +130,11 @@ namespace Bynder.Sdk.Service.Asset
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
         public Task<Media> GetMediaInfoAsync(MediaInformationQuery query)
         {
+            if (string.IsNullOrEmpty(query.MediaId))
+            {
+                throw new ArgumentNullException(nameof(query), "Parameter cannot be null or empty.");
+            }
+
             var request = new ApiRequest<Media>
             {
                 Path = $"/api/v4/media/{query.MediaId}/",
