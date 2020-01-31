@@ -55,6 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Queries\AssetUsageQuery.cs" />
+    <Compile Include="Queries\CreateAssetUsageQuery.cs" />
     <Compile Include="BynderApiFactory.cs" />
     <Compile Include="BynderUploadException.cs" />
     <Compile Include="Converters\DateTimeOffsetConverter.cs" />

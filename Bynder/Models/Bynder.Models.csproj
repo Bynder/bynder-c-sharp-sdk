@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssetType.cs" />
+    <Compile Include="AssetUsage.cs" />
     <Compile Include="Brand.cs" />
     <Compile Include="Collection.cs" />
     <Compile Include="CollectionCover.cs" />
