@@ -75,6 +75,11 @@ namespace Bynder.Api.Impl.Oauth
             return BynderRestCallAsync<T>(request.HTTPMethod, request.Uri, parameters, request.DeserializeResponse);
         }
 
+        public Task<T> SendJsonRequestAsync<T>(Request<T> request)
+        {
+            return BynderJsonRestCallAsync<T>(request.Uri, request.Query, request.DeserializeResponse);
+        }
+
         /// <summary>
         /// Gets response to an API call and deserialize response to object if needed
         /// </summary>
@@ -87,6 +92,24 @@ namespace Bynder.Api.Impl.Oauth
         private async Task<T> BynderRestCallAsync<T>(HttpMethod method, string uri, NameValueCollection requestParams, bool deserializeToJson)
         {
             var responseString = await BynderRestCallAsync(method, uri, requestParams).ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(responseString))
+            {
+                if (typeof(T) == typeof(string)
+                    && !deserializeToJson)
+                {
+                    // We can't return responseString directly. 
+                    return (T)Convert.ChangeType(responseString, typeof(T));
+                }
+
+                return JsonConvert.DeserializeObject<T>(responseString);
+            }
+
+            return default(T);
+        }
+
+        private async Task<T> BynderJsonRestCallAsync<T>(string uri, object query, bool deserializeToJson)
+        {
+            var responseString = await BynderJsonRestCallAsync(uri, query).ConfigureAwait(false);
             if (!string.IsNullOrEmpty(responseString))
             {
                 if (typeof(T) == typeof(string)
@@ -126,6 +149,23 @@ namespace Bynder.Api.Impl.Oauth
             }
         }
 
+        private async Task<string> BynderJsonRestCallAsync(string uri, object query)
+        {
+            Uri baseUri = new Uri(_baseUrl);
+            Uri uploadUri = new Uri(baseUri, uri);
+
+            using (var httpResponseMessage = await SendOauthJsonRequestAsync(uploadUri, query).ConfigureAwait(false))
+            {
+                var content = await httpResponseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+                if (httpResponseMessage.IsSuccessStatusCode)
+                {
+                    return content;
+                }
+
+                throw new HttpRequestException(content);
+            }
+        }
+
         /// <summary>
         /// Sends an API request adding appropriate Oauth headers. It returns a task with the HttpResponseMessage received.
         /// </summary>
@@ -143,6 +183,16 @@ namespace Bynder.Api.Impl.Oauth
                 {
                     request.Content = new StringContent(parametersUrlEncoded, Encoding.UTF8, "application/x-www-form-urlencoded");
                 }
+
+                // We need to await here so request is not disposed before the call finishes
+                return await _httpClient.SendAsync(request).ConfigureAwait(false);
+            }
+        }
+        private async Task<HttpResponseMessage> SendOauthJsonRequestAsync(Uri uri, object query)
+        {
+            using (HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, uri))
+            {
+                request.Content = new StringContent(JsonConvert.SerializeObject(query), Encoding.UTF8, "application/json");
 
                 // We need to await here so request is not disposed before the call finishes
                 return await _httpClient.SendAsync(request).ConfigureAwait(false);

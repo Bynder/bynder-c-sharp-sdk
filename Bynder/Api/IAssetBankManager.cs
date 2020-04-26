@@ -95,5 +95,12 @@ namespace Bynder.Api
         /// <returns>Task</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         Task DeleteAssetUsageAsync(AssetUsageQuery query);
+
+        /// <summary>
+        /// This API call allows you to sync all your usage from a single integration.
+        /// </summary>
+        /// <param name="query">Query that contains all the assets in use.</param>
+        /// <returns>Task</returns>
+        Task SyncAssetUsageAsync(SyncAssetUsageQuery query);
     }
 }

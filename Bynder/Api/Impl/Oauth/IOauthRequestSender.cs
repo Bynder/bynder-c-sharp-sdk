@@ -20,5 +20,14 @@ namespace Bynder.Api.Impl.Oauth
         /// <param name="request">Request with the information to do the API call</param>
         /// <returns>Task returning T</returns>
         Task<T> SendRequestAsync<T>(Request<T> request);
+
+        /// <summary>
+        /// Sends the request to Bynder API, where query object will be sent in json format. It gets all necessary information from <see cref="Request{T}"/>
+        /// and deserializes response if needed to specific object.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        Task<T> SendJsonRequestAsync<T>(Request<T> request);
     }
 }

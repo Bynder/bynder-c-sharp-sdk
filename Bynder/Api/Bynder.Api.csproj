@@ -83,6 +83,7 @@
     <Compile Include="Queries\DownloadMediaQuery.cs" />
     <Compile Include="Queries\MediaInformationQuery.cs" />
     <Compile Include="Queries\ModifyMediaQuery.cs" />
+    <Compile Include="Queries\SyncAssetUsageQuery.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Converters\ITypeToStringConverter.cs" />
     <Compile Include="Converters\ListConverter.cs" />
