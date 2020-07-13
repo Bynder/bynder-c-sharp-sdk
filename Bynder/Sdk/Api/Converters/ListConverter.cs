@@ -1,6 +1,7 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Bynder.Sdk.Query.Decoder;
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +11,7 @@ namespace Bynder.Sdk.Api.Converters
     /// Class used to convert IEnumerable{string} to string.
     /// Concretely it joins all IEnumerable values using ',' as separator
     /// </summary>
-    public class ListConverter : ITypeToStringConverter
+    public class ListConverter : ITypeToStringConverter, IParameterDecoder
     {
         /// <summary>
         /// Returns true if type is assignable from IEnumerable of strings
