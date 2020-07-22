@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -122,15 +122,15 @@ namespace Bynder.Test.Service.Asset
         public async Task ModifyMediaCallsRequestSenderWithValidRequest()
         {
             var apiRequestSender = new Mock<IApiRequestSender>();
-            var result = "";
-            apiRequestSender.Setup(sender => sender.SendRequestAsync(It.IsAny<Request<string>>()))
+            object result = new { message = "Accepted", statuscode = 202 };
+            apiRequestSender.Setup(sender => sender.SendRequestAsync(It.IsAny<Request<object>>()))
              .Returns(Task.FromResult(result));
             var assetService = new AssetService(apiRequestSender.Object);
             var modifyMediaQuery = new ModifyMediaQuery("mediaId");
             await assetService.ModifyMediaAsync(modifyMediaQuery);
 
             apiRequestSender.Verify(sender => sender.SendRequestAsync(
-                It.Is<Request<string>>(
+                It.Is<Request<object>>(
                     req => req.Path == $"/api/v4/media/{modifyMediaQuery.MediaId}/"
                     && req.HTTPMethod == HttpMethod.Post
                     && req.Query == modifyMediaQuery
