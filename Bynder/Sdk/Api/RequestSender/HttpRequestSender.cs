@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Bynder.Sdk.Api.RequestSender
@@ -14,6 +15,11 @@ namespace Bynder.Sdk.Api.RequestSender
     {
         private readonly HttpClient _httpClient = new HttpClient();
 
+        public string UserAgent
+        {
+            get { return "bynder-c-sharp-sdk/" + Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
+        }
+
         /// <summary>
         /// Sends the HTTP request and returns its response.
         /// </summary>
@@ -21,6 +27,7 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <param name="httpRequest">HTTP request.</param>
         public async Task<HttpResponseMessage> SendHttpRequest(HttpRequestMessage httpRequest)
         {
+            httpRequest.Headers.Add("User-Agent", UserAgent);
             HttpResponseMessage response = await _httpClient.SendAsync(httpRequest).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
