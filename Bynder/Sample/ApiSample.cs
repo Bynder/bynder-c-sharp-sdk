@@ -2,10 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Configuration;
-using Bynder.Sdk;
 using Bynder.Sdk.Service;
-using Bynder.Sample;
 using Bynder.Sample.Utils;
 using Bynder.Sdk.Query.Asset;
 using Bynder.Sdk.Query.Collection;
@@ -25,6 +22,13 @@ namespace Bynder.Sample
         /// <param name="args">arguments to main</param>
         public static void Main(string[] args)
         {
+            //Choose your authentication method by commenting one of these lines.
+            PermanentToken();
+            Oauth();
+        }
+
+        private static void PermanentToken()
+        {
             using (var client = ClientFactory.Create(Configuration.FromJson("Config.json")))
             {
                 var mediaList = client.GetAssetService().GetMediaListAsync(new MediaQuery()).Result;
@@ -41,34 +45,33 @@ namespace Bynder.Sample
                     Console.WriteLine(collection.Name);
                 }
             }
+        }
 
+        private static void Oauth()
+        {
             using (var waitForToken = new WaitForToken())
+            using (var listener = new UrlHttpListener("http://localhost:8888/", waitForToken))
+            using (var client = ClientFactory.Create(Configuration.FromJson("Config.json")))
             {
-                using (var listener = new UrlHttpListener("http://localhost:8888/", waitForToken))
+                Browser.Launch(client.GetOAuthService().GetAuthorisationUrl("state example", "offline asset:read collection:read"));
+                waitForToken.WaitHandle.WaitOne(50000);
+
+                if (waitForToken.Success)
                 {
-                    using (var client = ClientFactory.Create(Configuration.FromJson("Config.json")))
+                    client.GetOAuthService().GetAccessTokenAsync(waitForToken.Token, "offline asset:read collection:read").Wait();
+
+                    var mediaList = client.GetAssetService().GetMediaListAsync(new MediaQuery()).Result;
+
+                    foreach (var media in mediaList)
                     {
-                        Browser.Launch(client.GetOAuthService().GetAuthorisationUrl("state example", "offline asset:read collection:read"));
-                        waitForToken.WaitHandle.WaitOne(50000);
+                        Console.WriteLine(media.Name);
+                    }
 
-                        if (waitForToken.Success)
-                        {
-                            client.GetOAuthService().GetAccessTokenAsync(waitForToken.Token, "offline asset:read collection:read").Wait();
+                    var collectionList = client.GetCollectionService().GetCollectionsAsync(new GetCollectionsQuery()).Result;
 
-                            var mediaList = client.GetAssetService().GetMediaListAsync(new MediaQuery()).Result;
-
-                            foreach (var media in mediaList)
-                            {
-                                Console.WriteLine(media.Name);
-                            }
-
-                            var collectionList = client.GetCollectionService().GetCollectionsAsync(new GetCollectionsQuery()).Result;
-
-                            foreach (var collection in collectionList)
-                            {
-                                Console.WriteLine(collection.Name);
-                            }
-                        }
+                    foreach (var collection in collectionList)
+                    {
+                        Console.WriteLine(collection.Name);
                     }
                 }
             }
