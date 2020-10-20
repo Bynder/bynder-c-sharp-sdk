@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Api.Requests;
-using Bynder.Sdk.Service;
 using Newtonsoft.Json;
 using Bynder.Sdk.Query.Decoder;
 using Bynder.Sdk.Query;

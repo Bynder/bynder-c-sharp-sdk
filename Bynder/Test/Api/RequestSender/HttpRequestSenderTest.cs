@@ -19,8 +19,9 @@ namespace Bynder.Test.Api.RequestSender
             using (var httpListener = new TestHttpListener(HttpStatusCode.OK))
             using (var httpRequestSender = new HttpRequestSender())
             {
-                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, httpListener.ListeningUrl);
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, httpListener.ListeningUrl);
                 var response = await httpRequestSender.SendHttpRequest(requestMessage);
+
                 Assert.Equal(
                     httpRequestSender.UserAgent,
                     response.RequestMessage.Headers.GetValues("User-Agent").First()
@@ -34,7 +35,7 @@ namespace Bynder.Test.Api.RequestSender
             using (var httpListener = new TestHttpListener(HttpStatusCode.Forbidden))
             using (var httpRequestSender = new HttpRequestSender())
             {
-                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, httpListener.ListeningUrl);
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, httpListener.ListeningUrl);
                 var doRequest = httpRequestSender.SendHttpRequest(requestMessage);
 
                 await Assert.ThrowsAsync<HttpRequestException>(() => doRequest);

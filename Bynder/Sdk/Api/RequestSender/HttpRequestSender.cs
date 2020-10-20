@@ -15,6 +15,9 @@ namespace Bynder.Sdk.Api.RequestSender
     {
         private readonly HttpClient _httpClient = new HttpClient();
 
+        /// <summary>
+        /// User-Agent header we add to each request.
+        /// </summary>
         public string UserAgent
         {
             get { return "bynder-c-sharp-sdk/" + Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
@@ -28,7 +31,7 @@ namespace Bynder.Sdk.Api.RequestSender
         public async Task<HttpResponseMessage> SendHttpRequest(HttpRequestMessage httpRequest)
         {
             httpRequest.Headers.Add("User-Agent", UserAgent);
-            HttpResponseMessage response = await _httpClient.SendAsync(httpRequest).ConfigureAwait(false);
+            var response = await _httpClient.SendAsync(httpRequest).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
             return response;
         }
