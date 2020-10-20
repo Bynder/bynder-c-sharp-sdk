@@ -23,6 +23,11 @@ namespace Bynder.Test.Utils
         /// <summary>
         /// Path of the file which contents will be the response to requests.
         /// </summary>
+        private readonly string _responseContent;
+
+        /// <summary>
+        /// Path of the file which contents will be the response to requests.
+        /// </summary>
         private readonly string _responsePath;
 
         /// <summary>
@@ -37,11 +42,13 @@ namespace Bynder.Test.Utils
         /// Creates an instance of the class.
         /// </summary>
         /// <param name="statusCode">HTTP status code that the class will return when having requests</param>
+        /// <param name="responseContent">String whose contents the class will return in the response</param>
         /// <param name="responsePath">File whose contents the class will return in the response</param>
-        public TestHttpListener(HttpStatusCode statusCode, string responsePath)
+        public TestHttpListener(HttpStatusCode statusCode, string responseContent = null, string responsePath = null)
         {
-            _responsePath = responsePath;
             _statusCode = statusCode;
+            _responseContent = responseContent;
+            _responsePath = responsePath;
 
             _httpListenerFactory = new HttpListenerFactory();
 
@@ -97,7 +104,15 @@ namespace Bynder.Test.Utils
         {
             response.StatusCode = (int)_statusCode;
 
-            if (!string.IsNullOrEmpty(_responsePath))
+            if (!string.IsNullOrEmpty(_responseContent))
+            {
+                using (var sw = new StreamWriter(response.OutputStream))
+                {
+                    sw.Write(_responseContent);
+                }
+            }
+
+            else if (!string.IsNullOrEmpty(_responsePath))
             {
                 var dr = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 using (var fs = new FileStream(Path.Combine(dr, _responsePath), FileMode.Open, FileAccess.Read))

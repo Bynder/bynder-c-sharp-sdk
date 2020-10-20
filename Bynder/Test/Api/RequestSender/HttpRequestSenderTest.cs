@@ -3,6 +3,7 @@
 
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Bynder.Sdk.Api.RequestSender;
 using Bynder.Test.Utils;
 using Xunit;
@@ -12,16 +13,26 @@ namespace Bynder.Test.Api.RequestSender
     public class HttpRequestSenderTest
     {
         [Fact]
-        public void WhenErrorReceivedAnExceptionIsThown()
+        public async Task WhenSuccessReceivedResponseIsReturned()
         {
-            using (var testHttpListener = new TestHttpListener(HttpStatusCode.Forbidden, null))
+            using (var httpListener = new TestHttpListener(HttpStatusCode.OK))
+            using (var httpRequestSender = new HttpRequestSender())
             {
-                using (HttpRequestSender apiRequestSender = new HttpRequestSender())
-                {
-                    HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, testHttpListener.ListeningUrl);
+                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, httpListener.ListeningUrl);
+                var response = await httpRequestSender.SendHttpRequest(requestMessage);
 
-                    Assert.ThrowsAsync<HttpRequestException>(async () => await apiRequestSender.SendHttpRequest(requestMessage));
-                }
+            }
+        }
+        [Fact]
+        public async Task WhenErrorReceivedAnExceptionIsThown()
+        {
+            using (var httpListener = new TestHttpListener(HttpStatusCode.Forbidden))
+            using (var httpRequestSender = new HttpRequestSender())
+            {
+                HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, httpListener.ListeningUrl);
+                var doRequest = httpRequestSender.SendHttpRequest(requestMessage);
+
+                await Assert.ThrowsAsync<HttpRequestException>(() => doRequest);
             }
         }
     }

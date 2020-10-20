@@ -15,16 +15,15 @@ namespace Bynder.Sdk.Api.RequestSender
         private readonly HttpClient _httpClient = new HttpClient();
 
         /// <summary>
-        /// Sends the HTTP request and returns the content as string.
+        /// Sends the HTTP request and returns its response.
         /// </summary>
         /// <returns>The HTTP request response.</returns>
         /// <param name="httpRequest">HTTP request.</param>
-        public async Task<string> SendHttpRequest(HttpRequestMessage httpRequest)
+        public async Task<HttpResponseMessage> SendHttpRequest(HttpRequestMessage httpRequest)
         {
-            var response = await _httpClient.SendAsync(httpRequest).ConfigureAwait(false);
-
+            HttpResponseMessage response = await _httpClient.SendAsync(httpRequest).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return response;
         }
 
         /// <summary>
