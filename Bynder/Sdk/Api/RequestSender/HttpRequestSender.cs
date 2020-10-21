@@ -20,7 +20,7 @@ namespace Bynder.Sdk.Api.RequestSender
         /// </summary>
         public string UserAgent
         {
-            get { return "bynder-c-sharp-sdk/" + Assembly.GetExecutingAssembly().GetName().Version.ToString(); }
+            get { return $"bynder-c-sharp-sdk/{Assembly.GetExecutingAssembly().GetName().Version.ToString()}"; }
         }
 
         /// <summary>

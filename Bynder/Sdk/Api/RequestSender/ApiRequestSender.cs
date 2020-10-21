@@ -27,6 +27,8 @@ namespace Bynder.Sdk.Api.RequestSender
         private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private IHttpRequestSender _httpSender;
 
+        public const string TokenPath = "/v6/authentication/oauth2/token";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sdk.Api.ApiRequestSender"/> class.
         /// </summary>
@@ -138,7 +140,7 @@ namespace Bynder.Sdk.Api.RequestSender
             {
                 Authenticated = false,
                 Query = query,
-                Path = $"/v6/authentication/oauth2/token",
+                Path = TokenPath,
                 HTTPMethod = HttpMethod.Post
             };
 
