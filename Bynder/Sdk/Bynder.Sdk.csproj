@@ -6,10 +6,29 @@
     <Company>Bynder</Company>
     <Product>Bynder.Sdk</Product>
     <Copyright>Copyright © Bynder</Copyright>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageVersion>2.2.0</PackageVersion>
+    <Authors>BynderDevops</Authors>
+    <Description>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Description>
+    <PackageIconUrl>https://bynder.com/static/3.0/img/favicon-black.ico</PackageIconUrl>
+    <NeutralLanguage>en</NeutralLanguage>
+    <PackageLicenseUrl>https://github.com/Bynder/bynder-c-sharp-sdk/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Owners>BynderDevops</Owners>
+    <PackageProjectUrl>https://github.com/Bynder/bynder-c-sharp-sdk</PackageProjectUrl>
+    <PackageReleaseNotes>Adds the SDK's name and version to each request in the User-Agent header, to enable better insight in the Bynder API usage.</PackageReleaseNotes>
+    <Summary>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Summary>
+    <PackageTags>Bynder API C# SDK</PackageTags>
+    <Title>Bynder.Sdk</Title>
+    <PackageId>Bynder.Sdk</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
