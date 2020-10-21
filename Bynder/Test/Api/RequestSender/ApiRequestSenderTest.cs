@@ -15,7 +15,7 @@ namespace Bynder.Test.Api.RequestSender
 {
     public class ApiRequestSenderTest
     {
-        private const string ACCES_TOKEN = "access_token";
+        private const string AccessToken = "access_token";
 
         private Mock<IHttpRequestSender> httpSenderMock;
         private StubQuery query;
@@ -51,7 +51,7 @@ namespace Bynder.Test.Api.RequestSender
                     It.Is<HttpRequestMessage>(req =>
                         req.RequestUri.PathAndQuery.Contains("/fake/api")
                         && req.Method == HttpMethod.Post
-                        && req.Headers.Authorization.ToString() == $"Bearer {ACCES_TOKEN}"
+                        && req.Headers.Authorization.ToString() == $"Bearer {AccessToken}"
                         && req.Content.ReadAsStringAsync().Result.Contains("Item1=Value")
                     )
                 ));
@@ -88,7 +88,7 @@ namespace Bynder.Test.Api.RequestSender
                     It.Is<HttpRequestMessage>(
                         req => req.RequestUri.PathAndQuery.Contains("/fake/api")
                         && req.Method == HttpMethod.Get
-                        && req.Headers.Authorization.ToString() == $"Bearer {ACCES_TOKEN}"
+                        && req.Headers.Authorization.ToString() == $"Bearer {AccessToken}"
                         && req.RequestUri.Query.Contains("Item1=Value")
                     )
                 ));
@@ -117,7 +117,7 @@ namespace Bynder.Test.Api.RequestSender
                     It.Is<HttpRequestMessage>(
                         req => req.RequestUri.PathAndQuery.Contains("/fake/api")
                         && req.Method == HttpMethod.Get
-                        && req.Headers.Authorization.ToString() == $"Bearer {ACCES_TOKEN}"
+                        && req.Headers.Authorization.ToString() == $"Bearer {AccessToken}"
                         && req.RequestUri.Query.Contains("Item1=Value")
                     )
                 ));
@@ -150,7 +150,7 @@ namespace Bynder.Test.Api.RequestSender
 
             credentialsMock
                 .SetupGet(mock => mock.AccessToken)
-                .Returns(ACCES_TOKEN);
+                .Returns(AccessToken);
 
             credentialsMock
                 .SetupGet(mock => mock.TokenType)
