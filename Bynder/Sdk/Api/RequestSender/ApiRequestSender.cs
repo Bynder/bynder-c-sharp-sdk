@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Api.Requests;
-using Bynder.Sdk.Service;
 using Newtonsoft.Json;
 using Bynder.Sdk.Query.Decoder;
 using Bynder.Sdk.Query;
@@ -27,6 +26,8 @@ namespace Bynder.Sdk.Api.RequestSender
         private readonly ICredentials _credentials;
         private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private IHttpRequestSender _httpSender;
+
+        public const string TokenPath = "/v6/authentication/oauth2/token";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sdk.Api.ApiRequestSender"/> class.
@@ -90,13 +91,21 @@ namespace Bynder.Sdk.Api.RequestSender
             }
 
             var httpRequest = CreateHttpRequest(request);
-            var responseString = await _httpSender.SendHttpRequest(httpRequest).ConfigureAwait(false);
-            if (!string.IsNullOrEmpty(responseString))
+            var response = await _httpSender.SendHttpRequest(httpRequest).ConfigureAwait(false);
+
+            var responseContent = response.Content;
+            if (response.Content == null)
             {
-                return JsonConvert.DeserializeObject<T>(responseString);
+                return default(T);
             }
 
-            return default(T);
+            var responseString = await responseContent.ReadAsStringAsync().ConfigureAwait(false);
+            if (string.IsNullOrEmpty(responseString))
+            {
+                return default(T);
+            }
+
+            return JsonConvert.DeserializeObject<T>(responseString);
         }
 
         private HttpRequestMessage CreateHttpRequest<T>(Requests.Request<T> request)
@@ -131,7 +140,7 @@ namespace Bynder.Sdk.Api.RequestSender
             {
                 Authenticated = false,
                 Query = query,
-                Path = $"/v6/authentication/oauth2/token",
+                Path = TokenPath,
                 HTTPMethod = HttpMethod.Post
             };
 

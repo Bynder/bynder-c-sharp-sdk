@@ -15,147 +15,127 @@ namespace Bynder.Test.Api.RequestSender
 {
     public class ApiRequestSenderTest
     {
+        private const string _accessToken = "some_access_token";
+        private const string _authHeader = "Bearer " + _accessToken;
+        private const string _path = "/fake/api";
+        private const string _queryValue = "some_query_value";
+        private const string _queryString = "Item1=" + _queryValue;
+
+        private Mock<IHttpRequestSender> _httpSenderMock;
+        private StubQuery _query;
+
+        public ApiRequestSenderTest()
+        {
+            _httpSenderMock = new Mock<IHttpRequestSender>();
+            _httpSenderMock
+                .Setup(sender => sender.SendHttpRequest(It.IsAny<HttpRequestMessage>()))
+                .Returns(Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK)));
+            _query = new StubQuery
+            {
+                Item1 = _queryValue
+            };
+        }
+
         [Fact]
         public async Task WhenRequestIsPostThenParametersAreAddedToContent()
         {
-            var httpSenderMock = new Mock<IHttpRequestSender>();
-            var query = new StubQuery
-            {
-                Item1 = "Value"
-            };
-            var accessToken = "access_token";
+            await SendRequest(hasValidCredentials: true, httpMethod: HttpMethod.Post);
 
-            using (ApiRequestSender apiRequestSender = new ApiRequestSender(
-                new Configuration{
-                    BaseUrl = new Uri("https://example.bynder.com"),
-                },
-                GetCredentials(true, accessToken),
-                httpSenderMock.Object
-            ))
-            {
-                var apiRequest = new ApiRequest<bool>()
-                {
-                    Path = "/fake/api",
-                    HTTPMethod = HttpMethod.Post,
-                    Query = query
-                };
+            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
+                It.Is<HttpRequestMessage>(req =>
+                    req.RequestUri.PathAndQuery.Contains(_path)
+                    && req.Method == HttpMethod.Post
+                    && req.Headers.Authorization.ToString() == _authHeader
+                    && req.Content.ReadAsStringAsync().Result.Contains(_queryString)
+                )
+            ));
 
-                await apiRequestSender.SendRequestAsync(apiRequest);
-
-                httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                    It.Is<HttpRequestMessage>(
-                        req => req.RequestUri.PathAndQuery.Contains("/fake/api")
-                        && req.Method == HttpMethod.Post
-                        && req.Headers.Authorization.ToString() == $"Bearer {accessToken}"
-                        && req.Content.ReadAsStringAsync().Result.Contains("Item1=Value")
-                    )));
-
-                httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                    It.IsAny<HttpRequestMessage>()
-                    ), Times.Once);
-            }
+            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
+                It.IsAny<HttpRequestMessage>()
+            ), Times.Once);
         }
 
 
         [Fact]
         public async Task WhenCredentialInvalidTwoRequestsSent()
         {
-            var httpSenderMock = new Mock<IHttpRequestSender>();
+            await SendRequest(hasValidCredentials: false, httpMethod: HttpMethod.Get);
 
-            var query = new StubQuery
-            {
-                Item1 = "Value"
-            };
-            var accessToken = "access_token";
+            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
+                It.Is<HttpRequestMessage>(
+                    req => req.RequestUri.PathAndQuery == ApiRequestSender.TokenPath
+                    && req.Method == HttpMethod.Post
+                )
+            ));
 
-            using (ApiRequestSender apiRequestSender = new ApiRequestSender(
-                new Configuration{
-                    BaseUrl = new Uri("https://example.bynder.com"),
-                },
-                GetCredentials(false, accessToken),
-                httpSenderMock.Object
-            ))
-            {
-                var apiRequest = new ApiRequest<bool>()
-                {
-                    Path = "/fake/api",
-                    HTTPMethod = HttpMethod.Get,
-                    Query = query
-                };
+            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
+                It.Is<HttpRequestMessage>(
+                    req => req.RequestUri.PathAndQuery.Contains(_path)
+                    && req.Method == HttpMethod.Get
+                    && req.Headers.Authorization.ToString() == _authHeader
+                    && req.RequestUri.Query.Contains(_queryString)
+                )
+            ));
 
-                await apiRequestSender.SendRequestAsync(apiRequest);
-
-                httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                    It.Is<HttpRequestMessage>(
-                        req => req.RequestUri.PathAndQuery.Contains("/oauth2/token")
-                        && req.Method == HttpMethod.Post
-                    )));
-
-                httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                    It.Is<HttpRequestMessage>(
-                        req => req.RequestUri.PathAndQuery.Contains("/fake/api")
-                        && req.Method == HttpMethod.Get
-                        && req.Headers.Authorization.ToString() == $"Bearer {accessToken}"
-                        && req.RequestUri.Query.Contains("Item1=Value")
-                    )));
-
-                httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                    It.IsAny<HttpRequestMessage>()
-                ), Times.Exactly(2));
-            }
+            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
+                It.IsAny<HttpRequestMessage>()
+            ), Times.Exactly(2));
         }
 
         [Fact]
         public async Task WhenRequestIsGetThenParametersAreAddedToUrl()
         {
-            var httpSenderMock = new Mock<IHttpRequestSender>();
-            var query = new StubQuery
-            {
-                Item1 = "Value"
-            };
-            var accessToken = "access_token";
+            await SendRequest(hasValidCredentials: true, httpMethod: HttpMethod.Get);
 
-            using (ApiRequestSender apiRequestSender = new ApiRequestSender(
-                new Configuration{
-                    BaseUrl = new Uri("https://example.bynder.com"),
-                },
-                GetCredentials(true, accessToken),
-                httpSenderMock.Object
-            ))
-            {
-                var apiRequest = new ApiRequest<bool>
-                {
-                    Path = "/fake/api",
-                    HTTPMethod = HttpMethod.Get,
-                    Query = query
-                };
+            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
+                It.Is<HttpRequestMessage>(
+                    req => req.RequestUri.PathAndQuery.Contains(_path)
+                    && req.Method == HttpMethod.Get
+                    && req.Headers.Authorization.ToString() == _authHeader
+                    && req.RequestUri.Query.Contains(_queryString)
+                )
+            ));
 
-                await apiRequestSender.SendRequestAsync(apiRequest);
-
-                httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                    It.Is<HttpRequestMessage>(
-                        req => req.RequestUri.PathAndQuery.Contains("/fake/api")
-                        && req.Method == HttpMethod.Get
-                        && req.Headers.Authorization.ToString() == $"Bearer {accessToken}"
-                        && req.RequestUri.Query.Contains("Item1=Value")
-                    )));
-
-                httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                    It.IsAny<HttpRequestMessage>()
-                ), Times.Once);
-            }
+            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
+                It.IsAny<HttpRequestMessage>()
+            ), Times.Once);
         }
 
-        private ICredentials GetCredentials(bool valid = true, string accessToken = null)
+        private async Task SendRequest(bool hasValidCredentials, HttpMethod httpMethod)
+        {
+            await CreateApiRequestSender(hasValidCredentials).SendRequestAsync(
+                new ApiRequest<bool>()
+                {
+                    Path = _path,
+                    HTTPMethod = httpMethod,
+                    Query = _query
+                }
+            );
+        }
+
+        private IApiRequestSender CreateApiRequestSender(bool hasValidCredentials)
+        {
+            return new ApiRequestSender(
+                new Configuration
+                {
+                    BaseUrl = new Uri("https://example.bynder.com"),
+                },
+                GetCredentials(hasValidCredentials),
+                _httpSenderMock.Object
+            );
+        }
+
+        private ICredentials GetCredentials(bool isValid)
         {
             var credentialsMock = new Mock<ICredentials>();
+
             credentialsMock
                 .Setup(mock => mock.AreValid())
-                .Returns(valid);
+                .Returns(isValid);
 
             credentialsMock
                 .SetupGet(mock => mock.AccessToken)
-                .Returns(accessToken);
+                .Returns(_accessToken);
 
             credentialsMock
                 .SetupGet(mock => mock.TokenType)

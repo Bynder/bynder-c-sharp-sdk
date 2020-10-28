@@ -14,10 +14,10 @@ namespace Bynder.Sdk.Api.RequestSender
     internal interface IHttpRequestSender : IDisposable
     {
         /// <summary>
-        /// Sends the HTTP request and returns the content as string.
+        /// Sends the HTTP request and returns its response.
         /// </summary>
         /// <returns>The HTTP request response.</returns>
         /// <param name="httpRequest">HTTP request.</param>
-        Task<string> SendHttpRequest(HttpRequestMessage httpRequest);
+        Task<HttpResponseMessage> SendHttpRequest(HttpRequestMessage httpRequest);
     }
 }
