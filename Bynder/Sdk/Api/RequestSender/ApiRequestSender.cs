@@ -7,12 +7,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Bynder.Sdk.Model;
 using Bynder.Sdk.Api.Requests;
-using Newtonsoft.Json;
-using Bynder.Sdk.Query.Decoder;
+using Bynder.Sdk.Model;
 using Bynder.Sdk.Query;
+using Bynder.Sdk.Query.Decoder;
 using Bynder.Sdk.Settings;
+using Newtonsoft.Json;
 
 namespace Bynder.Sdk.Api.RequestSender
 {
@@ -38,8 +38,8 @@ namespace Bynder.Sdk.Api.RequestSender
         internal ApiRequestSender(Configuration configuration, ICredentials credentials, IHttpRequestSender httpSender)
         {
             _configuration = configuration;
-            _httpSender = httpSender;
             _credentials = credentials;
+            _httpSender = httpSender;
         }
 
         /// <summary>
@@ -72,26 +72,9 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <returns>Check <see cref="t:Sdk.Api.IApiRequestSender"/>.</returns>
         /// <param name="request">Check <see cref="t:Sdk.Api.IApiRequestSender"/>.</param>
         /// <typeparam name="T">Check <see cref="t:Sdk.Api.IApiRequestSender"/>.</typeparam>
-        public async Task<T> SendRequestAsync<T>(Requests.Request<T> request)
+        public async Task<T> SendRequestAsync<T>(Request<T> request)
         {
-            if (request.Authenticated && !_credentials.AreValid())
-            {
-                await _semaphore.WaitAsync().ConfigureAwait(false);
-                if (!_credentials.AreValid())
-                {
-                    try
-                    {
-                        await RefreshToken().ConfigureAwait(false);
-                    }
-                    finally
-                    {
-                        _semaphore.Release();
-                    }
-                }
-            }
-
-            var httpRequest = CreateHttpRequest(request);
-            var response = await _httpSender.SendHttpRequest(httpRequest).ConfigureAwait(false);
+            var response = await CreateHttpRequestAsync(request).ConfigureAwait(false);
 
             var responseContent = response.Content;
             if (response.Content == null)
@@ -100,7 +83,7 @@ namespace Bynder.Sdk.Api.RequestSender
             }
 
             var responseString = await responseContent.ReadAsStringAsync().ConfigureAwait(false);
-            if (string.IsNullOrEmpty(responseString))
+            if (responseString == null)
             {
                 return default(T);
             }
@@ -108,45 +91,57 @@ namespace Bynder.Sdk.Api.RequestSender
             return JsonConvert.DeserializeObject<T>(responseString);
         }
 
-        private HttpRequestMessage CreateHttpRequest<T>(Requests.Request<T> request)
+        private async Task<HttpResponseMessage> CreateHttpRequestAsync<T>(Request<T> request)
         {
             var parameters = _queryDecoder.GetParameters(request.Query);
             var httpRequestMessage = HttpRequestMessageFactory.Create(
                 _configuration.BaseUrl.ToString(),
                 request.HTTPMethod,
                 parameters,
-                request.Path);
+                request.Path
+            );
 
             if (request.Authenticated)
             {
-                httpRequestMessage.Headers.Authorization =
-                                      new AuthenticationHeaderValue(_credentials.TokenType, _credentials.AccessToken);
+                if (!_credentials.AreValid())
+                {
+                    _credentials.Update(await RefreshToken().ConfigureAwait(false));
+                }
+
+                httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue(
+                    _credentials.TokenType,
+                    _credentials.AccessToken
+                );
             }
 
-            return httpRequestMessage;
+            return await _httpSender.SendHttpRequest(httpRequestMessage).ConfigureAwait(false);
         }
 
-        private async Task RefreshToken()
+        private async Task<Token> RefreshToken()
         {
-            TokenQuery query = new TokenQuery
+            await _semaphore.WaitAsync().ConfigureAwait(false);
+            try
             {
-                ClientId = _configuration.ClientId,
-                ClientSecret = _configuration.ClientSecret,
-                RefreshToken = _credentials.RefreshToken,
-                GrantType = "refresh_token"
-            };
-
-            var request = new OAuthRequest<Token>
+                return await SendRequestAsync(
+                    new OAuthRequest<Token>
+                    {
+                        Authenticated = false,
+                        Query = new TokenQuery
+                        {
+                            ClientId = _configuration.ClientId,
+                            ClientSecret = _configuration.ClientSecret,
+                            RefreshToken = _credentials.RefreshToken,
+                            GrantType = "refresh_token"
+                        },
+                        Path = TokenPath,
+                        HTTPMethod = HttpMethod.Post
+                    }
+                ).ConfigureAwait(false);
+            }
+            finally
             {
-                Authenticated = false,
-                Query = query,
-                Path = TokenPath,
-                HTTPMethod = HttpMethod.Post
-            };
-
-            var newToken = await SendRequestAsync(request).ConfigureAwait(false);
-
-            _credentials.Update(newToken);
+                _semaphore.Release();
+            }
         }
 
         private static class HttpRequestMessageFactory
