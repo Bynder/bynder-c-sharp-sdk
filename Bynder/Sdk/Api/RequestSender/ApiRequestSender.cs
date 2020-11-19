@@ -32,6 +32,7 @@ namespace Bynder.Sdk.Api.RequestSender
         /// </summary>
         /// <param name="configuration">Configuration.</param>
         /// <param name="credentials">Credentials to use in authorized requests and to refresh tokens</param>
+        /// <param name="oauthService">OAuthService.</param>
         /// <param name="httpSender">HTTP instance to send API requests</param>
         internal ApiRequestSender(Configuration configuration, ICredentials credentials, IOAuthService oauthService, IHttpRequestSender httpSender)
         {
@@ -47,6 +48,7 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <returns>The instance.</returns>
         /// <param name="configuration">Configuration.</param>
         /// <param name="credentials">Credentials.</param>
+        /// <param name="oauthService">OAuthService.</param>
         public static IApiRequestSender Create(Configuration configuration, ICredentials credentials, IOAuthService oauthService)
         {
             return new ApiRequestSender(configuration, credentials, oauthService, new HttpRequestSender());
