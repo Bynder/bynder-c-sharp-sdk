@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,21 +40,12 @@ namespace Bynder.Test.Api.RequestSender
         }
 
         [Fact]
-        public async Task WhenErrorResponseThenReturnDefaultObject()
+        public async Task WhenErrorResponseThenThrowHttpRequestException()
         {
-            var expectedResponse = new HttpResponseMessage
-            {
-                StatusCode = System.Net.HttpStatusCode.InternalServerError,
-                Content = new StringContent(
-                    JsonConvert.SerializeObject(_expectedResponseBody),
-                    Encoding.UTF8,
-                    "application/json"
-                )
-            };
             var doRequest = SendRequestAsync<IList<string>>(
                 hasValidCredentials: true,
                 httpMethod: HttpMethod.Post,
-                expectedResponse
+                CreateResponse(HttpStatusCode.InternalServerError)
             );
             await Assert.ThrowsAsync<HttpRequestException>(() => doRequest);
 
@@ -74,7 +65,7 @@ namespace Bynder.Test.Api.RequestSender
             var responseBody = await SendRequestAsync<IList<string>>(
                 hasValidCredentials: true,
                 httpMethod: HttpMethod.Post,
-                System.Net.HttpStatusCode.OK
+                CreateResponse(addContent: false)
             );
 
             Assert.Equal(default(IList<string>), responseBody);
@@ -92,11 +83,9 @@ namespace Bynder.Test.Api.RequestSender
         [Fact]
         public async Task WhenRequestIsGetThenParametersAreAddedToUrl()
         {
-            var responseBody = await SendRequestAsync(
+            var responseBody = await SendRequestAsync<IList<string>>(
                 hasValidCredentials: true,
-                httpMethod: HttpMethod.Get,
-                System.Net.HttpStatusCode.OK,
-                _expectedResponseBody
+                httpMethod: HttpMethod.Get
             );
 
             Assert.Equal(_expectedResponseBody, responseBody);
@@ -114,11 +103,9 @@ namespace Bynder.Test.Api.RequestSender
         [Fact]
         public async Task WhenRequestIsPostThenParametersAreAddedToContent()
         {
-            var responseBody = await SendRequestAsync(
+            var responseBody = await SendRequestAsync<IList<string>>(
                 hasValidCredentials: true,
-                httpMethod: HttpMethod.Post,
-                System.Net.HttpStatusCode.OK,
-                _expectedResponseBody
+                httpMethod: HttpMethod.Post
             );
 
             Assert.Equal(_expectedResponseBody, responseBody);
@@ -136,11 +123,9 @@ namespace Bynder.Test.Api.RequestSender
         [Fact]
         public async Task WhenCredentialInvalidThenTokenIsRefreshed()
         {
-            var responseBody = await SendRequestAsync(
+            var responseBody = await SendRequestAsync<IList<string>>(
                 hasValidCredentials: false,
-                httpMethod: HttpMethod.Get,
-                System.Net.HttpStatusCode.OK,
-                _expectedResponseBody
+                httpMethod: HttpMethod.Get
             );
 
             Assert.Equal(_expectedResponseBody, responseBody);
@@ -167,44 +152,14 @@ namespace Bynder.Test.Api.RequestSender
         private async Task<T> SendRequestAsync<T>(
             bool hasValidCredentials,
             HttpMethod httpMethod,
-            System.Net.HttpStatusCode responseStatus)
+            HttpResponseMessage response = null)
         {
-            return await SendRequestAsync<T>(
-                hasValidCredentials,
-                httpMethod,
-                new HttpResponseMessage
-                {
-                    StatusCode = responseStatus
-                }
-            );
-        }
+            if (response == null)
+            {
+                response = CreateResponse();
+            }
 
-        private async Task<T> SendRequestAsync<T>(
-            bool hasValidCredentials,
-            HttpMethod httpMethod,
-            System.Net.HttpStatusCode responseStatus,
-            T responseBody)
-        {
-            return await SendRequestAsync<T>(
-                hasValidCredentials,
-                httpMethod,
-                new HttpResponseMessage
-                {
-                    StatusCode = responseStatus,
-                    Content = new StringContent(
-                        JsonConvert.SerializeObject(responseBody),
-                        Encoding.UTF8,
-                        "application/json"
-                    )
-                }
-            );
-        }
-
-        private async Task<T> SendRequestAsync<T>(
-            bool hasValidCredentials,
-            HttpMethod httpMethod,
-            HttpResponseMessage response)
-        {
+            // Setup mock for API requests
             var httpSenderMockSetup = _httpSenderMock
                 .Setup(sender => sender.SendHttpRequest(
                     It.Is<HttpRequestMessage>(req => req.RequestUri.PathAndQuery != ApiRequestSender.TokenPath)
@@ -218,16 +173,12 @@ namespace Bynder.Test.Api.RequestSender
                 httpSenderMockSetup.ThrowsAsync(new HttpRequestException(""));
             }
 
+            // Setup mock for OAuth token requests
             _httpSenderMock
                 .Setup(sender => sender.SendHttpRequest(
                     It.Is<HttpRequestMessage>(req => req.RequestUri.PathAndQuery == ApiRequestSender.TokenPath)
                 ))
-                .Returns(Task.FromResult(
-                    new HttpResponseMessage
-                    {
-                        StatusCode = System.Net.HttpStatusCode.OK
-                    }
-                ));
+                .Returns(Task.FromResult(CreateResponse(addContent: false)));
 
             return await CreateApiRequestSender(hasValidCredentials).SendRequestAsync(
                 new ApiRequest<T>
@@ -237,6 +188,22 @@ namespace Bynder.Test.Api.RequestSender
                     Query = _query
                 }
             );
+        }
+
+        private HttpResponseMessage CreateResponse(
+            HttpStatusCode statusCode = HttpStatusCode.OK,
+            bool addContent = true)
+        {
+            var response = new HttpResponseMessage(statusCode);
+            if (addContent)
+            {
+                response.Content = new StringContent(
+                    JsonConvert.SerializeObject(_expectedResponseBody),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+            }
+            return response;
         }
 
         private IApiRequestSender CreateApiRequestSender(bool hasValidCredentials)
@@ -251,9 +218,9 @@ namespace Bynder.Test.Api.RequestSender
             );
         }
 
-        private ICredentials GetCredentials(bool isValid)
+        private Sdk.Settings.ICredentials GetCredentials(bool isValid)
         {
-            var credentialsMock = new Mock<ICredentials>();
+            var credentialsMock = new Mock<Sdk.Settings.ICredentials>();
 
             credentialsMock
                 .Setup(mock => mock.AreValid())
