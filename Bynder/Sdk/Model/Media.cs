@@ -20,6 +20,32 @@ namespace Bynder.Sdk.Model
         public IList<string> PropertyOptions { get; set; }
 
         /// <summary>
+        /// Property asset types assigned to media
+        /// </summary>
+        [JsonProperty("property_assettype")]
+        public IList<string> PropertyAssetType { get; set; }
+
+        /// <summary>
+        /// Active focus point in the original media item, defined
+        /// by an x,y coordinate.
+        /// </summary>
+        [JsonProperty("activeOriginalFocusPoint")]
+        public IDictionary<string, int> ActiveOriginalFocusPoint { get; set; }
+
+
+        /// <summary>
+        /// Number of times the media has been downloaded
+        /// </summary>
+        [JsonProperty("downloads")]
+        public int NumberOfDownloads { get; set; }
+
+        /// <summary>
+        /// Number of times the media has been viewed
+        /// </summary>
+        [JsonProperty("views")]
+        public int NumberOfViews { get; set; }
+
+        /// <summary>
         /// Id of the brand the media belongs to
         /// </summary>
         [JsonProperty("brandId")]
@@ -32,6 +58,12 @@ namespace Bynder.Sdk.Model
         public string SubBrandId { get; set; }
 
         /// <summary>
+        /// Full name of the user who created the media
+        /// </summary>
+        [JsonProperty("userCreated")]
+        public string Creator { get; set; }
+
+        /// <summary>
         /// Date created
         /// </summary>
         [JsonProperty("dateCreated")]
@@ -42,6 +74,12 @@ namespace Bynder.Sdk.Model
         /// </summary>
         [JsonProperty("dateModified")]
         public string DateModified { get; set; }
+
+        /// <summary>
+        /// Date modified
+        /// </summary>
+        [JsonProperty("datePublished")]
+        public string DatePublished { get; set; }
 
         /// <summary>
         /// Extension of the file
@@ -66,6 +104,12 @@ namespace Bynder.Sdk.Model
         /// </summary>
         [JsonProperty("id")]
         public string Id { get; set; }
+
+        /// <summary>
+        /// Media id hash
+        /// </summary>
+        [JsonProperty("idHash")]
+        public string IdHash { get; set; }
 
         /// <summary>
         /// Media name
@@ -135,10 +179,28 @@ namespace Bynder.Sdk.Model
         public IList<string> Tags { get; set; }
 
         /// <summary>
+        /// Indicates if the media item is archived
+        /// </summary>
+        [JsonProperty("archive", ItemConverterType = typeof(BooleanJsonConverter))]
+        public bool IsArchived { get; set; }
+
+        /// <summary>
+        /// Indicates if the media item is marked as limited usage
+        /// </summary>
+        [JsonProperty("limited", ItemConverterType = typeof(BooleanJsonConverter))]
+        public bool IsLimited { get; set; }
+
+        /// <summary>
         /// Indicates if the media item is public
         /// </summary>
         [JsonProperty("isPublic", ItemConverterType = typeof(BooleanJsonConverter))]
         public bool IsPublic { get; set; }
+
+        /// <summary>
+        /// Indicates if the media item is watermarked
+        /// </summary>
+        [JsonProperty("watermarked", ItemConverterType = typeof(BooleanJsonConverter))]
+        public bool IsWatermarked { get; set; }
 
         /// <summary>
         /// URL to Bynder CDN for the original
