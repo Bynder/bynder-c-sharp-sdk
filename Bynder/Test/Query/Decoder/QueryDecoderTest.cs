@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using Bynder.Sdk.Api.Converters;
 using Bynder.Sdk.Query.Decoder;
 using Xunit;
 
@@ -73,13 +74,13 @@ namespace Bynder.Test.Api
         /// <summary>
         /// Stub converter only used for testing purposes.
         /// </summary>
-        private class StubDecoder : IParameterDecoder
+        private class StubDecoder : ITypeToStringConverter
         {
             /// <summary>
             /// Check <see cref="IParameterDecoder.CanConvert(Type)"/>.
             /// </summary>
-            /// <param name="typeToConvert">Check <see cref="IParameterDecoder.CanConvert(Type)"/></param>
-            /// <returns>Check <see cref="IParameterDecoder.CanConvert(Type)"/></returns>
+            /// <param name="typeToConvert">Check <see cref="ITypeToStringConverter.CanConvert(Type)"/></param>
+            /// <returns>Check <see cref="ITypeToStringConverter.CanConvert(Type)"/></returns>
             public bool CanConvert(Type typeToConvert)
             {
                 return true;
@@ -88,8 +89,8 @@ namespace Bynder.Test.Api
             /// <summary>
             /// Check <see cref="IParameterDecoder.Convert(object)"/>.
             /// </summary>
-            /// <param name="value">Check <see cref="IParameterDecoder.Convert(object)"/></param>
-            /// <returns>Check <see cref="IParameterDecoder.Convert(object)"/></returns>
+            /// <param name="value">Check <see cref="ITypeToStringConverter.Convert(object)"/></param>
+            /// <returns>Check <see cref="ITypeToStringConverter.Convert(object)"/></returns>
             public string Convert(object value)
             {
                 return "Converted";
