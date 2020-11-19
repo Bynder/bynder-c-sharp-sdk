@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
 using Bynder.Sdk.Query.Decoder;
+using Bynder.Sdk.Service.OAuth;
 using Bynder.Sdk.Settings;
 using Moq;
 using Newtonsoft.Json;
@@ -25,12 +26,14 @@ namespace Bynder.Test.Api.RequestSender
         private const string _queryValue = "some_query_value";
         private const string _queryString = "Item1=" + _queryValue;
 
+        private Mock<IOAuthService> _oAuthServiceMock;
         private Mock<IHttpRequestSender> _httpSenderMock;
         private StubQuery _query;
         private IList<string> _expectedResponseBody;
 
         public ApiRequestSenderTest()
         {
+            _oAuthServiceMock = new Mock<IOAuthService>();
             _httpSenderMock = new Mock<IHttpRequestSender>();
             _query = new StubQuery
             {
@@ -130,15 +133,8 @@ namespace Bynder.Test.Api.RequestSender
 
             Assert.Equal(_expectedResponseBody, responseBody);
 
-            // Check Refresh token request
-            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                It.Is<HttpRequestMessage>(
-                    req => req.RequestUri.PathAndQuery == ApiRequestSender.TokenPath
-                    && req.Method == HttpMethod.Post
-                )
-            ), Times.Once);
+            _oAuthServiceMock.Verify(oAuthService => oAuthService.GetRefreshTokenAsync(), Times.Once);
 
-            // Check API request
             _httpSenderMock.Verify(sender => sender.SendHttpRequest(
                 It.Is<HttpRequestMessage>(
                     req => req.RequestUri.PathAndQuery.Contains(_path)
@@ -159,11 +155,8 @@ namespace Bynder.Test.Api.RequestSender
                 response = CreateResponse();
             }
 
-            // Setup mock for API requests
             var httpSenderMockSetup = _httpSenderMock
-                .Setup(sender => sender.SendHttpRequest(
-                    It.Is<HttpRequestMessage>(req => req.RequestUri.PathAndQuery != ApiRequestSender.TokenPath)
-                ));
+                .Setup(sender => sender.SendHttpRequest(It.IsAny<HttpRequestMessage>()));
             if (response.IsSuccessStatusCode)
             {
                 httpSenderMockSetup.Returns(Task.FromResult(response));
@@ -172,13 +165,6 @@ namespace Bynder.Test.Api.RequestSender
             {
                 httpSenderMockSetup.ThrowsAsync(new HttpRequestException(""));
             }
-
-            // Setup mock for OAuth token requests
-            _httpSenderMock
-                .Setup(sender => sender.SendHttpRequest(
-                    It.Is<HttpRequestMessage>(req => req.RequestUri.PathAndQuery == ApiRequestSender.TokenPath)
-                ))
-                .Returns(Task.FromResult(CreateResponse(addContent: false)));
 
             return await CreateApiRequestSender(hasValidCredentials).SendRequestAsync(
                 new ApiRequest<T>
@@ -214,6 +200,7 @@ namespace Bynder.Test.Api.RequestSender
                     BaseUrl = new Uri("https://example.bynder.com"),
                 },
                 GetCredentials(hasValidCredentials),
+                _oAuthServiceMock.Object,
                 _httpSenderMock.Object
             );
         }

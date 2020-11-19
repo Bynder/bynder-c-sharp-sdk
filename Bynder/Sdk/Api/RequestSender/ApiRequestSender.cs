@@ -8,9 +8,8 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
-using Bynder.Sdk.Model;
-using Bynder.Sdk.Query;
 using Bynder.Sdk.Query.Decoder;
+using Bynder.Sdk.Service.OAuth;
 using Bynder.Sdk.Settings;
 using Newtonsoft.Json;
 
@@ -24,10 +23,9 @@ namespace Bynder.Sdk.Api.RequestSender
         private readonly Configuration _configuration;
         private readonly QueryDecoder _queryDecoder = new QueryDecoder();
         private readonly ICredentials _credentials;
+        private readonly IOAuthService _oauthService;
         private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private IHttpRequestSender _httpSender;
-
-        public const string TokenPath = "/v6/authentication/oauth2/token";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sdk.Api.ApiRequestSender"/> class.
@@ -35,10 +33,11 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <param name="configuration">Configuration.</param>
         /// <param name="credentials">Credentials to use in authorized requests and to refresh tokens</param>
         /// <param name="httpSender">HTTP instance to send API requests</param>
-        internal ApiRequestSender(Configuration configuration, ICredentials credentials, IHttpRequestSender httpSender)
+        internal ApiRequestSender(Configuration configuration, ICredentials credentials, IOAuthService oauthService, IHttpRequestSender httpSender)
         {
             _configuration = configuration;
             _credentials = credentials;
+            _oauthService = oauthService;
             _httpSender = httpSender;
         }
 
@@ -48,9 +47,9 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <returns>The instance.</returns>
         /// <param name="configuration">Configuration.</param>
         /// <param name="credentials">Credentials.</param>
-        public static IApiRequestSender Create(Configuration configuration, ICredentials credentials)
+        public static IApiRequestSender Create(Configuration configuration, ICredentials credentials, IOAuthService oauthService)
         {
-            return new ApiRequestSender(configuration, credentials, new HttpRequestSender());
+            return new ApiRequestSender(configuration, credentials, oauthService, new HttpRequestSender());
         }
 
         /// <summary>
@@ -94,11 +93,10 @@ namespace Bynder.Sdk.Api.RequestSender
 
         private async Task<HttpResponseMessage> CreateHttpRequestAsync<T>(Request<T> request)
         {
-            var parameters = _queryDecoder.GetParameters(request.Query);
             var httpRequestMessage = HttpRequestMessageFactory.Create(
                 _configuration.BaseUrl.ToString(),
                 request.HTTPMethod,
-                parameters,
+                _queryDecoder.GetParameters(request.Query),
                 request.Path
             );
 
@@ -106,7 +104,16 @@ namespace Bynder.Sdk.Api.RequestSender
             {
                 if (!_credentials.AreValid())
                 {
-                    _credentials.Update(await RefreshToken().ConfigureAwait(false));
+                    // Get a refesh token when the credentials are no longer valid
+                    await _semaphore.WaitAsync().ConfigureAwait(false);
+                    try
+                    {
+                        await _oauthService.GetRefreshTokenAsync().ConfigureAwait(false);
+                    }
+                    finally
+                    {
+                        _semaphore.Release();
+                    }
                 }
 
                 httpRequestMessage.Headers.Authorization = new AuthenticationHeaderValue(
@@ -116,33 +123,6 @@ namespace Bynder.Sdk.Api.RequestSender
             }
 
             return await _httpSender.SendHttpRequest(httpRequestMessage).ConfigureAwait(false);
-        }
-
-        private async Task<Token> RefreshToken()
-        {
-            await _semaphore.WaitAsync().ConfigureAwait(false);
-            try
-            {
-                return await SendRequestAsync(
-                    new OAuthRequest<Token>
-                    {
-                        Authenticated = false,
-                        Query = new TokenQuery
-                        {
-                            ClientId = _configuration.ClientId,
-                            ClientSecret = _configuration.ClientSecret,
-                            RefreshToken = _credentials.RefreshToken,
-                            GrantType = "refresh_token"
-                        },
-                        Path = TokenPath,
-                        HTTPMethod = HttpMethod.Post
-                    }
-                ).ConfigureAwait(false);
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
         }
 
         private static class HttpRequestMessageFactory

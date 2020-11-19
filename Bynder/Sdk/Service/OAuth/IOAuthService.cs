@@ -25,5 +25,11 @@ namespace Bynder.Sdk.Service.OAuth
         /// <param name="code">Code received after the redirect</param>
         /// <param name="scopes">The authorization scopes</param>
         Task GetAccessTokenAsync(string code, string scopes);
+
+        /// <summary>
+        /// Gets a refresh token.
+        /// </summary>
+        /// <returns>The task to get the refresh token</returns>
+        Task GetRefreshTokenAsync();
     }
 }
