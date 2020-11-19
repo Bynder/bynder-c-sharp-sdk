@@ -69,9 +69,10 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <summary>
         /// Check <see cref="t:Sdk.Api.IApiRequestSender"/>.
         /// </summary>
-        /// <returns>Check <see cref="t:Sdk.Api.IApiRequestSender"/>.</returns>
         /// <param name="request">Check <see cref="t:Sdk.Api.IApiRequestSender"/>.</param>
         /// <typeparam name="T">Check <see cref="t:Sdk.Api.IApiRequestSender"/>.</typeparam>
+        /// <returns>Check <see cref="t:Sdk.Api.IApiRequestSender"/>.</returns>
+        /// <exception cref="T:System.Net.Http.HttpRequestException">Check <see cref="t:Sdk.Api.IApiRequestSender"/>.</exception>
         public async Task<T> SendRequestAsync<T>(Request<T> request)
         {
             var response = await CreateHttpRequestAsync(request).ConfigureAwait(false);
