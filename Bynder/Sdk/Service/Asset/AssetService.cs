@@ -152,7 +152,7 @@ namespace Bynder.Sdk.Service.Asset
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
         public Task ModifyMediaAsync(ModifyMediaQuery query)
         {
-            var request = new ApiRequest<string>
+            var request = new ApiRequest<object>
             {
                 Path = $"/api/v4/media/{query.MediaId}/",
                 HTTPMethod = HttpMethod.Post,
