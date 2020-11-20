@@ -19,6 +19,9 @@ namespace Bynder.Sdk.Service.OAuth
         /// </summary>
         private IApiRequestSender _requestSender;
 
+        public const string AuthPath = "/v6/authentication/oauth2/auth";
+        public const string TokenPath = "/v6/authentication/oauth2/token";
+
         /// <summary>
         /// Initializes a new instance of the class
         /// </summary>
@@ -53,7 +56,7 @@ namespace Bynder.Sdk.Service.OAuth
             };
 
             var builder = new UriBuilder(_configuration.BaseUrl);
-            builder.Path = "/v6/authentication/oauth2/auth";
+            builder.Path = AuthPath;
             
             builder.Query = Utils.Url.ConvertToQuery(authoriseParams);
 
@@ -73,7 +76,7 @@ namespace Bynder.Sdk.Service.OAuth
                 throw new ArgumentNullException(code);
             }
 
-            TokenQuery query = new TokenQuery
+            var query = new TokenQuery
             {
                 ClientId = _configuration.ClientId,
                 ClientSecret = _configuration.ClientSecret,
@@ -86,14 +89,39 @@ namespace Bynder.Sdk.Service.OAuth
             var request = new OAuthRequest<Token>
             {
                 Query = query,
-                Path = "/v6/authentication/oauth2/token",
+                Path = TokenPath,
                 HTTPMethod = HttpMethod.Post,
-                Authenticated = false
             };
 
             var token = await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
             token.SetAccessTokenExpiration();
             _credentials.Update(token);
         }
+
+        /// <summary>
+        /// Check <see cref="IOAuthService"/>.
+        /// </summary>
+        /// <returns>Check <see cref="IOAuthService"/>.</returns>
+        public async Task GetRefreshTokenAsync()
+        {
+            var query = new TokenQuery
+            {
+                ClientId = _configuration.ClientId,
+                ClientSecret = _configuration.ClientSecret,
+                RefreshToken = _credentials.RefreshToken,
+                GrantType = "refresh_token"
+            };
+
+            var request = new OAuthRequest<Token>
+            {
+                Query = query,
+                Path = TokenPath,
+                HTTPMethod = HttpMethod.Post,
+            };
+
+            var token = await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
+            _credentials.Update(token);
+        }
+
     }
 }

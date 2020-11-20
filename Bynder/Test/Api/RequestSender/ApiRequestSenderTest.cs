@@ -2,13 +2,18 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
 using Bynder.Sdk.Query.Decoder;
+using Bynder.Sdk.Service.OAuth;
 using Bynder.Sdk.Settings;
 using Moq;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Bynder.Test.Api.RequestSender
@@ -21,25 +26,31 @@ namespace Bynder.Test.Api.RequestSender
         private const string _queryValue = "some_query_value";
         private const string _queryString = "Item1=" + _queryValue;
 
+        private Mock<IOAuthService> _oAuthServiceMock;
         private Mock<IHttpRequestSender> _httpSenderMock;
         private StubQuery _query;
+        private IList<string> _expectedResponseBody;
 
         public ApiRequestSenderTest()
         {
+            _oAuthServiceMock = new Mock<IOAuthService>();
             _httpSenderMock = new Mock<IHttpRequestSender>();
-            _httpSenderMock
-                .Setup(sender => sender.SendHttpRequest(It.IsAny<HttpRequestMessage>()))
-                .Returns(Task.FromResult(new HttpResponseMessage(System.Net.HttpStatusCode.OK)));
             _query = new StubQuery
             {
                 Item1 = _queryValue
             };
+            _expectedResponseBody = new List<string> { "foo", "bar" };
         }
 
         [Fact]
-        public async Task WhenRequestIsPostThenParametersAreAddedToContent()
+        public async Task WhenErrorResponseThenThrowHttpRequestException()
         {
-            await SendRequest(hasValidCredentials: true, httpMethod: HttpMethod.Post);
+            var doRequest = SendRequestAsync<IList<string>>(
+                hasValidCredentials: true,
+                httpMethod: HttpMethod.Post,
+                CreateResponse(HttpStatusCode.InternalServerError)
+            );
+            await Assert.ThrowsAsync<HttpRequestException>(() => doRequest);
 
             _httpSenderMock.Verify(sender => sender.SendHttpRequest(
                 It.Is<HttpRequestMessage>(req =>
@@ -48,44 +59,39 @@ namespace Bynder.Test.Api.RequestSender
                     && req.Headers.Authorization.ToString() == _authHeader
                     && req.Content.ReadAsStringAsync().Result.Contains(_queryString)
                 )
-            ));
-
-            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                It.IsAny<HttpRequestMessage>()
             ), Times.Once);
         }
 
-
         [Fact]
-        public async Task WhenCredentialInvalidTwoRequestsSent()
+        public async Task WhenEmptyResponseThenReturnDefaultObject()
         {
-            await SendRequest(hasValidCredentials: false, httpMethod: HttpMethod.Get);
+            var responseBody = await SendRequestAsync<IList<string>>(
+                hasValidCredentials: true,
+                httpMethod: HttpMethod.Post,
+                CreateResponse(addContent: false)
+            );
+
+            Assert.Equal(default(IList<string>), responseBody);
 
             _httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                It.Is<HttpRequestMessage>(
-                    req => req.RequestUri.PathAndQuery == ApiRequestSender.TokenPath
+                It.Is<HttpRequestMessage>(req =>
+                    req.RequestUri.PathAndQuery.Contains(_path)
                     && req.Method == HttpMethod.Post
-                )
-            ));
-
-            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                It.Is<HttpRequestMessage>(
-                    req => req.RequestUri.PathAndQuery.Contains(_path)
-                    && req.Method == HttpMethod.Get
                     && req.Headers.Authorization.ToString() == _authHeader
-                    && req.RequestUri.Query.Contains(_queryString)
+                    && req.Content.ReadAsStringAsync().Result.Contains(_queryString)
                 )
-            ));
-
-            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                It.IsAny<HttpRequestMessage>()
-            ), Times.Exactly(2));
+            ), Times.Once);
         }
 
         [Fact]
         public async Task WhenRequestIsGetThenParametersAreAddedToUrl()
         {
-            await SendRequest(hasValidCredentials: true, httpMethod: HttpMethod.Get);
+            var responseBody = await SendRequestAsync<IList<string>>(
+                hasValidCredentials: true,
+                httpMethod: HttpMethod.Get
+            );
+
+            Assert.Equal(_expectedResponseBody, responseBody);
 
             _httpSenderMock.Verify(sender => sender.SendHttpRequest(
                 It.Is<HttpRequestMessage>(
@@ -94,23 +100,96 @@ namespace Bynder.Test.Api.RequestSender
                     && req.Headers.Authorization.ToString() == _authHeader
                     && req.RequestUri.Query.Contains(_queryString)
                 )
-            ));
-
-            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                It.IsAny<HttpRequestMessage>()
             ), Times.Once);
         }
 
-        private async Task SendRequest(bool hasValidCredentials, HttpMethod httpMethod)
+        [Fact]
+        public async Task WhenRequestIsPostThenParametersAreAddedToContent()
         {
-            await CreateApiRequestSender(hasValidCredentials).SendRequestAsync(
-                new ApiRequest<bool>()
+            var responseBody = await SendRequestAsync<IList<string>>(
+                hasValidCredentials: true,
+                httpMethod: HttpMethod.Post
+            );
+
+            Assert.Equal(_expectedResponseBody, responseBody);
+
+            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
+                It.Is<HttpRequestMessage>(req =>
+                    req.RequestUri.PathAndQuery.Contains(_path)
+                    && req.Method == HttpMethod.Post
+                    && req.Headers.Authorization.ToString() == _authHeader
+                    && req.Content.ReadAsStringAsync().Result.Contains(_queryString)
+                )
+            ), Times.Once);
+        }
+
+        [Fact]
+        public async Task WhenCredentialInvalidThenTokenIsRefreshed()
+        {
+            var responseBody = await SendRequestAsync<IList<string>>(
+                hasValidCredentials: false,
+                httpMethod: HttpMethod.Get
+            );
+
+            Assert.Equal(_expectedResponseBody, responseBody);
+
+            _oAuthServiceMock.Verify(oAuthService => oAuthService.GetRefreshTokenAsync(), Times.Once);
+
+            _httpSenderMock.Verify(sender => sender.SendHttpRequest(
+                It.Is<HttpRequestMessage>(
+                    req => req.RequestUri.PathAndQuery.Contains(_path)
+                    && req.Method == HttpMethod.Get
+                    && req.Headers.Authorization.ToString() == _authHeader
+                    && req.RequestUri.Query.Contains(_queryString)
+                )
+            ), Times.Once);
+        }
+
+        private async Task<T> SendRequestAsync<T>(
+            bool hasValidCredentials,
+            HttpMethod httpMethod,
+            HttpResponseMessage response = null)
+        {
+            if (response == null)
+            {
+                response = CreateResponse();
+            }
+
+            var httpSenderMockSetup = _httpSenderMock
+                .Setup(sender => sender.SendHttpRequest(It.IsAny<HttpRequestMessage>()));
+            if (response.IsSuccessStatusCode)
+            {
+                httpSenderMockSetup.Returns(Task.FromResult(response));
+            }
+            else
+            {
+                httpSenderMockSetup.ThrowsAsync(new HttpRequestException(""));
+            }
+
+            return await CreateApiRequestSender(hasValidCredentials).SendRequestAsync(
+                new ApiRequest<T>
                 {
                     Path = _path,
                     HTTPMethod = httpMethod,
                     Query = _query
                 }
             );
+        }
+
+        private HttpResponseMessage CreateResponse(
+            HttpStatusCode statusCode = HttpStatusCode.OK,
+            bool addContent = true)
+        {
+            var response = new HttpResponseMessage(statusCode);
+            if (addContent)
+            {
+                response.Content = new StringContent(
+                    JsonConvert.SerializeObject(_expectedResponseBody),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+            }
+            return response;
         }
 
         private IApiRequestSender CreateApiRequestSender(bool hasValidCredentials)
@@ -121,13 +200,14 @@ namespace Bynder.Test.Api.RequestSender
                     BaseUrl = new Uri("https://example.bynder.com"),
                 },
                 GetCredentials(hasValidCredentials),
+                _oAuthServiceMock.Object,
                 _httpSenderMock.Object
             );
         }
 
-        private ICredentials GetCredentials(bool isValid)
+        private Sdk.Settings.ICredentials GetCredentials(bool isValid)
         {
-            var credentialsMock = new Mock<ICredentials>();
+            var credentialsMock = new Mock<Sdk.Settings.ICredentials>();
 
             credentialsMock
                 .Setup(mock => mock.AreValid())

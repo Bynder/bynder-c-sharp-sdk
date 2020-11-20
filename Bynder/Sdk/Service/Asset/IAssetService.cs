@@ -19,6 +19,7 @@ namespace Bynder.Sdk.Service.Asset
         /// Gets Brands Async
         /// </summary>
         /// <returns>Task with list of brands</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         Task<IList<Brand>> GetBrandsAsync();
 
         /// <summary>

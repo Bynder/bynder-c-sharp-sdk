@@ -26,8 +26,9 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <summary>
         /// Sends the HTTP request and returns its response.
         /// </summary>
-        /// <returns>The HTTP request response.</returns>
         /// <param name="httpRequest">HTTP request.</param>
+        /// <returns>The HTTP request response.</returns>
+        /// <exception cref="T:System.Net.Http.HttpRequestException">Check <see cref="t:Sdk.Api.IHttpRequestSender"/>.</exception>
         public async Task<HttpResponseMessage> SendHttpRequest(HttpRequestMessage httpRequest)
         {
             httpRequest.Headers.Add("User-Agent", UserAgent);

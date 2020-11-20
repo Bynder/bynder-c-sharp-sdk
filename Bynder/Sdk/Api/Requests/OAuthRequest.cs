@@ -9,5 +9,8 @@ namespace Bynder.Sdk.Api.Requests
     /// <typeparam name="T">Type to which the response will be deserialized</typeparam>
     internal class OAuthRequest<T> : Request<T>
     {
+        public OAuthRequest() {
+            Authenticated = false;
+        }
     }
 }

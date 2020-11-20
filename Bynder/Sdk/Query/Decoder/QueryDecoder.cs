@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Reflection;
+using Bynder.Sdk.Api.Converters;
 
 namespace Bynder.Sdk.Query.Decoder
 {
@@ -79,7 +79,7 @@ namespace Bynder.Sdk.Query.Decoder
             bool isConverted = false;
             if (apiField.Converter != null)
             {
-                IParameterDecoder converter = Activator.CreateInstance(apiField.Converter) as IParameterDecoder;
+                ITypeToStringConverter converter = Activator.CreateInstance(apiField.Converter) as ITypeToStringConverter;
 
                 if (converter != null
                     && converter.CanConvert(propertyType))

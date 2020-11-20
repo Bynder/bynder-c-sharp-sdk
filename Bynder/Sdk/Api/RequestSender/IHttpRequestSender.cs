@@ -16,8 +16,10 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <summary>
         /// Sends the HTTP request and returns its response.
         /// </summary>
-        /// <returns>The HTTP request response.</returns>
         /// <param name="httpRequest">HTTP request.</param>
+        /// <returns>The HTTP request response.</returns>
+        /// <exception cref="T:System.Net.Http.HttpRequestException">The request failed due to an underlying issue
+        /// such as network connectivity, DNS failure, server certificate validation or timeout.</exception>
         Task<HttpResponseMessage> SendHttpRequest(HttpRequestMessage httpRequest);
     }
 }

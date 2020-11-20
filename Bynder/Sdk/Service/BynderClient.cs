@@ -41,7 +41,7 @@ namespace Bynder.Sdk.Service
             {
                 _credentials = new Credentials(configuration.Token);
             }
-            _requestSender = ApiRequestSender.Create(_configuration, _credentials);
+            _requestSender = ApiRequestSender.Create(_configuration, _credentials, _oauthService);
         }
 
         /// <summary>
