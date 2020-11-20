@@ -29,28 +29,26 @@ namespace Bynder.Sdk.Service.Upload
 
             using (var client = new HttpClient())
             {
-                using (var formData = new MultipartFormDataContent())
+                var formData = new MultipartFormDataContent
                 {
-                    formData.Add(new StringContent(uploadRequest.MultipartParams.AWSAccessKeyid), "x-amz-credential");
-                    formData.Add(new StringContent(finalKey), "key");
-                    formData.Add(new StringContent(uploadRequest.MultipartParams.Policy), "Policy");
-                    formData.Add(new StringContent(uploadRequest.MultipartParams.Signature), "X-Amz-Signature");
-                    formData.Add(new StringContent(uploadRequest.MultipartParams.Acl), "acl");
-                    formData.Add(new StringContent(uploadRequest.MultipartParams.Algorithm), "x-amz-algorithm");
-                    formData.Add(new StringContent(uploadRequest.MultipartParams.Date), "x-amz-date");
-                    formData.Add(new StringContent(uploadRequest.MultipartParams.SuccessActionStatus), "success_action_status");
-                    formData.Add(new StringContent(uploadRequest.MultipartParams.ContentType), "Content-Type");
-                    formData.Add(new StringContent(filename), "name");
-                    formData.Add(new StringContent(chunkNumber.ToString()), "chunk");
-                    formData.Add(new StringContent(numberOfChunks.ToString()), "chunks");
-                    formData.Add(new StringContent(finalKey), "Filename");
-                    formData.Add(new ByteArrayContent(fileContent, 0, numberOfBytes), "file");
+                    { new StringContent(uploadRequest.MultipartParams.AWSAccessKeyid), "x-amz-credential" },
+                    { new StringContent(finalKey), "key" },
+                    { new StringContent(uploadRequest.MultipartParams.Policy), "Policy" },
+                    { new StringContent(uploadRequest.MultipartParams.Signature), "X-Amz-Signature" },
+                    { new StringContent(uploadRequest.MultipartParams.Acl), "acl" },
+                    { new StringContent(uploadRequest.MultipartParams.Algorithm), "x-amz-algorithm" },
+                    { new StringContent(uploadRequest.MultipartParams.Date), "x-amz-date" },
+                    { new StringContent(uploadRequest.MultipartParams.SuccessActionStatus), "success_action_status" },
+                    { new StringContent(uploadRequest.MultipartParams.ContentType), "Content-Type" },
+                    { new StringContent(filename), "name" },
+                    { new StringContent(chunkNumber.ToString()), "chunk" },
+                    { new StringContent(numberOfChunks.ToString()), "chunks" },
+                    { new StringContent(finalKey), "Filename" },
+                    { new ByteArrayContent(fileContent, 0, numberOfBytes), "file" }
+                };
 
-                    using (var response = await client.PostAsync(awsBucket, formData).ConfigureAwait(false))
-                    {
-                        response.EnsureSuccessStatusCode();
-                    }
-                }
+                var response = await client.PostAsync(awsBucket, formData).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
             }
         }
     }
