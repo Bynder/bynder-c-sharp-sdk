@@ -243,15 +243,24 @@ namespace Bynder.Sdk.Service.Upload
         }
 
         /// <summary>
-        /// Registers a chunk in Bynder.
+        /// Registers a chunk in Bynder using <see cref="UploadRequest"/>.
         /// </summary>
-        /// <param name="query">Query information to be able to register chunk</param>
+        /// <param name="uploadRequest">Upload request information</param>
+        /// <param name="chunkNumber">Current chunk number</param>
         /// <returns>Task representing the register chunk process</returns>
-        private Task RegisterChunkAsync(RegisterChunkQuery query)
+        private async Task RegisterChunkAsync(UploadRequest uploadRequest, uint chunkNumber)
         {
+            var query = new RegisterChunkQuery
+            {
+                TargetId = uploadRequest.S3File.TargetId,
+                UploadId = uploadRequest.S3File.UploadId,
+                S3Filename = uploadRequest.S3Filename,
+                ChunkNumber = chunkNumber.ToString()
+            };
+
             query.S3Filename = $"{query.S3Filename}/p{query.ChunkNumber}";
 
-            var request = new ApiRequest<string>
+            var request = new ApiRequest<object>
             {
                 Path = $"/api/v4/upload/{query.UploadId}/",
                 HTTPMethod = HttpMethod.Post,
@@ -259,24 +268,7 @@ namespace Bynder.Sdk.Service.Upload
                 DeserializeResponse = false
             };
 
-            return _requestSender.SendRequestAsync(request);
-        }
-
-        /// <summary>
-        /// Registers a chunk in Bynder using <see cref="UploadRequest"/>.
-        /// </summary>
-        /// <param name="uploadRequest">Upload request information</param>
-        /// <param name="chunkNumber">Current chunk number</param>
-        /// <returns>Task representing the register chunk process</returns>
-        private Task RegisterChunkAsync(UploadRequest uploadRequest, uint chunkNumber)
-        {
-            return RegisterChunkAsync(new RegisterChunkQuery
-            {
-                TargetId = uploadRequest.S3File.TargetId,
-                UploadId = uploadRequest.S3File.UploadId,
-                S3Filename = uploadRequest.S3Filename,
-                ChunkNumber = chunkNumber.ToString()
-            });
+            await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
