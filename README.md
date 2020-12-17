@@ -1,6 +1,7 @@
 # Bynder C# SDK
 
-[![Build Status](https://travis-ci.org/Bynder/bynder-c-sharp-sdk.svg?branch=master)](https://travis-ci.org/Bynder/bynder-c-sharp-sdk)
+![.NET](https://github.com/Arpit-Sharma-USC/bynder-c-sharp-sdk/workflows/.NET/badge.svg)
+![Publish SDK to nuget](https://github.com/Arpit-Sharma-USC/bynder-c-sharp-sdk/workflows/Publish%20SDK%20to%20nuget/badge.svg)
 
 The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io) and executing requests on it.
 
