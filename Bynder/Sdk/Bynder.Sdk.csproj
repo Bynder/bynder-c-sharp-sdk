@@ -7,7 +7,7 @@
     <Product>Bynder.SdkTest</Product>
     <Copyright>Copyright © Bynder</Copyright>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>2.2.3</PackageVersion>
+    <PackageVersion>2.2.4</PackageVersion>
     <Authors>BynderDevops</Authors>
     <Description>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Description>
     <PackageIconUrl>https://bynder.com/static/3.0/img/favicon-black.ico</PackageIconUrl>
