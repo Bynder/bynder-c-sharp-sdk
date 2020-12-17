@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsTestProject>true</IsTestProject>
-    <AssemblyVersion>2.0.0</AssemblyVersion>
-    <FileVersion>2.0.0</FileVersion>
+    <AssemblyVersion>3.1.100</AssemblyVersion>
+    <FileVersion>3.1.100</FileVersion>
     <Company>Bynder</Company>
     <Product>Bynder.Test</Product>
     <Copyright>Copyright © Bynder</Copyright>
