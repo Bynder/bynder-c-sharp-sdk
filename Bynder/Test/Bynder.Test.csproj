@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsTestProject>true</IsTestProject>
-    <AssemblyVersion>3.1.100</AssemblyVersion>
-    <FileVersion>3.1.100</FileVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
     <Company>Bynder</Company>
     <Product>Bynder.Test</Product>
     <Copyright>Copyright © Bynder</Copyright>
