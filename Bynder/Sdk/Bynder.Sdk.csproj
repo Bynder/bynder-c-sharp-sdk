@@ -4,10 +4,10 @@
     <AssemblyVersion>2.1.0</AssemblyVersion>
     <FileVersion>2.1.0</FileVersion>
     <Company>Bynder</Company>
-    <Product>Bynder.SdkTest</Product>
+    <Product>Bynder.Sdk</Product>
     <Copyright>Copyright © Bynder</Copyright>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>2.2.4</PackageVersion>
+    <PackageVersion>2.2.2</PackageVersion>
     <Authors>BynderDevops</Authors>
     <Description>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Description>
     <PackageIconUrl>https://bynder.com/static/3.0/img/favicon-black.ico</PackageIconUrl>
@@ -19,8 +19,8 @@
     <PackageReleaseNotes>Fixes an issue that broke the file uploader</PackageReleaseNotes>
     <Summary>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Summary>
     <PackageTags>Bynder API C# SDK</PackageTags>
-    <Title>Bynder.SdkTest</Title>
-    <PackageId>Bynder.SdkTest</PackageId>
+    <Title>Bynder.Sdk</Title>
+    <PackageId>Bynder.Sdk</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
