@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Bynder.Sdk.Query.Collection;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
-using Bynder.Sdk.Model;
 
 namespace Bynder.Sdk.Service.Collection
 {
@@ -35,17 +34,14 @@ namespace Bynder.Sdk.Service.Collection
         /// </summary>
         /// <param name="query">Check <see cref="ICollectionService"/> for more information</param>
         /// <returns>Check <see cref="ICollectionService"/> for more information</returns>
-        public Task CreateCollectionAsync(CreateCollectionQuery query)
+        public async Task CreateCollectionAsync(CreateCollectionQuery query)
         {
-            var request = new ApiRequest<string>
+            await _requestSender.SendRequestAsync(new ApiRequest
             {
                 Path = $"/api/v4/collections/",
                 HTTPMethod = HttpMethod.Post,
                 Query = query,
-                DeserializeResponse = false
-            };
-
-            return _requestSender.SendRequestAsync(request);
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -53,15 +49,13 @@ namespace Bynder.Sdk.Service.Collection
         /// </summary>
         /// <param name="id">Check <see cref="ICollectionService"/> for more information</param>
         /// <returns>Check <see cref="ICollectionService"/> for more information</returns>
-        public Task DeleteCollectionAsync(string id)
+        public async Task DeleteCollectionAsync(string id)
         {
-            var request = new ApiRequest<string>
+            await _requestSender.SendRequestAsync(new ApiRequest
             {
                 Path = $"/api/v4/collections/{id}/",
-                HTTPMethod = HttpMethod.Delete
-            };
-
-            return _requestSender.SendRequestAsync(request);
+                HTTPMethod = HttpMethod.Delete,
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,15 +63,13 @@ namespace Bynder.Sdk.Service.Collection
         /// </summary>
         /// <param name="id">Check <see cref="ICollectionService"/> for more information</param>
         /// <returns>Check <see cref="ICollectionService"/> for more information</returns>
-        public Task<Model.Collection> GetCollectionAsync(string id)
+        public async Task<Model.Collection> GetCollectionAsync(string id)
         {
-            var request = new ApiRequest<Model.Collection>
+            return await _requestSender.SendRequestAsync(new ApiRequest<Model.Collection>
             {
                 Path = $"/api/v4/collections/{id}/",
-                HTTPMethod = HttpMethod.Get
-            };
-
-            return _requestSender.SendRequestAsync(request);
+                HTTPMethod = HttpMethod.Get,
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -85,16 +77,14 @@ namespace Bynder.Sdk.Service.Collection
         /// </summary>
         /// <param name="query">Check <see cref="ICollectionService"/> for more information</param>
         /// <returns>Check <see cref="ICollectionService"/> for more information</returns>
-        public Task<IList<Model.Collection>> GetCollectionsAsync(GetCollectionsQuery query)
+        public async Task<IList<Model.Collection>> GetCollectionsAsync(GetCollectionsQuery query)
         {
-            var request = new ApiRequest<IList<Model.Collection>>
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<Model.Collection>>
             {
                 Path = "/api/v4/collections/",
                 HTTPMethod = HttpMethod.Get,
-                Query = query
-            };
-
-            return _requestSender.SendRequestAsync(request);
+                Query = query,
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -102,15 +92,13 @@ namespace Bynder.Sdk.Service.Collection
         /// </summary>
         /// <param name="query">Check <see cref="ICollectionService"/> for more information</param>
         /// <returns>Check <see cref="ICollectionService"/> for more information</returns>
-        public Task<IList<string>> GetMediaAsync(GetMediaQuery query)
+        public async Task<IList<string>> GetMediaAsync(GetMediaQuery query)
         {
-            var request = new ApiRequest<IList<string>>
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<string>>
             {
                 Path = $"/api/v4/collections/{query.CollectionId}/media/",
-                HTTPMethod = HttpMethod.Get
-            };
-
-            return _requestSender.SendRequestAsync(request);
+                HTTPMethod = HttpMethod.Get,
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -118,17 +106,14 @@ namespace Bynder.Sdk.Service.Collection
         /// </summary>
         /// <param name="query">Check <see cref="ICollectionService"/> for more information</param>
         /// <returns>Check <see cref="ICollectionService"/> for more information</returns>
-        public Task AddMediaAsync(AddMediaQuery query)
+        public async Task AddMediaAsync(AddMediaQuery query)
         {
-            var request = new ApiRequest<string>
+            await _requestSender.SendRequestAsync(new ApiRequest
             {
                 Path = $"/api/v4/collections/{query.CollectionId}/media/",
                 HTTPMethod = HttpMethod.Post,
                 Query = query,
-                DeserializeResponse = false
-            };
-
-            return _requestSender.SendRequestAsync(request);
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -136,16 +121,14 @@ namespace Bynder.Sdk.Service.Collection
         /// </summary>
         /// <param name="query">Check <see cref="ICollectionService"/> for more information</param>
         /// <returns>Check <see cref="ICollectionService"/> for more information</returns>
-        public Task RemoveMediaAsync(RemoveMediaQuery query)
+        public async Task RemoveMediaAsync(RemoveMediaQuery query)
         {
-            var request = new ApiRequest<string>
+            await _requestSender.SendRequestAsync(new ApiRequest
             {
                 Path = $"/api/v4/collections/{query.CollectionId}/media/",
                 HTTPMethod = HttpMethod.Delete,
-                Query = query
-            };
-
-            return _requestSender.SendRequestAsync(request);
+                Query = query,
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -153,17 +136,14 @@ namespace Bynder.Sdk.Service.Collection
         /// </summary>
         /// <param name="query">Check <see cref="ICollectionService"/> for more information</param>
         /// <returns>Check <see cref="ICollectionService"/> for more information</returns>
-        public Task ShareCollectionAsync(ShareQuery query)
+        public async Task ShareCollectionAsync(ShareQuery query)
         {
-            var request = new ApiRequest<string>
+            await _requestSender.SendRequestAsync(new ApiRequest
             {
                 Path = $"/api/v4/collections/{query.CollectionId}/share/",
                 HTTPMethod = HttpMethod.Post,
                 Query = query,
-                DeserializeResponse = false
-            };
-
-            return _requestSender.SendRequestAsync(request);
+            }).ConfigureAwait(false);
         }
     }
 }

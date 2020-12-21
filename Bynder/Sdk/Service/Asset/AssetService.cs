@@ -43,30 +43,26 @@ namespace Bynder.Sdk.Service.Asset
         /// Check <see cref="IAssetService"/> for more information
         /// </summary>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task<IList<Brand>> GetBrandsAsync()
+        public async Task<IList<Brand>> GetBrandsAsync()
         {
-            var request = new ApiRequest<IList<Brand>>
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<Brand>>
             {
                 Path = "/api/v4/brands/",
-                HTTPMethod = HttpMethod.Get
-            };
-
-            return _requestSender.SendRequestAsync(request);
+                HTTPMethod = HttpMethod.Get,
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Check <see cref="IAssetService"/> for more information
         /// </summary>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync()
+        public async Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync()
         {
-            var request = new ApiRequest<IDictionary<string, Metaproperty>>
+            return await _requestSender.SendRequestAsync(new ApiRequest<IDictionary<string, Metaproperty>>
             {
                 Path = "/api/v4/metaproperties/",
-                HTTPMethod = HttpMethod.Get
-            };
-
-            return _requestSender.SendRequestAsync(request);
+                HTTPMethod = HttpMethod.Get,
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -74,16 +70,14 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task<IList<Media>> GetMediaListAsync(MediaQuery query)
+        public async Task<IList<Media>> GetMediaListAsync(MediaQuery query)
         {
-            var request = new ApiRequest<IList<Media>>
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<Media>>
             {
                 Path = "/api/v4/media/",
                 HTTPMethod = HttpMethod.Get,
-                Query = query
-            };
-
-            return _requestSender.SendRequestAsync(request);
+                Query = query,
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -93,7 +87,7 @@ namespace Bynder.Sdk.Service.Asset
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
         public async Task<Uri> GetDownloadFileUrlAsync(DownloadMediaQuery query)
         {
-            string path = string.Empty;
+            string path;
             if (query.MediaItemId == null)
             {
                 path = $"/api/v4/media/{query.MediaId}/download/";
@@ -103,13 +97,11 @@ namespace Bynder.Sdk.Service.Asset
                 path = $"/api/v4/media/{query.MediaId}/download/{query.MediaItemId}/";
             }
 
-            var request = new ApiRequest<DownloadFileUrl>
+            var downloadFileInformation = await _requestSender.SendRequestAsync(new ApiRequest<DownloadFileUrl>
             {
                 Path = path,
-                HTTPMethod = HttpMethod.Get
-            };
-
-            var downloadFileInformation = await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
+                HTTPMethod = HttpMethod.Get,
+            }).ConfigureAwait(false);
             return downloadFileInformation.S3File;
         }
 
@@ -118,9 +110,9 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task UploadFileAsync(UploadQuery query)
+        public async Task UploadFileAsync(UploadQuery query)
         {
-            return _uploader.UploadFile(query);
+            await _uploader.UploadFileAsync(query).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -128,21 +120,14 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task<Media> GetMediaInfoAsync(MediaInformationQuery query)
+        public async Task<Media> GetMediaInfoAsync(MediaInformationQuery query)
         {
-            if (string.IsNullOrEmpty(query.MediaId))
-            {
-                throw new ArgumentNullException(nameof(query), "Parameter cannot be null or empty.");
-            }
-
-            var request = new ApiRequest<Media>
+            return await _requestSender.SendRequestAsync(new ApiRequest<Media>
             {
                 Path = $"/api/v4/media/{query.MediaId}/",
                 HTTPMethod = HttpMethod.Get,
-                Query = query
-            };
-
-            return _requestSender.SendRequestAsync(request);
+                Query = query,
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -150,17 +135,14 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task ModifyMediaAsync(ModifyMediaQuery query)
+        public async Task ModifyMediaAsync(ModifyMediaQuery query)
         {
-            var request = new ApiRequest<object>
+            await _requestSender.SendRequestAsync(new ApiRequest
             {
                 Path = $"/api/v4/media/{query.MediaId}/",
                 HTTPMethod = HttpMethod.Post,
                 Query = query,
-                DeserializeResponse = false
-            };
-
-            return _requestSender.SendRequestAsync(request);
+            }).ConfigureAwait(false);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Bynder.Sdk.Service.OAuth
         /// <summary>
         /// Request sender to communicate with the Bynder API
         /// </summary>
-        private IApiRequestSender _requestSender;
+        private readonly IApiRequestSender _requestSender;
 
         public const string AuthPath = "/v6/authentication/oauth2/auth";
         public const string TokenPath = "/v6/authentication/oauth2/token";
@@ -46,21 +46,20 @@ namespace Bynder.Sdk.Service.OAuth
                 throw new ArgumentNullException(state);
             }
 
-            var authoriseParams = new Dictionary<string, string>
+            return new UriBuilder(_configuration.BaseUrl)
             {
-                { "client_id", _configuration.ClientId },
-                { "redirect_uri", _configuration.RedirectUri },
-                { "scope", scopes },
-                { "response_type", "code" },
-                { "state", state }
-            };
-
-            var builder = new UriBuilder(_configuration.BaseUrl);
-            builder.Path = AuthPath;
-            
-            builder.Query = Utils.Url.ConvertToQuery(authoriseParams);
-
-            return builder.ToString();
+                Path = AuthPath,
+                Query = Utils.Url.ConvertToQuery(
+                    new Dictionary<string, string>
+                    {
+                        { "client_id", _configuration.ClientId },
+                        { "redirect_uri", _configuration.RedirectUri },
+                        { "scope", scopes },
+                        { "response_type", "code" },
+                        { "state", state }
+                    }
+                )
+            }.ToString();
         }
 
         /// <summary>
@@ -76,24 +75,22 @@ namespace Bynder.Sdk.Service.OAuth
                 throw new ArgumentNullException(code);
             }
 
-            var query = new TokenQuery
-            {
-                ClientId = _configuration.ClientId,
-                ClientSecret = _configuration.ClientSecret,
-                RedirectUri = _configuration.RedirectUri,
-                GrantType = "authorization_code",
-                Code = code,
-                Scopes = scopes
-            };
-
-            var request = new OAuthRequest<Token>
-            {
-                Query = query,
-                Path = TokenPath,
-                HTTPMethod = HttpMethod.Post,
-            };
-
-            var token = await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
+            var token = await _requestSender.SendRequestAsync(
+                new OAuthRequest<Token>
+                {
+                    Path = TokenPath,
+                    HTTPMethod = HttpMethod.Post,
+                    Query = new TokenQuery
+                    {
+                        ClientId = _configuration.ClientId,
+                        ClientSecret = _configuration.ClientSecret,
+                        RedirectUri = _configuration.RedirectUri,
+                        GrantType = "authorization_code",
+                        Code = code,
+                        Scopes = scopes
+                    },
+                }
+            ).ConfigureAwait(false);
             token.SetAccessTokenExpiration();
             _credentials.Update(token);
         }
@@ -104,22 +101,20 @@ namespace Bynder.Sdk.Service.OAuth
         /// <returns>Check <see cref="IOAuthService"/>.</returns>
         public async Task GetRefreshTokenAsync()
         {
-            var query = new TokenQuery
-            {
-                ClientId = _configuration.ClientId,
-                ClientSecret = _configuration.ClientSecret,
-                RefreshToken = _credentials.RefreshToken,
-                GrantType = "refresh_token"
-            };
-
-            var request = new OAuthRequest<Token>
-            {
-                Query = query,
-                Path = TokenPath,
-                HTTPMethod = HttpMethod.Post,
-            };
-
-            var token = await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
+            var token = await _requestSender.SendRequestAsync(
+                new OAuthRequest<Token>
+                {
+                    Path = TokenPath,
+                    HTTPMethod = HttpMethod.Post,
+                    Query = new TokenQuery
+                    {
+                        ClientId = _configuration.ClientId,
+                        ClientSecret = _configuration.ClientSecret,
+                        RefreshToken = _credentials.RefreshToken,
+                        GrantType = "refresh_token"
+                    },
+                }
+            ).ConfigureAwait(false);
             _credentials.Update(token);
         }
 
