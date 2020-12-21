@@ -31,12 +31,5 @@ namespace Bynder.Sdk.Api.Requests
         /// </summary>
         /// <value><c>true</c> if authenticated; otherwise, <c>false</c>.</value>
         public bool Authenticated { get; set; } = true;
-
-        /// <summary>
-        /// True if we want to deserialize response to <see cref="T"/>. 
-        /// However if <see cref="T"/> is a string and this property has value false, we might want to get the raw string response without
-        /// deserializing, so in that case deserialization will not occur.
-        /// </summary>
-        public bool DeserializeResponse { get; set; } = true;
     }
 }
