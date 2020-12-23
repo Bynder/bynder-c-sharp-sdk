@@ -5,12 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Bynder.Sdk.Service.Upload;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Query.Asset;
-using Bynder.Sdk.Query.Upload;
 
 namespace Bynder.Sdk.Service.Asset
 {
@@ -25,18 +23,12 @@ namespace Bynder.Sdk.Service.Asset
         private IApiRequestSender _requestSender;
 
         /// <summary>
-        /// Instance to upload file to Bynder
-        /// </summary>
-        private FileUploader _uploader;
-
-        /// <summary>
         /// Initializes a new instance of the class
         /// </summary>
         /// <param name="requestSender">instance to communicate with the Bynder API</param>
         public AssetService(IApiRequestSender requestSender)
         {
             _requestSender = requestSender;
-            _uploader = FileUploader.Create(_requestSender);
         }
 
         /// <summary>
@@ -103,16 +95,6 @@ namespace Bynder.Sdk.Service.Asset
                 HTTPMethod = HttpMethod.Get,
             }).ConfigureAwait(false);
             return downloadFileInformation.S3File;
-        }
-
-        /// <summary>
-        /// Check <see cref="IAssetService"/> for more information
-        /// </summary>
-        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
-        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public async Task UploadFileAsync(UploadQuery query)
-        {
-            await _uploader.UploadFileAsync(query).ConfigureAwait(false);
         }
 
         /// <summary>
