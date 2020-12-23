@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -95,12 +94,7 @@ namespace Bynder.Sdk.Api.RequestSender
 
         private async Task<HttpResponseMessage> CreateHttpRequestAsync<T>(Request<T> request)
         {
-            var httpRequestMessage = HttpRequestMessageFactory.Create(
-                _configuration.BaseUrl.ToString(),
-                request.HTTPMethod,
-                _queryDecoder.GetParameters(request.Query),
-                request.Path
-            );
+            var httpRequestMessage = CreateRequest(request);
 
             if (request.Authenticated)
             {
@@ -127,29 +121,35 @@ namespace Bynder.Sdk.Api.RequestSender
             return await _httpSender.SendHttpRequest(httpRequestMessage).ConfigureAwait(false);
         }
 
-        private static class HttpRequestMessageFactory
+        private HttpRequestMessage CreateRequest<T>(Request<T> request)
         {
-            internal static HttpRequestMessage Create(
-                string baseUrl, HttpMethod method, IDictionary<string, string> requestParams, string urlPath)
+            var uriBuilder = new UriBuilder(_configuration.BaseUrl.ToString())
             {
-                var builder = new UriBuilder(baseUrl)
-                {
-                    Path = urlPath
-                };
-
-                if (HttpMethod.Get == method)
-                {
-                    builder.Query = Utils.Url.ConvertToQuery(requestParams);
-                }
-
-                HttpRequestMessage requestMessage = new HttpRequestMessage(method, builder.ToString());
-                if (HttpMethod.Post == method)
-                {
-                    requestMessage.Content = new FormUrlEncodedContent(requestParams);
-                }
-
-                return requestMessage;
+                Path = request.Path
+            };
+            if (request.HTTPMethod == HttpMethod.Get)
+            {
+                uriBuilder.Query = Utils.Url.ConvertToQuery(_queryDecoder.GetParameters(request.Query));
             }
+            HttpRequestMessage httpRequest = new HttpRequestMessage(request.HTTPMethod, uriBuilder.ToString());
+
+            if (request.Headers != null)
+            {
+                foreach (var kv in request.Headers)
+                {
+                    httpRequest.Headers.Add(kv.Key, kv.Value);
+                }
+            }
+
+            if (request.HTTPMethod == HttpMethod.Post)
+            {
+                httpRequest.Content = request.BinaryContent != null
+                    ? new ByteArrayContent(request.BinaryContent)
+                    : new FormUrlEncodedContent(_queryDecoder.GetParameters(request.Query));
+            }
+
+            return httpRequest;
         }
+
     }
 }

@@ -11,7 +11,7 @@ namespace Bynder.Sdk.Api.Requests
     {
         public OAuthRequest()
         {
-            Authenticated = false;
+            _authenticated = false;
         }
     }
 }
