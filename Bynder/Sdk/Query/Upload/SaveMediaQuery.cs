@@ -22,17 +22,5 @@ namespace Bynder.Sdk.Query.Upload
         /// </summary>
         [ApiField("name")]
         public string Filename { get; set; }
-
-        /// <summary>
-        /// Import id
-        /// </summary>
-        public string ImportId { get; set; }
-
-        /// <summary>
-        /// Media id. If specified it will add the asset as new version
-        /// of the specified media. Otherwise a new media will be added to 
-        /// the asset bank
-        /// </summary>
-        public string MediaId { get; set; }
     }
 }
