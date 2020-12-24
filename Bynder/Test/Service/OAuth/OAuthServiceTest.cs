@@ -79,7 +79,6 @@ namespace Bynder.Test.Service.OAuth
                 It.Is<OAuthRequest<Token>>(
                     req => req.Path == OAuthService.TokenPath
                     && req.HTTPMethod == HttpMethod.Post
-                    && !req.Authenticated
                     && (req.Query as TokenQuery).ClientId == _clientId
                     && (req.Query as TokenQuery).ClientSecret == _clientSecret
                     && (req.Query as TokenQuery).RedirectUri == _redirectUrl
@@ -105,7 +104,6 @@ namespace Bynder.Test.Service.OAuth
                 It.Is<OAuthRequest<Token>>(
                     req => req.Path == OAuthService.TokenPath
                     && req.HTTPMethod == HttpMethod.Post
-                    && !req.Authenticated
                     && (req.Query as TokenQuery).ClientId == _clientId
                     && (req.Query as TokenQuery).ClientSecret == _clientSecret
                     && (req.Query as TokenQuery).RefreshToken == _refreshToken

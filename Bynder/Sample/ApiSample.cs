@@ -7,6 +7,7 @@ using Bynder.Sample.Utils;
 using Bynder.Sdk.Query.Asset;
 using Bynder.Sdk.Query.Collection;
 using Bynder.Sdk.Settings;
+using System.Threading.Tasks;
 
 namespace Bynder.Sample
 {
@@ -20,61 +21,49 @@ namespace Bynder.Sample
         /// Main function
         /// </summary>
         /// <param name="args">arguments to main</param>
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            //Choose your authentication method by commenting one of these lines.
-            PermanentToken();
-            Oauth();
-        }
-
-        private static void PermanentToken()
-        {
-            using (var client = ClientFactory.Create(Configuration.FromJson("Config.json")))
+            Configuration configuration = Configuration.FromJson("Config.json");
+            using var client = ClientFactory.Create(configuration);
+            if (configuration.PermanentToken != null)
             {
-                var mediaList = client.GetAssetService().GetMediaListAsync(new MediaQuery()).Result;
-
-                foreach (var media in mediaList)
-                {
-                    Console.WriteLine(media.Name);
-                }
-
-                var collectionList = client.GetCollectionService().GetCollectionsAsync(new GetCollectionsQuery()).Result;
-
-                foreach (var collection in collectionList)
-                {
-                    Console.WriteLine(collection.Name);
-                }
+                await QueryBynder(client);
+            }
+            else
+            {
+                await QueryBynderUsingOAuth(client);
             }
         }
 
-        private static void Oauth()
+        private static async Task QueryBynder(IBynderClient client)
         {
-            using (var waitForToken = new WaitForToken())
-            using (var listener = new UrlHttpListener("http://localhost:8888/", waitForToken))
-            using (var client = ClientFactory.Create(Configuration.FromJson("Config.json")))
+            var mediaList = await client.GetAssetService().GetMediaListAsync(new MediaQuery());
+            foreach (var media in mediaList)
             {
-                Browser.Launch(client.GetOAuthService().GetAuthorisationUrl("state example", "offline asset:read collection:read"));
-                waitForToken.WaitHandle.WaitOne(50000);
+                Console.WriteLine(media.Name);
+            }
 
-                if (waitForToken.Success)
-                {
-                    client.GetOAuthService().GetAccessTokenAsync(waitForToken.Token, "offline asset:read collection:read").Wait();
-
-                    var mediaList = client.GetAssetService().GetMediaListAsync(new MediaQuery()).Result;
-
-                    foreach (var media in mediaList)
-                    {
-                        Console.WriteLine(media.Name);
-                    }
-
-                    var collectionList = client.GetCollectionService().GetCollectionsAsync(new GetCollectionsQuery()).Result;
-
-                    foreach (var collection in collectionList)
-                    {
-                        Console.WriteLine(collection.Name);
-                    }
-                }
+            var collectionList = await client.GetCollectionService().GetCollectionsAsync(new GetCollectionsQuery());
+            foreach (var collection in collectionList)
+            {
+                Console.WriteLine(collection.Name);
             }
         }
+
+        private static async Task QueryBynderUsingOAuth(IBynderClient client)
+        {
+            using var waitForToken = new WaitForToken();
+            using var listener = new UrlHttpListener("http://localhost:8888/", waitForToken);
+
+            Browser.Launch(client.GetOAuthService().GetAuthorisationUrl("state example", "offline asset:read collection:read"));
+            waitForToken.WaitHandle.WaitOne(50000);
+
+            if (waitForToken.Success)
+            {
+                client.GetOAuthService().GetAccessTokenAsync(waitForToken.Token, "offline asset:read collection:read").Wait();
+                await QueryBynder(client);
+            }
+        }
+
     }
 }
