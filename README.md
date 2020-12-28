@@ -28,8 +28,9 @@ Task<Uri> GetDownloadFileUrlAsync(DownloadMediaQuery query);
 Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync();
 Task<Media> GetMediaInfoAsync(MediaInformationQuery query);
 Task<IList<Media>> GetMediaListAsync(MediaQuery query);
-Task UploadFileAsync(UploadQuery query);
 Task ModifyMediaAsync(ModifyMediaQuery query);
+Task<SaveMediaResponse> UploadFileToNewAssetAsync(string path, string brandId);
+Task<SaveMediaResponse> UploadFileToExistingAssetAsync(string path, string mediaId);
 ```
 
 ### Collection management operations
