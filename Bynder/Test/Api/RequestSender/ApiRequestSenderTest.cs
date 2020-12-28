@@ -48,7 +48,7 @@ namespace Bynder.Test.Api.RequestSender
             var doRequest = SendRequestAsync<IList<string>>(
                 hasValidCredentials: true,
                 httpMethod: HttpMethod.Post,
-                CreateResponse(HttpStatusCode.InternalServerError)
+                response: CreateResponse(HttpStatusCode.InternalServerError)
             );
             await Assert.ThrowsAsync<HttpRequestException>(() => doRequest);
 
@@ -68,7 +68,7 @@ namespace Bynder.Test.Api.RequestSender
             var responseBody = await SendRequestAsync<IList<string>>(
                 hasValidCredentials: true,
                 httpMethod: HttpMethod.Post,
-                CreateResponse(addContent: false)
+                response: CreateResponse(addContent: false)
             );
 
             Assert.Equal(default, responseBody);
