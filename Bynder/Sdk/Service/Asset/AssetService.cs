@@ -5,12 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Bynder.Sdk.Service.Upload;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
 using Bynder.Sdk.Model;
+using Bynder.Sdk.Model.Upload;
 using Bynder.Sdk.Query.Asset;
-using Bynder.Sdk.Query.Upload;
+using Bynder.Sdk.Service.Upload;
 
 namespace Bynder.Sdk.Service.Asset
 {
@@ -36,7 +36,7 @@ namespace Bynder.Sdk.Service.Asset
         public AssetService(IApiRequestSender requestSender)
         {
             _requestSender = requestSender;
-            _uploader = FileUploader.Create(_requestSender);
+            _uploader = new FileUploader(_requestSender);
         }
 
         /// <summary>
@@ -110,16 +110,6 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public async Task UploadFileAsync(UploadQuery query)
-        {
-            await _uploader.UploadFileAsync(query).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Check <see cref="IAssetService"/> for more information
-        /// </summary>
-        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
-        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
         public async Task<Media> GetMediaInfoAsync(MediaInformationQuery query)
         {
             return await _requestSender.SendRequestAsync(new ApiRequest<Media>
@@ -144,5 +134,28 @@ namespace Bynder.Sdk.Service.Asset
                 Query = query,
             }).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="path">Check <see cref="IAssetService"/> for more information</param>
+        /// <param name="brandId">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<SaveMediaResponse> UploadFileToNewAssetAsync(string path, string brandId)
+        {
+            return await _uploader.UploadFileToNewAssetAsync(path, brandId).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="path">Check <see cref="IAssetService"/> for more information</param>
+        /// <param name="mediaId">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<SaveMediaResponse> UploadFileToExistingAssetAsync(string path, string mediaId)
+        {
+            return await _uploader.UploadFileToExistingAssetAsync(path, mediaId).ConfigureAwait(false);
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.Net.Http;
 
 namespace Bynder.Sdk.Api.Requests
@@ -29,8 +30,18 @@ namespace Bynder.Sdk.Api.Requests
         internal string Path { get; set; }
 
         /// <summary>
+        /// Optional: Key/value pairs to add to the request header.
+        /// </summary>
+        internal IDictionary<string, string> Headers { get; set; }
+
+        /// <summary>
         /// Optional: Object with information about the API parameters to send.
         /// </summary>
         internal object Query { get; set; }
+
+        /// <summary>
+        /// Optional: Binary content to put in the request body.
+        /// </summary>
+        internal byte[] BinaryContent { get; set; }
     }
 }

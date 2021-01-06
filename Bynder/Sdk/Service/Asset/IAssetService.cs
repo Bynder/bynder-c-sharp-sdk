@@ -5,8 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bynder.Sdk.Model;
+using Bynder.Sdk.Model.Upload;
 using Bynder.Sdk.Query.Asset;
-using Bynder.Sdk.Query.Upload;
 
 namespace Bynder.Sdk.Service.Asset
 {
@@ -58,20 +58,37 @@ namespace Bynder.Sdk.Service.Asset
         Task<IList<Media>> GetMediaListAsync(MediaQuery query);
 
         /// <summary>
-        /// Uploads a file async.
-        /// </summary>
-        /// <param name="query">Information to upload a file</param>
-        /// <returns>Task representing the upload</returns>
-        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        /// <exception cref="BynderUploadException">Can be thrown when upload does not finish within expected time</exception>
-        Task UploadFileAsync(UploadQuery query);
-
-        /// <summary>
         /// Modifies a media
         /// </summary>
         /// <param name="query">Information needed to modify a media</param>
         /// <returns>Task</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         Task ModifyMediaAsync(ModifyMediaQuery query);
+
+        /// <summary>
+        /// Uploads a file async.
+        /// </summary>
+        /// <param name="query">Information to upload a file</param>
+        /// <returns>Task representing the upload</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        /// <exception cref="BynderUploadException">Can be thrown when upload does not finish within expected time</exception>
+
+        /// <summary>
+        /// Uploads a file to Bynder to be stored as a new asset.
+        /// </summary>
+        /// <param name="path">path to the file to be uploaded</param>
+        /// <param name="brandId">Brand ID to save the asset to.</param>
+        /// <returns></returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<SaveMediaResponse> UploadFileToNewAssetAsync(string path, string brandId);
+
+        /// <summary>
+        /// Uploads a file to Bynder to be stored as a new version of an existing asset.
+        /// </summary>
+        /// <param name="path">path to the file to be uploaded</param>
+        /// <param name="mediaId">Asset ID for which to save the new version.</param>
+        /// <returns>Information about the created asset</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<SaveMediaResponse> UploadFileToExistingAssetAsync(string path, string mediaId);
     }
 }
