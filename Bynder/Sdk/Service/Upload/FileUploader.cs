@@ -3,13 +3,14 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Bynder.Sdk.Exceptions;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
-using Bynder.Sdk.Model;
+using Bynder.Sdk.Model.Upload;
 using Bynder.Sdk.Query.Upload;
+using Bynder.Sdk.Utils;
 
 namespace Bynder.Sdk.Service.Upload
 {
@@ -21,294 +22,167 @@ namespace Bynder.Sdk.Service.Upload
         /// <summary>
         /// Max chunk size
         /// </summary>
-        private const int CHUNK_SIZE = 1024 * 1024 * 5;
-
-        /// <summary>
-        /// Max polling iterations to wait for the asset to be converted.
-        /// </summary>
-        private const int MAX_POLLING_ITERATIONS = 60;
-
-        /// <summary>
-        /// Iddle time between iterations
-        /// </summary>
-        private const int POLLING_IDDLE_TIME = 2000;
+        private readonly int _chunkSize;
 
         /// <summary>
         /// Request sender used to call Bynder API.
         /// </summary>
         private readonly IApiRequestSender _requestSender;
 
-        /// <summary>
-        /// Amazon API used to upload parts
-        /// </summary>
-        private readonly IAmazonApi _amazonApi;
+        readonly IFileSystem _fileSystem;
 
-        /// <summary>
-        /// AWS bucket Url to upload chunks
-        /// </summary>
-        private string _awsBucket = string.Empty;
+        // <summary>Create FileUploader with values injected for testing.</summary>
+        internal FileUploader(IApiRequestSender requestSender, IFileSystem fileSystem, int chunkSize)
+        {
+            _requestSender = requestSender;
+            _fileSystem = fileSystem;
+            _chunkSize = chunkSize;
+        }
 
         /// <summary>
         /// Creates a new instance of the class
         /// </summary>
         /// <param name="requestSender">Request sender to communicate with Bynder API</param>
-        /// <param name="amazonApi">Amazon API to upload parts</param>
-        public FileUploader(IApiRequestSender requestSender, IAmazonApi amazonApi)
+        internal FileUploader(IApiRequestSender requestSender) : this(
+            requestSender,
+            fileSystem: new FileSystem(),
+            chunkSize: 1024 * 1024 * 5
+        )
+        { }
+
+        /// <summary>
+        /// Uploads a file to Bynder to be stored as a new asset.
+        /// </summary>
+        /// <param name="path">path to the file to be uploaded</param>
+        /// <param name="brandId">Brand ID to save the asset to.</param>
+        /// <returns>Information about the created asset</returns>
+        internal async Task<SaveMediaResponse> UploadFileToNewAssetAsync(string path, string brandId, IList<string> tags)
         {
-            _requestSender = requestSender;
-            _amazonApi = amazonApi;
+            var fileId = await UploadFileAsync(path);
+            return await SaveMediaAsync(fileId, brandId, path, tags).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Creates a new instance of <see cref="FileUploader"/>
+        /// Uploads a file to Bynder to be stored as a new version of an existing asset.
         /// </summary>
-        /// <param name="requestSender">Request sender to communicate with Bynder API</param>
-        /// <returns>new instance</returns>
-        public static FileUploader Create(IApiRequestSender requestSender)
+        /// <param name="path">path to the file to be uploaded</param>
+        /// <param name="mediaId">Asset ID for which to save the new version.</param>
+        /// <returns>Information about the created asset</returns>
+        internal async Task<SaveMediaResponse> UploadFileToExistingAssetAsync(string path, string mediaId)
         {
-            return new FileUploader(requestSender, new AmazonApi());
+            var fileId = await UploadFileAsync(path);
+            return await SaveMediaAsync(mediaId, fileId).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Uploads a file with the data specified in query parameter
-        /// </summary>
-        /// <param name="query">Upload query information to upload a file</param>
-        /// <returns>Task representing the upload</returns>
-        public async Task<SaveMediaResponse> UploadFileAsync(UploadQuery query)
+        private async Task<string> UploadFileAsync(string path)
         {
-            var uploadRequest = await RequestUploadInformationAsync(new RequestUploadQuery { Filename = query.Filepath }).ConfigureAwait(false);
+            // Prepare the upload to retrieve the file ID.
+            var fileId = await PrepareAsync().ConfigureAwait(false);
 
-            uint chunkNumber = 0;
-
-            using (var file = File.Open(query.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+            using (var fileStream = _fileSystem.File.OpenRead(path))
+            using (var reader = new BinaryReader(fileStream))
             {
-                int bytesRead = 0;
-                var buffer = new byte[CHUNK_SIZE];
-                long numberOfChunks = (file.Length + CHUNK_SIZE - 1) / CHUNK_SIZE;
+                int chunksUploaded = 0;
 
-                while ((bytesRead = file.Read(buffer, 0, buffer.Length)) > 0)
+                // Upload the file divided in chunks.
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
                 {
-                    ++chunkNumber;
-                    await UploadPartAsync(Path.GetFileName(query.Filepath), buffer, bytesRead, chunkNumber, uploadRequest, (uint)numberOfChunks).ConfigureAwait(false);
-                }
-            }
-
-            var finalizeResponse = await FinalizeUploadAsync(uploadRequest, chunkNumber).ConfigureAwait(false);
-
-            if (await HasFinishedSuccessfullyAsync(finalizeResponse).ConfigureAwait(false))
-            {
-                return await SaveMediaAsync(new SaveMediaQuery
-                {
-                    Filename = query.Filepath,
-                    BrandId = query.BrandId,
-                    ImportId = finalizeResponse.ImportId,
-                    MediaId = query.MediaId,
-                    Tags = query.Tags
-                }).ConfigureAwait(false);
-            }
-            else
-            {
-                throw new BynderUploadException("Converter did not finished. Upload not completed");
-            }
-        }
-
-        /// <summary>
-        /// Gets the closes s3 endpoint. This is needed to know to which bucket Url it uploads chunks
-        /// </summary>
-        /// <returns>Task containting string with the Url</returns>
-        private async Task<string> GetClosestS3EndpointAsync()
-        {
-            if (string.IsNullOrEmpty(_awsBucket))
-            {
-                var request = new ApiRequest<string>
-                {
-                    Path = "/api/upload/endpoint",
-                    HTTPMethod = HttpMethod.Get
-                };
-
-                _awsBucket = await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
-            }
-
-            return _awsBucket;
-        }
-
-        /// <summary>
-        /// Saves media async. If MediaId is specified in the query a new version of the asset
-        /// will be saved. Otherwise a new asset will be saved.
-        /// </summary>
-        /// <param name="query">Query with necessary information to save the asset</param>
-        /// <returns>Task that represents the save</returns>
-        private async Task<SaveMediaResponse> SaveMediaAsync(SaveMediaQuery query)
-        {
-            query.Filename = Path.GetFileName(query.Filename);
-
-            string path = null;
-            if (query.MediaId == null)
-            {
-                path = $"/api/v4/media/save/{query.ImportId}/";
-            }
-            else
-            {
-                path = $"/api/v4/media/{query.MediaId}/save/{query.ImportId}/";
-            }
-
-            var request = new ApiRequest<SaveMediaResponse>
-            {
-                Path = path,
-                HTTPMethod = HttpMethod.Post,
-                Query = query
-            };
-
-            // No need to check response. It will only gets here if SaveMedia call gets a success code response
-            return await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Polls status of a file using <see cref="FinalizeResponse"/>. This is used to know
-        /// if Bynder already converted the file, or if it failed.
-        /// </summary>
-        /// <param name="finalizeResponse">finalize response information</param>
-        /// <returns>Task with poll status information</returns>
-        private async Task<PollStatus> PollStatusAsync(FinalizeResponse finalizeResponse)
-        {
-            return await PollStatusAsync(new PollQuery
-            {
-                Items = new List<string> { finalizeResponse.ImportId }
-            }).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Polls status of a file. This is used to know
-        /// if Bynder already converted the file, or if it failed.
-        /// </summary>
-        /// <param name="query">query information</param>
-        /// <returns>Task with poll status information</returns>
-        private async Task<PollStatus> PollStatusAsync(PollQuery query)
-        {
-            var request = new ApiRequest<PollStatus>
-            {
-                Path = "/api/v4/upload/poll/",
-                HTTPMethod = HttpMethod.Get,
-                Query = query
-            };
-
-            return await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Uploads a part to Amazon and registers the part in Bynder.
-        /// </summary>
-        /// <param name="filename">file name</param>
-        /// <param name="buffer">content to be uploaded</param>
-        /// <param name="bytesRead">number of bytes to upload</param>
-        /// <param name="chunkNumber">chunk number</param>
-        /// <param name="uploadRequest">Upload request information</param>
-        /// <param name="numberOfChunks">total number of chunks</param>
-        /// <returns>Task that represent the upload part</returns>
-        private async Task UploadPartAsync(string filename, byte[] buffer, int bytesRead, uint chunkNumber, UploadRequest uploadRequest, uint numberOfChunks)
-        {
-            var awsBucket = await GetClosestS3EndpointAsync().ConfigureAwait(false);
-
-            await _amazonApi.UploadPartToAmazon(filename, awsBucket, uploadRequest, chunkNumber, buffer, bytesRead, numberOfChunks).ConfigureAwait(false);
-            await RegisterChunkAsync(uploadRequest, chunkNumber).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Function to check if file has finished converting within expected timeout.
-        /// </summary>
-        /// <param name="finalizeResponse">Finalize response information</param>
-        /// <returns>Task returning true if file has finished converting successfully. False otherwise</returns>
-        private async Task<bool> HasFinishedSuccessfullyAsync(FinalizeResponse finalizeResponse)
-        {
-            for (int iterations = MAX_POLLING_ITERATIONS; iterations > 0; --iterations)
-            {
-                var pollStatus = await PollStatusAsync(finalizeResponse).ConfigureAwait(false);
-                if (pollStatus != null)
-                {
-                    if (pollStatus.ItemsDone.Contains(finalizeResponse.ImportId))
-                    {
-                        return true;
-                    }
-
-                    if (pollStatus.ItemsFailed.Contains(finalizeResponse.ImportId))
-                    {
-                        return false;
-                    }
+                    await UploadChunkAsync(
+                        fileId,
+                        chunksUploaded++,
+                        reader.ReadBytes(_chunkSize)
+                    ).ConfigureAwait(false);
                 }
 
-                await Task.Delay(POLLING_IDDLE_TIME).ConfigureAwait(false);
+                // Finalize the upload.
+                await FinalizeAsync(
+                    fileId,
+                    chunksUploaded,
+                    Path.GetFileName(path),
+                    fileStream
+                ).ConfigureAwait(false);
             }
 
-            return false;
+            return fileId;
         }
 
-        /// <summary>
-        /// Registers a chunk in Bynder using <see cref="UploadRequest"/>.
-        /// </summary>
-        /// <param name="uploadRequest">Upload request information</param>
-        /// <param name="chunkNumber">Current chunk number</param>
-        /// <returns>Task representing the register chunk process</returns>
-        private async Task RegisterChunkAsync(UploadRequest uploadRequest, uint chunkNumber)
+        #region API calls
+
+        private async Task<string> PrepareAsync()
         {
-            var query = new RegisterChunkQuery
-            {
-                TargetId = uploadRequest.S3File.TargetId,
-                UploadId = uploadRequest.S3File.UploadId,
-                S3Filename = uploadRequest.S3Filename,
-                ChunkNumber = chunkNumber.ToString()
-            };
-
-            query.S3Filename = $"{query.S3Filename}/p{query.ChunkNumber}";
-
-            var request = new ApiRequest
-            {
-                Path = $"/api/v4/upload/{query.UploadId}/",
-                HTTPMethod = HttpMethod.Post,
-                Query = query
-            };
-
-            await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
+            var response = await _requestSender.SendRequestAsync(
+                new ApiRequest<PrepareUploadResponse>
+                {
+                    HTTPMethod = HttpMethod.Post,
+                    Path = "/v7/file_cmds/upload/prepare",
+                }
+            ).ConfigureAwait(false);
+            return response.FileId;
         }
 
-        /// <summary>
-        /// Requests information to start a new upload
-        /// </summary>
-        /// <param name="query">Contains the information needed to request upload information</param>
-        /// <returns>Task containing <see cref="UploadRequest"/> information</returns>
-        private async Task<UploadRequest> RequestUploadInformationAsync(RequestUploadQuery query)
+        private async Task UploadChunkAsync(string fileId, int chunkNumber, byte[] chunk)
         {
-            var request = new ApiRequest<UploadRequest>
-            {
-                Path = "/api/upload/init",
-                HTTPMethod = HttpMethod.Post,
-                Query = query
-            };
-
-            return await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
+            await _requestSender.SendRequestAsync(
+                new ApiRequest
+                {
+                    HTTPMethod = HttpMethod.Post,
+                    Path = $"/v7/file_cmds/upload/{fileId}/chunk/{chunkNumber}",
+                    Headers = new Dictionary<string, string>
+                    {
+                        { "Content-SHA256", SHA256Utils.SHA256hex(chunk) }
+                    },
+                    BinaryContent = chunk,
+                }
+            ).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Finalizes an upload using <see cref="UploadRequest"/>.
-        /// </summary>
-        /// <param name="uploadRequest">Upload request information</param>
-        /// <param name="chunkNumber">chunk number</param>
-        /// <returns>Task with <see cref="FinalizeResponse"/> information</returns>
-        private async Task<FinalizeResponse> FinalizeUploadAsync(UploadRequest uploadRequest, uint chunkNumber)
+        private async Task FinalizeAsync(string fileId, int chunksUploaded, string filename, Stream fileStream)
         {
-            var query = new FinalizeUploadQuery
-            {
-                TargetId = uploadRequest.S3File.TargetId,
-                UploadId = uploadRequest.S3File.UploadId,
-                S3Filename = $"{uploadRequest.S3Filename}/p{chunkNumber}",
-                Chunks = chunkNumber.ToString()
-            };
-            var request = new ApiRequest<FinalizeResponse>
-            {
-                Path = $"/api/v4/upload/{query.UploadId}/",
-                HTTPMethod = HttpMethod.Post,
-                Query = query
-            };
-            return await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
+            await _requestSender.SendRequestAsync(
+                new ApiRequest
+                {
+                    HTTPMethod = HttpMethod.Post,
+                    Path = $"/v7/file_cmds/upload/{fileId}/finalise_api",
+                    Query = new FinalizeUploadQuery
+                    {
+                        ChunksCount = chunksUploaded,
+                        Filename = filename,
+                        FileSize = fileStream.Length,
+                        SHA256 = SHA256Utils.SHA256hex(fileStream),
+                    },
+                }
+            ).ConfigureAwait(false);
         }
+
+        private async Task<SaveMediaResponse> SaveMediaAsync(string fileId, string brandId, string path, IList<string> tags)
+        {
+            return await _requestSender.SendRequestAsync(
+                new ApiRequest<SaveMediaResponse>
+                {
+                    HTTPMethod = HttpMethod.Post,
+                    Path = $"/api/v4/media/save/{fileId}",
+                    Query = new SaveMediaQuery
+                    {
+                        Filename = Path.GetFileName(path),
+                        BrandId = brandId,
+                        Tags = tags,
+                    },
+                }
+            ).ConfigureAwait(false);
+        }
+
+        private async Task<SaveMediaResponse> SaveMediaAsync(string mediaId, string fileId)
+        {
+            return await _requestSender.SendRequestAsync(
+                new ApiRequest<SaveMediaResponse>
+                {
+                    HTTPMethod = HttpMethod.Post,
+                    Path = $"/api/v4/media/{mediaId}/save/{fileId}",
+                }
+             ).ConfigureAwait(false);
+        }
+
+        #endregion
+
     }
 }

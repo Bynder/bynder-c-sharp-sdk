@@ -3,11 +3,12 @@
 
 using Newtonsoft.Json;
 
-namespace Bynder.Sdk.Model
+namespace Bynder.Sdk.Model.Upload
 {
     /// <summary>
     /// Represents the response body of file upload calls
-    /// <see cref="IAssetService.UploadFileAsync"/>.
+    /// <see cref="IAssetService.UploadFileToNewAssetAsync"/> and
+    /// <see cref="IAssetService.UploadFileToExistingAssetAsync"/>.
     /// </summary>
     public class SaveMediaResponse
     {

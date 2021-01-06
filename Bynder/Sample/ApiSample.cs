@@ -10,7 +10,7 @@ using Bynder.Sdk.Settings;
 using System.Threading.Tasks;
 using System.Linq;
 using Bynder.Sdk.Model;
-using Bynder.Sdk.Query.Upload;
+using System.Net.Http;
 
 namespace Bynder.Sample
 {
@@ -37,7 +37,8 @@ namespace Bynder.Sample
             await apiSample.UploadFileAsync("/path/to/file.ext");
         }
 
-        private ApiSample(Configuration configuration) {
+        private ApiSample(Configuration configuration)
+        {
             _bynderClient = ClientFactory.Create(configuration);
         }
 
@@ -77,38 +78,35 @@ namespace Bynder.Sample
                 return;
             }
 
-            await assetService.UploadFileAsync(new UploadQuery { Filepath = uploadPath, BrandId = brands.First().Id });
+            var saveMediaResponse = await assetService.UploadFileToNewAssetAsync(uploadPath, brands.First().Id);
+            Console.WriteLine($"Asset uploaded: {saveMediaResponse.MediaId}");
 
-            //TODO: This can be done instead when UploadFileToNewAssetAsync gets the correct response type
-            //var saveMediaResponse = await assetService.UploadFileToNewAssetAsync(uploadPath, brands.First().Id);
-            //Console.WriteLine($"Asset uploaded: {saveMediaResponse.MediaId}");
-            //
-            //Media media = null;
-            //for (int iterations = 10; iterations > 0; --iterations)
-            //{
-            //    try
-            //    {
-            //        media = await assetService.GetMediaInfoAsync(
-            //            new MediaInformationQuery
-            //            {
-            //                MediaId = saveMediaResponse.MediaId,
-            //            }
-            //        );
+            Media media = null;
+            for (int iterations = 10; iterations > 0; --iterations)
+            {
+                try
+                {
+                    media = await assetService.GetMediaInfoAsync(
+                        new MediaInformationQuery
+                        {
+                            MediaId = saveMediaResponse.MediaId,
+                        }
+                    );
 
-            //    }
-            //    catch (HttpRequestException)
-            //    {
-            //        await Task.Delay(1000).ConfigureAwait(false);
-            //    }
-            //}
-            //if (media == null)
-            //{
-            //    Console.Error.WriteLine("The asset could not be retrieved");
-            //    return;
-            //}
+                }
+                catch (HttpRequestException)
+                {
+                    await Task.Delay(1000).ConfigureAwait(false);
+                }
+            }
+            if (media == null)
+            {
+                Console.Error.WriteLine("The asset could not be retrieved");
+                return;
+            }
 
-            //var saveMediaVersionResponse = await assetService.UploadFileToExistingAssetAsync(uploadPath, media.Id);
-            //Console.WriteLine($"New asset version uploaded: {saveMediaVersionResponse.MediaId}");
+            var saveMediaVersionResponse = await assetService.UploadFileToExistingAssetAsync(uploadPath, media.Id);
+            Console.WriteLine($"New asset version uploaded: {saveMediaVersionResponse.MediaId}");
         }
 
         private async Task AuthenticateWithOAuth2Async(bool useClientCredentials)
