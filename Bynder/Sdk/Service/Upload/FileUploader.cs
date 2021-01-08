@@ -156,25 +156,29 @@ namespace Bynder.Sdk.Service.Upload
 
         private async Task<SaveMediaResponse> SaveMediaAsync(string fileId, string brandId, string path)
         {
-            return await _requestSender.SendRequestAsync(new ApiRequest<SaveMediaResponse>
-            {
-                HTTPMethod = HttpMethod.Post,
-                Path = $"/api/v4/media/save/{fileId}/",
-                Query = new SaveMediaQuery
+            return await _requestSender.SendRequestAsync(
+                new ApiRequest<SaveMediaResponse>
                 {
-                    Filename = Path.GetFileName(path),
-                    BrandId = brandId,
-                },
-            }).ConfigureAwait(false);
+                    HTTPMethod = HttpMethod.Post,
+                    Path = $"/api/v4/media/save/{fileId}",
+                    Query = new SaveMediaQuery
+                    {
+                        Filename = Path.GetFileName(path),
+                        BrandId = brandId,
+                    },
+                }
+            ).ConfigureAwait(false);
         }
 
         private async Task<SaveMediaResponse> SaveMediaAsync(string mediaId, string fileId)
         {
-            return await _requestSender.SendRequestAsync(new ApiRequest<SaveMediaResponse>
-            {
-                HTTPMethod = HttpMethod.Post,
-                Path = $"/api/v4/media/{mediaId}/save/{fileId}/",
-            }).ConfigureAwait(false);
+            return await _requestSender.SendRequestAsync(
+                new ApiRequest<SaveMediaResponse>
+                {
+                    HTTPMethod = HttpMethod.Post,
+                    Path = $"/api/v4/media/{mediaId}/save/{fileId}",
+                }
+             ).ConfigureAwait(false);
         }
 
         #endregion
