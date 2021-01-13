@@ -8,15 +8,15 @@ namespace Bynder.Sdk.Query.Upload
     internal class FinalizeUploadQuery
     {
         [ApiField("chunksCount")]
-        internal int ChunksCount { get; set; }
+        public int ChunksCount { get; set; }
 
         [ApiField("fileName")]
-        internal string Filename { get; set; }
+        public string Filename { get; set; }
 
         [ApiField("fileSize")]
-        internal long FileSize { get; set; }
+        public long FileSize { get; set; }
 
         [ApiField("sha256")]
-        internal string SHA256 { get; set; }
+        public string SHA256 { get; set; }
     }
 }

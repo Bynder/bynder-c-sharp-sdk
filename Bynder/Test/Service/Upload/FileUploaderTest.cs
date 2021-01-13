@@ -47,13 +47,13 @@ namespace Bynder.Test.Service.Upload
 
             _apiRequestSenderMock
                 .Setup(sender => sender.SendRequestAsync(It.Is<ApiRequest<SaveMediaResponse>>(
-                    req => req.Path == $"/api/v4/media/save/{_fileId}/"
+                    req => req.Path == $"/api/v4/media/save/{_fileId}"
                 )))
                 .ReturnsAsync(_saveMediaResponse);
 
             _apiRequestSenderMock
                 .Setup(sender => sender.SendRequestAsync(It.Is<ApiRequest<SaveMediaResponse>>(
-                    req => req.Path == $"/api/v4/media/{_mediaId}/save/{_fileId}/"
+                    req => req.Path == $"/api/v4/media/{_mediaId}/save/{_fileId}"
                 )))
                 .ReturnsAsync(_saveMediaResponse);
 
@@ -119,7 +119,7 @@ namespace Bynder.Test.Service.Upload
             CheckFilesServiceRequests();
 
             _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(It.Is<ApiRequest<SaveMediaResponse>>(
-                req => req.Path == $"/api/v4/media/save/{_fileId}/"
+                req => req.Path == $"/api/v4/media/save/{_fileId}"
                     && req.HTTPMethod == HttpMethod.Post
                     && new CompareLogic().Compare(
                         req.Query,
@@ -142,7 +142,7 @@ namespace Bynder.Test.Service.Upload
             CheckFilesServiceRequests();
 
             _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(It.Is<ApiRequest<SaveMediaResponse>>(
-                req => req.Path == $"/api/v4/media/{_mediaId}/save/{_fileId}/"
+                req => req.Path == $"/api/v4/media/{_mediaId}/save/{_fileId}"
                     && req.HTTPMethod == HttpMethod.Post
             )));
         }
