@@ -16,8 +16,9 @@ At the moment this SDK provides a library with the following methods:
 ### OAuth operations
 
 ```c#
-string GetAuthorisationUrl(string state, string scopes);
-Task GetAccessTokenAsync(string code, string scopes);
+string GetAuthorisationUrl(string state);
+Task GetAccessTokenAsync();
+Task GetAccessTokenAsync(string code);
 ```
 
 ### Asset management operations
