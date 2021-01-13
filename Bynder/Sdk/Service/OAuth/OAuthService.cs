@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
+using Bynder.Sdk.Exceptions;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Query;
 using Bynder.Sdk.Settings;
@@ -38,8 +39,7 @@ namespace Bynder.Sdk.Service.OAuth
         /// </summary>
         /// <returns>Check <see cref="IOAuthService"/>.</returns>
         /// <param name="state">Check <see cref="IOAuthService"/>.</param>
-        /// <param name="scopes">Check <see cref="IOAuthService"/>.</param>
-        public string GetAuthorisationUrl(string state, string scopes)
+        public string GetAuthorisationUrl(string state)
         {
             if (string.IsNullOrEmpty(state))
             {
@@ -54,9 +54,9 @@ namespace Bynder.Sdk.Service.OAuth
                     {
                         { "client_id", _configuration.ClientId },
                         { "redirect_uri", _configuration.RedirectUri },
-                        { "scope", scopes },
+                        { "scope", _configuration.Scopes },
                         { "response_type", "code" },
-                        { "state", state }
+                        { "state", state },
                     }
                 )
             }.ToString();
@@ -66,16 +66,37 @@ namespace Bynder.Sdk.Service.OAuth
         /// Check <see cref="IOAuthService"/>.
         /// </summary>
         /// <returns>Check <see cref="IOAuthService"/>.</returns>
+        public async Task GetAccessTokenAsync()
+        {
+            _credentials.Update(await _requestSender.SendRequestAsync(
+                new OAuthRequest<Token>
+                {
+                    Path = TokenPath,
+                    HTTPMethod = HttpMethod.Post,
+                    Query = new TokenQuery
+                    {
+                        ClientId = _configuration.ClientId,
+                        ClientSecret = _configuration.ClientSecret,
+                        GrantType = "client_credentials",
+                        Scopes = _configuration.Scopes,
+                    },
+                }
+            ).ConfigureAwait(false));
+        }
+
+        /// <summary>
+        /// Check <see cref="IOAuthService"/>.
+        /// </summary>
+        /// <returns>Check <see cref="IOAuthService"/>.</returns>
         /// <param name="code">Check <see cref="IOAuthService"/>.</param>
-        /// <param name="scopes">Check <see cref="IOAuthService"/>.</param>
-        public async Task GetAccessTokenAsync(string code, string scopes)
+        public async Task GetAccessTokenAsync(string code)
         {
             if (string.IsNullOrEmpty(code))
             {
                 throw new ArgumentNullException(code);
             }
 
-            var token = await _requestSender.SendRequestAsync(
+            _credentials.Update(await _requestSender.SendRequestAsync(
                 new OAuthRequest<Token>
                 {
                     Path = TokenPath,
@@ -87,12 +108,10 @@ namespace Bynder.Sdk.Service.OAuth
                         RedirectUri = _configuration.RedirectUri,
                         GrantType = "authorization_code",
                         Code = code,
-                        Scopes = scopes
+                        Scopes = _configuration.Scopes,
                     },
                 }
-            ).ConfigureAwait(false);
-            token.SetAccessTokenExpiration();
-            _credentials.Update(token);
+            ).ConfigureAwait(false));
         }
 
         /// <summary>
@@ -101,21 +120,35 @@ namespace Bynder.Sdk.Service.OAuth
         /// <returns>Check <see cref="IOAuthService"/>.</returns>
         public async Task GetRefreshTokenAsync()
         {
-            var token = await _requestSender.SendRequestAsync(
-                new OAuthRequest<Token>
+            if (_configuration.RedirectUri == null)
+            {
+                await GetAccessTokenAsync();
+            }
+            else
+            {
+                if (_credentials.RefreshToken == null)
                 {
-                    Path = TokenPath,
-                    HTTPMethod = HttpMethod.Post,
-                    Query = new TokenQuery
-                    {
-                        ClientId = _configuration.ClientId,
-                        ClientSecret = _configuration.ClientSecret,
-                        RefreshToken = _credentials.RefreshToken,
-                        GrantType = "refresh_token"
-                    },
+                    throw new MissingTokenException(
+                        "Access token expired and refresh token is missing. " +
+                        "Either pass a not expited access token through " +
+                        "configuration or login through OAuth2"
+                    );
                 }
-            ).ConfigureAwait(false);
-            _credentials.Update(token);
+                _credentials.Update(await _requestSender.SendRequestAsync(
+                    new OAuthRequest<Token>
+                    {
+                        Path = TokenPath,
+                        HTTPMethod = HttpMethod.Post,
+                        Query = new TokenQuery
+                        {
+                            ClientId = _configuration.ClientId,
+                            ClientSecret = _configuration.ClientSecret,
+                            RefreshToken = _credentials.RefreshToken,
+                            GrantType = "refresh_token",
+                        },
+                    }
+                ).ConfigureAwait(false));
+            }
         }
 
     }

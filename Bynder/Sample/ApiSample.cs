@@ -28,16 +28,17 @@ namespace Bynder.Sample
         /// <param name="args">arguments to main</param>
         public static async Task Main(string[] args)
         {
-            var apiSample = new ApiSample();
-            await apiSample.AuthenticateWithOAuth2Async();
+            var configuration = Configuration.FromJson("Config.json");
+            var apiSample = new ApiSample(configuration);
+            await apiSample.AuthenticateWithOAuth2Async(
+                useClientCredentials: configuration.RedirectUri == null
+            );
             await apiSample.ListItemsAsync();
             await apiSample.UploadFileAsync("/path/to/file.ext");
         }
 
-        private ApiSample() {
-            _bynderClient = ClientFactory.Create(
-                Configuration.FromJson("Config.json")
-            );
+        private ApiSample(Configuration configuration) {
+            _bynderClient = ClientFactory.Create(configuration);
         }
 
         private async Task ListItemsAsync()
@@ -109,13 +110,19 @@ namespace Bynder.Sample
             Console.WriteLine($"New asset version uploaded: {saveMediaVersionResponse.MediaId}");
         }
 
-        private async Task AuthenticateWithOAuth2Async()
+        private async Task AuthenticateWithOAuth2Async(bool useClientCredentials)
         {
-            const string scopes = "offline asset:read collection:read asset:write";
-            Browser.Launch(_bynderClient.GetOAuthService().GetAuthorisationUrl("state example", scopes));
-            Console.WriteLine("Insert the code: ");
-            var code = Console.ReadLine();
-            await _bynderClient.GetOAuthService().GetAccessTokenAsync(code, scopes);
+            if (useClientCredentials)
+            {
+                await _bynderClient.GetOAuthService().GetAccessTokenAsync();
+            }
+            else
+            {
+                Browser.Launch(_bynderClient.GetOAuthService().GetAuthorisationUrl("state example"));
+                Console.WriteLine("Insert the code: ");
+                var code = Console.ReadLine();
+                await _bynderClient.GetOAuthService().GetAccessTokenAsync(code);
+            }
         }
 
     }
