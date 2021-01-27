@@ -22,8 +22,10 @@ jobs:
           /p:CoverletOutput=TestResults/
           /p:CoverletOutputFormat=lcov
           
+      - name: PWD
+        run: pwd
       - name: Publish coverage report to coveralls.io   
         uses: coverallsapp/github-action@master   
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} 
-          path-to-lcov: TestResults/coverage.info   
+          path-to-lcov: ./TestResults/coverage.info   
