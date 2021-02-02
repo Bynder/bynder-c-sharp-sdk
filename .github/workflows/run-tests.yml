@@ -16,6 +16,7 @@ jobs:
           dotnet-version: '3.1.x'
       - name: Build
         run: dotnet build --configuration Release
+      - run: ls
       - name: Run unit tests
         run: cd /Bynder/Test/
       - run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
