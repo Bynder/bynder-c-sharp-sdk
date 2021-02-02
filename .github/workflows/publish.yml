@@ -6,18 +6,25 @@ on:
 jobs:
   build-tests:
     name: Tests
-    runs-on: ubuntu-latest
+      runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v1
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.1.x'
-      - name: Build
-        run: dotnet build --configuration Release
-      - name: Run unit tests
-        run: dotnet test --no-build --configuration Release
+      steps:
+        - uses: actions/checkout@v1
+        - name: Setup .NET Core
+          uses: actions/setup-dotnet@v1
+          with:
+            dotnet-version: '3.1.x'
+        - name: Build
+          run: dotnet build --configuration Release
+
+        - name: Run unit tests
+          run: dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+
+        - name: Publish coverage report to Coveralls
+          uses: coverallsapp/github-action@master
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            path-to-lcov: ./Bynder/Test/coverage.info
 
   publish-nuget:
     name: Release
@@ -30,10 +37,13 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.1.x'
+
       - name: Install dependencies
         run: dotnet restore
+
       - name: Build
         run: dotnet build --configuration Release --no-restore
+
       - name: Publish to NuGet
         uses: brandedoutcast/publish-nuget@v2
         with:

@@ -2,6 +2,7 @@
 
 ![Tests](https://github.com/Bynder/bynder-c-sharp-sdk/workflows/Tests/badge.svg)
 ![Publish](https://github.com/Bynder/bynder-c-sharp-sdk/workflows/Publish/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/Bynder/bynder-c-sharp-sdk/badge.svg?branch=master)](https://coveralls.io/github/Bynder/bynder-c-sharp-sdk?branch=master)
 
 The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io) and executing requests on it.
 

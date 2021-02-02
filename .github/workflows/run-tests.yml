@@ -20,7 +20,7 @@ jobs:
       - name: Run unit tests
         run: dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
 
-      - name: Publish coverage report to coveralls.io
+      - name: Publish coverage report to Coveralls
         uses: coverallsapp/github-action@master   
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }} 
