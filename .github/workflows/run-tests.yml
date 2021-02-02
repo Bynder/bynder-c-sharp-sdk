@@ -18,8 +18,9 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Test
-        run: dotnet test -c Release --no-build /p:CollectCoverage=true /p:CoverletOutput="$GITHUB_WORKSPACE/coverage/lcov.info" /p:MergeWith="$GITHUB_WORKSPACE/coverage/lcov.info" /p:CoverletOutputFormat=lcov
-
+        run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+      - run: dotnet tool install -g coveralls.net
+      - run: csmacnz.Coveralls --opencover -i Bynder/Test/coverage.opencover.xml --useRelativePaths
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
