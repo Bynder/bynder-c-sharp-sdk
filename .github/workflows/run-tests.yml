@@ -19,8 +19,6 @@ jobs:
 
       - name: Run unit tests
         run: dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-      - name: Publish coverage report to Coveralls
-        uses: coverallsapp/github-action@master   
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }} 
-          path-to-lcov: ./Bynder/Test/coverage.opencover.xml
+      - run: dotnet tool install --global --add-source https://ci.appveyor.com/nuget/coveralls-net-t37a9a9unhwk coveralls.net
+      - run: dotnet csmacnz.Coveralls
+      
