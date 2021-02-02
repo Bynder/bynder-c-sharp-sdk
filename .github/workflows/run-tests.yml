@@ -18,17 +18,12 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: Run unit tests
-        run: dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-      - name: coverlet
-        uses: b3b00/coverlet-action@1.1.0
+        run: dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+
+      - run: cat ./Bynder/Test/coverage.info
+      - name: Publish coverage report to Coveralls
+        uses: coverallsapp/github-action@master
         with:
-          testProject: './Bynder/Test/Bynder.Test.csproj'
-          output: 'lcov.info'
-          outputFormat: 'lcov'
-          excludes: '[program]*,[test]test.*'
-      - name: coveralls
-        uses: coverallsapp/github-action@v1.1.1
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN }}
-          path-to-lcov: './Bynder/Test/lcov.info'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./Bynder/Test/coverage.info
 
