@@ -20,6 +20,7 @@ jobs:
       - name: Test
         run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
       - run: dotnet tool install -g coveralls.net
+      - run: cat ./Bynder/Test/coverage.opencover.xml
       - name: COveralls
         env:
           COVERALLS_REPO_TOKEN: ${{secrets.COVERALLS_REPO_TOKEN}}
