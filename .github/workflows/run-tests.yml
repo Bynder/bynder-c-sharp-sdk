@@ -19,6 +19,16 @@ jobs:
 
       - name: Run unit tests
         run: dotnet test --no-build --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-      - run: dotnet tool install --global --add-source https://ci.appveyor.com/nuget/coveralls-net-t37a9a9unhwk coveralls.net
-      - run: dotnet csmacnz.Coveralls
-      
+      - name: coverlet
+        uses: b3b00/coverlet-action@1.1.0
+        with:
+          testProject: './Bynder/Test/Bynder.Test.csproj'
+          output: 'lcov.info'
+          outputFormat: 'lcov'
+          excludes: '[program]*,[test]test.*'
+      - name: coveralls
+        uses: coverallsapp/github-action@v1.1.1
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN }}
+          path-to-lcov: ${{steps.coverlet.outputs.coverageFile}}
+
