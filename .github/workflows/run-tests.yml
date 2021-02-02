@@ -24,5 +24,5 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: /home/runner/work/Neovolve.CodeAnalysis.ChangeTracking/Neovolve.CodeAnalysis.ChangeTracking/coverage/lcov.info
+          path-to-lcov: /home/runner/work/bynder-c-sharp-sdk/bynder-c-sharp-sdk/coverage/lcov.info
 
