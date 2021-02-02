@@ -17,8 +17,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release
       - name: Run unit tests
-        run: cd ./Bynder/Test/
-      - run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
+        - run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov
       - run: ls ./Bynder/Test
       - name: Publish coverage report to coveralls.io   
         uses: coverallsapp/github-action@master   
