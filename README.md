@@ -6,6 +6,8 @@
 [![NuGet version](https://badge.fury.io/nu/Bynder.Sdk.svg)](https://badge.fury.io/nu/Bynder.Sdk)
 ![Nuget](https://img.shields.io/nuget/dt/Bynder.Sdk)
 
+Test across forks
+
 The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io) and executing requests on it.
 
 ## Nuget Package
