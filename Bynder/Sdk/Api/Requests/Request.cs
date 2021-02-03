@@ -11,32 +11,26 @@ namespace Bynder.Sdk.Api.Requests
     /// <typeparam name="T">Type to which the response will be deserialized</typeparam>
     internal abstract class Request<T>
     {
-        /// <summary>
-        /// Object with information about the API parameters to send.
-        /// </summary>
-        public object Query { get; set; }
+        protected bool _authenticated = true;
 
         /// <summary>
-        /// Path of the endpoint to call.
+        /// Indicates whether the request needs to be authenticated.
         /// </summary>
-        public string Path { get; set; }
+        internal bool Authenticated { get { return _authenticated; } }
 
         /// <summary>
         /// HttpMethod to use.
         /// </summary>
-        public HttpMethod HTTPMethod { get; set; }
+        internal HttpMethod HTTPMethod { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this <see cref="Request`1"/> is authenticated.
+        /// Path of the endpoint to call.
         /// </summary>
-        /// <value><c>true</c> if authenticated; otherwise, <c>false</c>.</value>
-        public bool Authenticated { get; set; } = true;
+        internal string Path { get; set; }
 
         /// <summary>
-        /// True if we want to deserialize response to <see cref="T"/>. 
-        /// However if <see cref="T"/> is a string and this property has value false, we might want to get the raw string response without
-        /// deserializing, so in that case deserialization will not occur.
+        /// Optional: Object with information about the API parameters to send.
         /// </summary>
-        public bool DeserializeResponse { get; set; } = true;
+        internal object Query { get; set; }
     }
 }

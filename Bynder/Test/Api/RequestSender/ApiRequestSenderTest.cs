@@ -71,7 +71,7 @@ namespace Bynder.Test.Api.RequestSender
                 response: CreateResponse(addContent: false)
             );
 
-            Assert.Equal(default(IList<string>), responseBody);
+            Assert.Equal(default, responseBody);
 
             _httpSenderMock.Verify(sender => sender.SendHttpRequest(
                 It.Is<HttpRequestMessage>(req =>

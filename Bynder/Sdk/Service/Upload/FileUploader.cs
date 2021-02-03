@@ -74,7 +74,7 @@ namespace Bynder.Sdk.Service.Upload
         /// </summary>
         /// <param name="query">Upload query information to upload a file</param>
         /// <returns>Task representing the upload</returns>
-        public async Task UploadFile(UploadQuery query)
+        public async Task UploadFileAsync(UploadQuery query)
         {
             var uploadRequest = await RequestUploadInformationAsync(new RequestUploadQuery { Filename = query.Filepath }).ConfigureAwait(false);
 
@@ -137,7 +137,7 @@ namespace Bynder.Sdk.Service.Upload
         /// </summary>
         /// <param name="query">Query with necessary information to save the asset</param>
         /// <returns>Task that represents the save</returns>
-        private Task SaveMediaAsync(SaveMediaQuery query)
+        private async Task SaveMediaAsync(SaveMediaQuery query)
         {
             query.Filename = Path.GetFileName(query.Filename);
 
@@ -151,16 +151,15 @@ namespace Bynder.Sdk.Service.Upload
                 path = $"/api/v4/media/{query.MediaId}/save/{query.ImportId}/";
             }
 
-            var request = new ApiRequest<string>
+            var request = new ApiRequest
             {
                 Path = path,
                 HTTPMethod = HttpMethod.Post,
-                Query = query,
-                DeserializeResponse = false
+                Query = query
             };
 
             // No need to check response. It will only gets here if SaveMedia call gets a success code response
-            return _requestSender.SendRequestAsync(request);
+            await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -169,12 +168,12 @@ namespace Bynder.Sdk.Service.Upload
         /// </summary>
         /// <param name="finalizeResponse">finalize response information</param>
         /// <returns>Task with poll status information</returns>
-        private Task<PollStatus> PollStatusAsync(FinalizeResponse finalizeResponse)
+        private async Task<PollStatus> PollStatusAsync(FinalizeResponse finalizeResponse)
         {
-            return PollStatusAsync(new PollQuery
+            return await PollStatusAsync(new PollQuery
             {
                 Items = new List<string> { finalizeResponse.ImportId }
-            });
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -183,7 +182,7 @@ namespace Bynder.Sdk.Service.Upload
         /// </summary>
         /// <param name="query">query information</param>
         /// <returns>Task with poll status information</returns>
-        private Task<PollStatus> PollStatusAsync(PollQuery query)
+        private async Task<PollStatus> PollStatusAsync(PollQuery query)
         {
             var request = new ApiRequest<PollStatus>
             {
@@ -192,7 +191,7 @@ namespace Bynder.Sdk.Service.Upload
                 Query = query
             };
 
-            return _requestSender.SendRequestAsync(request);
+            return await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -260,12 +259,11 @@ namespace Bynder.Sdk.Service.Upload
 
             query.S3Filename = $"{query.S3Filename}/p{query.ChunkNumber}";
 
-            var request = new ApiRequest<object>
+            var request = new ApiRequest
             {
                 Path = $"/api/v4/upload/{query.UploadId}/",
                 HTTPMethod = HttpMethod.Post,
-                Query = query,
-                DeserializeResponse = false
+                Query = query
             };
 
             await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
@@ -276,7 +274,7 @@ namespace Bynder.Sdk.Service.Upload
         /// </summary>
         /// <param name="query">Contains the information needed to request upload information</param>
         /// <returns>Task containing <see cref="UploadRequest"/> information</returns>
-        private Task<UploadRequest> RequestUploadInformationAsync(RequestUploadQuery query)
+        private async Task<UploadRequest> RequestUploadInformationAsync(RequestUploadQuery query)
         {
             var request = new ApiRequest<UploadRequest>
             {
@@ -285,7 +283,7 @@ namespace Bynder.Sdk.Service.Upload
                 Query = query
             };
 
-            return _requestSender.SendRequestAsync(request);
+            return await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -294,35 +292,22 @@ namespace Bynder.Sdk.Service.Upload
         /// <param name="uploadRequest">Upload request information</param>
         /// <param name="chunkNumber">chunk number</param>
         /// <returns>Task with <see cref="FinalizeResponse"/> information</returns>
-        private Task<FinalizeResponse> FinalizeUploadAsync(UploadRequest uploadRequest, uint chunkNumber)
+        private async Task<FinalizeResponse> FinalizeUploadAsync(UploadRequest uploadRequest, uint chunkNumber)
         {
-            return FinalizeUploadAsync(
-                new FinalizeUploadQuery
-                {
-                    TargetId = uploadRequest.S3File.TargetId,
-                    UploadId = uploadRequest.S3File.UploadId,
-                    S3Filename = uploadRequest.S3Filename,
-                    Chunks = chunkNumber.ToString()
-                });
-        }
-
-        /// <summary>
-        /// Finalizes an upload
-        /// </summary>
-        /// <param name="query">Instance with necessary information to Finalize Upload</param>
-        /// <returns>Task with <see cref="FinalizeResponse"/> information</returns>
-        private Task<FinalizeResponse> FinalizeUploadAsync(FinalizeUploadQuery query)
-        {
-            query.S3Filename = $"{query.S3Filename}/p{query.Chunks}";
-
+            var query = new FinalizeUploadQuery
+            {
+                TargetId = uploadRequest.S3File.TargetId,
+                UploadId = uploadRequest.S3File.UploadId,
+                S3Filename = $"{uploadRequest.S3Filename}/p{chunkNumber}",
+                Chunks = chunkNumber.ToString()
+            };
             var request = new ApiRequest<FinalizeResponse>
             {
                 Path = $"/api/v4/upload/{query.UploadId}/",
                 HTTPMethod = HttpMethod.Post,
                 Query = query
             };
-
-            return _requestSender.SendRequestAsync(request);
+            return await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
         }
     }
 }

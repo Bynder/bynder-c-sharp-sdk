@@ -81,13 +81,13 @@ namespace Bynder.Sdk.Api.RequestSender
             var responseContent = response.Content;
             if (response.Content == null)
             {
-                return default(T);
+                return default;
             }
 
             var responseString = await responseContent.ReadAsStringAsync().ConfigureAwait(false);
             if (responseString == null)
             {
-                return default(T);
+                return default;
             }
 
             return JsonConvert.DeserializeObject<T>(responseString);
@@ -132,8 +132,10 @@ namespace Bynder.Sdk.Api.RequestSender
             internal static HttpRequestMessage Create(
                 string baseUrl, HttpMethod method, IDictionary<string, string> requestParams, string urlPath)
             {
-                var builder = new UriBuilder(baseUrl);
-                builder.Path = urlPath;
+                var builder = new UriBuilder(baseUrl)
+                {
+                    Path = urlPath
+                };
 
                 if (HttpMethod.Get == method)
                 {
