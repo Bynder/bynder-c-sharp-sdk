@@ -90,7 +90,7 @@ namespace Bynder.Sdk.Service.Asset
         /// <param name="query">Filters for searching tags</param>
         /// <returns>Task with list of tags</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task<List<Tag>> GetTagsAsync(TagsQuery query);
+        Task<IList<Tag>> GetTagsAsync(TagsQuery query);
 
         /// <summary>
         /// Gets Tags Async

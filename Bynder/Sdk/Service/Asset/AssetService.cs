@@ -181,7 +181,7 @@ namespace Bynder.Sdk.Service.Asset
         /// Check <see cref="IAssetService"/> for more information
         /// </summary>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task<List<Tag>> GetTagsAsync(TagsQuery query)
+        public Task<IList<Tag>> GetTagsAsync(TagsQuery query)
         {
             var request = new ApiRequest<IList<Tag>>
             {
