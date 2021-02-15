@@ -24,5 +24,10 @@ namespace Bynder.Sdk.Query.Upload
         /// the asset bank
         /// </summary>
         public string MediaId { get; set; }
+
+        /// <summary>
+        /// Tags of the file that we want to update
+        /// </summary>
+        public string Tags { get; set; }
     }
 }

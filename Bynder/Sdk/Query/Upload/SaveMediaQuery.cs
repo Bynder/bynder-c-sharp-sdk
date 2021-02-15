@@ -34,5 +34,11 @@ namespace Bynder.Sdk.Query.Upload
         /// the asset bank
         /// </summary>
         public string MediaId { get; set; }
+
+        /// <summary>
+        /// Tags that will be added on the image
+        /// </summary>
+        [ApiField("tags")]
+        public string Tags { get; set; }
     }
 }

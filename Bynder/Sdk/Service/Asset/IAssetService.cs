@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -40,6 +40,16 @@ namespace Bynder.Sdk.Service.Asset
         Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync();
 
         /// <summary>
+        /// Get one Metadata item
+        /// </summary>
+        Task<Metaproperty> GetMetapropertyByIdAsync(MetapropertiesQuery metadataQuery);
+
+        /// <summary>
+        /// Get list of dependecy ids for Metadata item
+        /// </summary>
+        Task<List<String>> GetMetepropertiesDependencyAsync(MetapropertiesQuery metapropertiesQuery);
+
+        /// <summary>
         /// Gets all the information for a specific mediaId. This is needed 
         /// to get the media items of a media.
         /// </summary>
@@ -73,5 +83,21 @@ namespace Bynder.Sdk.Service.Asset
         /// <returns>Task</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         Task ModifyMediaAsync(ModifyMediaQuery query);
+
+        /// <summary>
+        /// Gets Tags Async
+        /// </summary>
+        /// <param name="query">Filters for searching tags</param>
+        /// <returns>Task with list of tags</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<List<Tag>> GetTagsAsync(TagsQuery query);
+
+        /// <summary>
+        /// Gets Tags Async
+        /// </summary>
+        /// <param name="query">Information about tag which will be set to media files</param>
+        /// <returns>Task representing the upload</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task AddTagOnMedia(AddTagToAssetsQuery query);
     }
 }
