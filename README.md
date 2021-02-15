@@ -29,10 +29,14 @@ Task GetAccessTokenAsync(string code, string scopes);
 Task<IList<Brand>> GetBrandsAsync();
 Task<Uri> GetDownloadFileUrlAsync(DownloadMediaQuery query);
 Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync();
+Task<Metaproperty> GetMetapropertyByIdAsync(MetapropertiesQuery metadataQuery);
+Task<List<String>> GetMetepropertiesDependencyAsync(MetapropertiesQuery metapropertiesQuery);
 Task<Media> GetMediaInfoAsync(MediaInformationQuery query);
 Task<IList<Media>> GetMediaListAsync(MediaQuery query);
 Task UploadFileAsync(UploadQuery query);
 Task ModifyMediaAsync(ModifyMediaQuery query);
+Task<List<Tag>> GetTagsAsync(TagsQuery query);
+Task AddTagOnMedia(AddTagToAssetsQuery query);
 ```
 
 ### Collection management operations
