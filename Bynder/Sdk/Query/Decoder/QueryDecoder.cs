@@ -46,8 +46,7 @@ namespace Bynder.Sdk.Query.Decoder
             var attributes = propertyInfo.GetCustomAttributes(true);
             foreach (var attribute in attributes)
             {
-                ApiField nameAttr = attribute as ApiField;
-                if (nameAttr != null)
+                if (attribute is ApiField nameAttr)
                 {
                     object value = propertyInfo.GetValue(query);
                     if (value != null)
@@ -75,26 +74,11 @@ namespace Bynder.Sdk.Query.Decoder
         /// <returns>converted value</returns>
         private string ConvertPropertyValue(ApiField apiField, Type propertyType, object value)
         {
-            string convertedValue = null;
-            bool isConverted = false;
-            if (apiField.Converter != null)
-            {
-                ITypeToStringConverter converter = Activator.CreateInstance(apiField.Converter) as ITypeToStringConverter;
-
-                if (converter != null
-                    && converter.CanConvert(propertyType))
-                {
-                    convertedValue = converter.Convert(value);
-                    isConverted = true;
-                }
-            }
-
-            if (!isConverted)
-            {
-                convertedValue = value.ToString();
-            }
-
-            return convertedValue;
+            return apiField.Converter != null
+                && Activator.CreateInstance(apiField.Converter) is ITypeToStringConverter converter
+                && converter.CanConvert(propertyType)
+                ? converter.Convert(value)
+                : value.ToString();
         }
     }
 }

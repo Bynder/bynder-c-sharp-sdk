@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
+using Bynder.Sdk.Model;
 using Bynder.Sdk.Query.Collection;
 using Bynder.Sdk.Service.Collection;
 using Moq;
@@ -27,7 +28,7 @@ namespace Bynder.Test.Service.Collection
         [Fact]
         public async Task CreateCollectionCallsRequestSenderWithValidRequest()
         {
-            var result = new { message = "Created", statuscode = 201 };
+            var result = new Status { Message = "Created", StatusCode = 201 };
             _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
                 .ReturnsAsync(result);
             var createCollectionQuery = new CreateCollectionQuery("name");
@@ -45,7 +46,7 @@ namespace Bynder.Test.Service.Collection
         [Fact]
         public async Task DeleteCollectionCallsRequestSenderWithValidRequest()
         {
-            var result = new { };
+            var result = new Status { };
             _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
                  .ReturnsAsync(result);
             var collectionId = "collectionId";
@@ -120,7 +121,7 @@ namespace Bynder.Test.Service.Collection
         [Fact]
         public async Task AddMediaAsyncCallsRequestSenderWithValidRequest()
         {
-            var result = new { message = "Accepted", statuscode = 202 };
+            var result = new Status { Message = "Accepted", StatusCode = 202 };
             _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
                 .ReturnsAsync(result);
             var addMediaQuery = new AddMediaQuery("collectionId", new List<string>());
@@ -138,7 +139,7 @@ namespace Bynder.Test.Service.Collection
         [Fact]
         public async Task RemoveMediaAsyncCallsRequestSenderWithValidRequest()
         {
-            var result = new { };
+            var result = new Status { };
             _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
                 .ReturnsAsync(result);
             var removeMediaQuery = new RemoveMediaQuery("collectionId", new List<string>());
@@ -156,7 +157,7 @@ namespace Bynder.Test.Service.Collection
         [Fact]
         public async Task ShareCollectionAsyncCallsRequestSenderWithValidRequest()
         {
-            var result = new { message = "Accepted", statuscode = 202 };
+            var result = new Status { Message = "Accepted", StatusCode = 202 };
             _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
                 .ReturnsAsync(result);
             var shareQuery = new ShareQuery("collectionId", new List<string>(), SharingPermission.View);

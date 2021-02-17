@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
+using Bynder.Sdk.Api.Converters;
 using Bynder.Sdk.Query.Decoder;
 
 namespace Bynder.Sdk.Query.Upload
@@ -38,7 +40,7 @@ namespace Bynder.Sdk.Query.Upload
         /// <summary>
         /// Tags that will be added on the image
         /// </summary>
-        [ApiField("tags")]
-        public string Tags { get; set; }
+        [ApiField("tags", Converter = typeof(ListConverter))]
+        public IList<string> Tags { get; set; }
     }
 }

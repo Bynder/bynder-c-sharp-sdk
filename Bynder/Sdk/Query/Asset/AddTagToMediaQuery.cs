@@ -4,14 +4,14 @@ using System.Collections.Generic;
 
 namespace Bynder.Sdk.Query.Asset
 {
-    public class AddTagToAssetsQuery
+    public class AddTagToMediaQuery
     {
         /// <summary>
         /// Initializes the class with needed information
         /// </summary>
-        /// <param name="collectionId">The id of the tag on which the operation will be performed</param>
-        /// <param name="mediaIds">List with the Ids of the media</param>
-        public AddTagToAssetsQuery(string tagId, IList<string> mediaIds)
+        /// <param name="tagId">The id of the tag on which the operation will be performed</param>
+        /// <param name="mediaIds">list of asset ids to which you'd like to add the tag</param>
+        public AddTagToMediaQuery(string tagId, IList<string> mediaIds)
         {
             TagId = tagId;
             MediaIds = mediaIds;
@@ -23,7 +23,7 @@ namespace Bynder.Sdk.Query.Asset
         public string TagId { get; private set; }
 
         /// <summary>
-        /// List with the Ids of the media
+        /// list of asset ids to which you'd like to add the tag
         /// </summary>
         [ApiField("data", Converter = typeof(JsonConverter))]
         public IList<string> MediaIds { get; private set; }

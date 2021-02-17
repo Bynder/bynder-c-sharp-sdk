@@ -28,7 +28,7 @@ namespace Bynder.Sdk.Query.Collection
 
         /// <summary>
         /// <para>Desired order of returned collection set.</para>
-        /// <para>See <see cref="Bynder.Sdk.Model.OrderByType"/> for possible values.</para>
+        /// <para>See <see cref="Model.CollectionsOrderBy"/> for possible values.</para>
         /// </summary>
         [ApiField("orderBy")]
         public string OrderBy { get; set; }

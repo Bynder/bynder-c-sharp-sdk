@@ -68,17 +68,15 @@ namespace Bynder.Sdk.Service.Asset
         /// <summary>
         /// Check <see cref="IAssetService"/> for more information
         /// </summary>
-        /// <param name="metadataQuery">Check <see cref="IAssetService"/> for more information</param>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task<Metaproperty> GetMetapropertyByIdAsync(MetapropertiesQuery metadataQuery)
+        public async Task<Metaproperty> GetMetapropertyAsync(MetapropertyQuery query)
         {
-            var request = new ApiRequest<Metaproperty>
+            return await _requestSender.SendRequestAsync(new ApiRequest<Metaproperty>
             {
-                Path = $"/api/v4/metaproperties/{metadataQuery.MetadataId}",
+                Path = $"/api/v4/metaproperties/{query.MetapropertyId}",
                 HTTPMethod = HttpMethod.Get
-            };
-
-            return _requestSender.SendRequestAsync(request);
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -86,15 +84,13 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task<List<String>> GetMetepropertiesDependencyAsync(MetapropertiesQuery metapropertiesQuery)
+        public async Task<IList<String>> GetMetapropertyDependenciesAsync(MetapropertyQuery query)
         {
-            var request = new ApiRequest<List<String>>
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<string>>
             {
-                Path = $"api/v4/metaproperties/{metapropertiesQuery.MetadataId}/dependencies/",
+                Path = $"api/v4/metaproperties/{query.MetapropertyId}/dependencies/",
                 HTTPMethod = HttpMethod.Get
-            };
-
-            return _requestSender.SendRequestAsync(request);
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -167,9 +163,9 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public async Task ModifyMediaAsync(ModifyMediaQuery query)
+        public async Task<Status> ModifyMediaAsync(ModifyMediaQuery query)
         {
-            await _requestSender.SendRequestAsync(new ApiRequest
+            return await _requestSender.SendRequestAsync(new ApiRequest
             {
                 Path = $"/api/v4/media/{query.MediaId}/",
                 HTTPMethod = HttpMethod.Post,
@@ -181,32 +177,28 @@ namespace Bynder.Sdk.Service.Asset
         /// Check <see cref="IAssetService"/> for more information
         /// </summary>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task<IList<Tag>> GetTagsAsync(TagsQuery query)
+        public async Task<IList<Tag>> GetTagsAsync(GetTagsQuery query)
         {
-            var request = new ApiRequest<IList<Tag>>
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<Tag>>
             {
                 Path = "/api/v4/tags/",
                 HTTPMethod = HttpMethod.Get,
                 Query = query
-            };
-
-            return _requestSender.SendRequestAsync(request);
+            }).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Check <see cref="IAssetService"/> for more information
         /// </summary>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public Task AddTagOnMedia(AddTagToAssetsQuery query)
+        public async Task<Status> AddTagToMediaAsync(AddTagToMediaQuery query)
         {
-            var request = new ApiRequest<Status>
+            return await _requestSender.SendRequestAsync(new ApiRequest
             {
                 Path = $"/api/v4/tags/{query.TagId}/media/",
                 HTTPMethod = HttpMethod.Post,
                 Query = query,
-            };
-
-            return _requestSender.SendRequestAsync(request);
+            }).ConfigureAwait(false);
         }
     }
 }

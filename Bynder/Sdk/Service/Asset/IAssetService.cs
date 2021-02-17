@@ -40,14 +40,20 @@ namespace Bynder.Sdk.Service.Asset
         Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync();
 
         /// <summary>
-        /// Get one Metadata item
+        /// Retrieve specific Metaproperty
         /// </summary>
-        Task<Metaproperty> GetMetapropertyByIdAsync(MetapropertiesQuery metadataQuery);
+        /// <param name="query">query containing the metaproperty ID</param>
+        /// <returns>Structure representing the metaproperty</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<Metaproperty> GetMetapropertyAsync(MetapropertyQuery query);
 
         /// <summary>
-        /// Get list of dependecy ids for Metadata item
+        /// Retrieve metaproperty dependencies
         /// </summary>
-        Task<List<String>> GetMetepropertiesDependencyAsync(MetapropertiesQuery metapropertiesQuery);
+        /// <param name="query">iquery containing the metaproperty ID</param>
+        /// <returns>List of the metaproperty's dependencies</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<IList<string>> GetMetapropertyDependenciesAsync(MetapropertyQuery query);
 
         /// <summary>
         /// Gets all the information for a specific mediaId. This is needed 
@@ -82,22 +88,22 @@ namespace Bynder.Sdk.Service.Asset
         /// <param name="query">Information needed to modify a media</param>
         /// <returns>Task</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task ModifyMediaAsync(ModifyMediaQuery query);
+        Task<Status> ModifyMediaAsync(ModifyMediaQuery query);
 
         /// <summary>
-        /// Gets Tags Async
+        /// Retrieve tags
         /// </summary>
         /// <param name="query">Filters for searching tags</param>
         /// <returns>Task with list of tags</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task<IList<Tag>> GetTagsAsync(TagsQuery query);
+        Task<IList<Tag>> GetTagsAsync(GetTagsQuery query);
 
         /// <summary>
-        /// Gets Tags Async
+        /// Add tag to assets
         /// </summary>
         /// <param name="query">Information about tag which will be set to media files</param>
         /// <returns>Task representing the upload</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task AddTagOnMedia(AddTagToAssetsQuery query);
+        Task<Status> AddTagToMediaAsync(AddTagToMediaQuery query);
     }
 }
