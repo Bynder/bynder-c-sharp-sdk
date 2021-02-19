@@ -29,10 +29,14 @@ Task GetAccessTokenAsync(string code, string scopes);
 Task<IList<Brand>> GetBrandsAsync();
 Task<Uri> GetDownloadFileUrlAsync(DownloadMediaQuery query);
 Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync();
+Task<Metaproperty> GetMetapropertyAsync(MetapropertiesQuery query);
+Task<List<String>> GetMetapropertyDependenciesAsync(MetapropertiesQuery query);
 Task<Media> GetMediaInfoAsync(MediaInformationQuery query);
 Task<IList<Media>> GetMediaListAsync(MediaQuery query);
 Task UploadFileAsync(UploadQuery query);
-Task ModifyMediaAsync(ModifyMediaQuery query);
+Task<Status> ModifyMediaAsync(ModifyMediaQuery query);
+Task<List<Tag>> GetTagsAsync(TagsQuery query);
+Task<Status> AddTagToMediaAsync(AddTagToMediaQuery query);
 ```
 
 ### Collection management operations
@@ -40,12 +44,12 @@ Task ModifyMediaAsync(ModifyMediaQuery query);
 ```c#
 Task<IList<Collection>> GetCollectionsAsync(GetCollectionsQuery query);
 Task<Collection> GetCollectionAsync(string id);
-Task CreateCollectionAsync(CreateCollectionQuery query);
-Task DeleteCollectionAsync(string id);
+Task<Status> CreateCollectionAsync(CreateCollectionQuery query);
+Task<Status> DeleteCollectionAsync(string id);
 Task<IList<string>> GetMediaAsync(GetMediaQuery query);
-Task AddMediaAsync(AddMediaQuery query);
-Task RemoveMediaAsync(RemoveMediaQuery query);
-Task ShareCollectionAsync(ShareQuery query);
+Task<Status> AddMediaAsync(AddMediaQuery query);
+Task<Status> RemoveMediaAsync(RemoveMediaQuery query);
+Task<Status> ShareCollectionAsync(ShareQuery query);
 ```
 
 ## Sample

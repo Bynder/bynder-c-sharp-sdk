@@ -70,6 +70,34 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<Metaproperty> GetMetapropertyAsync(MetapropertyQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<Metaproperty>
+            {
+                Path = $"/api/v4/metaproperties/{query.MetapropertyId}",
+                HTTPMethod = HttpMethod.Get
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<IList<String>> GetMetapropertyDependenciesAsync(MetapropertyQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<string>>
+            {
+                Path = $"api/v4/metaproperties/{query.MetapropertyId}/dependencies/",
+                HTTPMethod = HttpMethod.Get
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
         public async Task<IList<Media>> GetMediaListAsync(MediaQuery query)
         {
             return await _requestSender.SendRequestAsync(new ApiRequest<IList<Media>>
@@ -135,11 +163,39 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public async Task ModifyMediaAsync(ModifyMediaQuery query)
+        public async Task<Status> ModifyMediaAsync(ModifyMediaQuery query)
         {
-            await _requestSender.SendRequestAsync(new ApiRequest
+            return await _requestSender.SendRequestAsync(new ApiRequest
             {
                 Path = $"/api/v4/media/{query.MediaId}/",
+                HTTPMethod = HttpMethod.Post,
+                Query = query,
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<IList<Tag>> GetTagsAsync(GetTagsQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<Tag>>
+            {
+                Path = "/api/v4/tags/",
+                HTTPMethod = HttpMethod.Get,
+                Query = query
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<Status> AddTagToMediaAsync(AddTagToMediaQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest
+            {
+                Path = $"/api/v4/tags/{query.TagId}/media/",
                 HTTPMethod = HttpMethod.Post,
                 Query = query,
             }).ConfigureAwait(false);

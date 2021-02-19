@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
+
 namespace Bynder.Sdk.Query.Upload
 {
     /// <summary>
@@ -24,5 +26,10 @@ namespace Bynder.Sdk.Query.Upload
         /// the asset bank
         /// </summary>
         public string MediaId { get; set; }
+
+        /// <summary>
+        /// Tags of the file that we want to update
+        /// </summary>
+        public IList<string> Tags { get; set; }
     }
 }

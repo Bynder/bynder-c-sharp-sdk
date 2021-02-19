@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -102,7 +102,8 @@ namespace Bynder.Sdk.Service.Upload
                     Filename = query.Filepath,
                     BrandId = query.BrandId,
                     ImportId = finalizeResponse.ImportId,
-                    MediaId = query.MediaId
+                    MediaId = query.MediaId,
+                    Tags = query.Tags
                 }).ConfigureAwait(false);
             }
             else
