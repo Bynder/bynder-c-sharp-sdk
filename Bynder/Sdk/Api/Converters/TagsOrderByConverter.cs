@@ -20,13 +20,20 @@ namespace Bynder.Sdk.Api.Converters
         /// </summary>
         /// <param name="value">TagsOrderBy value</param>
         /// <returns>converted string</returns>
-        public string Convert(object value) => value switch
+        public string Convert(object value)
         {
-            TagsOrderBy.TagAscending => "tag asc",
-            TagsOrderBy.TagDescending => "tag desc",
-            TagsOrderBy.MediaCountAscending => "mediaCount asc",
-            TagsOrderBy.MediaCountDescending => "mediaCount desc",
-            _ => null,
-        };
+            switch (value) {
+                case TagsOrderBy.TagAscending:
+                    return "tag asc";
+                case TagsOrderBy.TagDescending:
+                    return "tag desc";
+                case TagsOrderBy.MediaCountAscending:
+                    return "mediaCount asc";
+                case TagsOrderBy.MediaCountDescending:
+                    return "mediaCount desc";
+                default:
+                    return null;
+            }
+        }
     }
 }
