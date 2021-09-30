@@ -138,9 +138,9 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public async Task UploadFileAsync(UploadQuery query)
+        public async Task<UploadResponse> UploadFileAsync(UploadQuery query)
         {
-            await _uploader.UploadFileAsync(query).ConfigureAwait(false);
+            return await _uploader.UploadFileAsync(query).ConfigureAwait(false);
         }
 
         /// <summary>
