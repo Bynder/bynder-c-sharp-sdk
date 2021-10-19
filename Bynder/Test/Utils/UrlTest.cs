@@ -27,5 +27,14 @@ namespace Bynder.Test.Utils
         {
             Assert.Empty(Url.ConvertToQuery(new Dictionary<string, string>()));
         }
+        
+        [Fact]
+        public void MergeBaseUrlWithRelativePath()
+        {
+            var uriWithDirectDomain = Url.MergeBaseUrlAndRelativePath("https://test.getbynder.com", "/api/v4/some-api-method");
+            Assert.Equal("https://test.getbynder.com/api/v4/some-api-method", uriWithDirectDomain.ToString());
+            var uriWithDirectory = Url.MergeBaseUrlAndRelativePath("https://test.mydomain.com/bynder", "/api/v4/some-api-method");
+            Assert.Equal("https://test.mydomain.com/bynder/api/v4/some-api-method", uriWithDirectory.ToString());
+        }
     }
 }

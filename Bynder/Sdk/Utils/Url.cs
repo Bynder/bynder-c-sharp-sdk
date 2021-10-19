@@ -26,5 +26,19 @@ namespace Bynder.Sdk.Utils
 
             return queryUri;
         }
+
+        /// <summary>
+        /// Merges BaseUrl with a RelativePath
+        /// </summary>
+        /// <param name="baseUrl">The baseUrl of the request</param>
+        /// <param name="urlPath">The relative url of the request</param>
+        /// <returns>A valid uri merge the base and the relative uri</returns>
+        public static Uri MergeBaseUrlAndRelativePath(string baseUrl, string urlPath)
+        {
+            // for the relative url to be merged correctly the following must be true
+            // base url should always end with /
+            // relative url should never begin with a /
+            return new Uri(new Uri(baseUrl.TrimEnd('/')+"/"), urlPath.TrimStart('/'));
+        }
     }
 }

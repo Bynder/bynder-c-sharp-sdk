@@ -132,10 +132,7 @@ namespace Bynder.Sdk.Api.RequestSender
             internal static HttpRequestMessage Create(
                 string baseUrl, HttpMethod method, IDictionary<string, string> requestParams, string urlPath)
             {
-                var builder = new UriBuilder(baseUrl)
-                {
-                    Path = urlPath
-                };
+                var builder = new UriBuilder(Utils.Url.MergeBaseUrlAndRelativePath(baseUrl, urlPath));
 
                 if (HttpMethod.Get == method)
                 {
