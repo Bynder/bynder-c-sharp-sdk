@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
+using Bynder.Sdk.Extensions;
 using Bynder.Sdk.Query.Decoder;
 using Bynder.Sdk.Service.OAuth;
 using Bynder.Sdk.Settings;
@@ -132,10 +133,7 @@ namespace Bynder.Sdk.Api.RequestSender
             internal static HttpRequestMessage Create(
                 string baseUrl, HttpMethod method, IDictionary<string, string> requestParams, string urlPath)
             {
-                var builder = new UriBuilder(baseUrl)
-                {
-                    Path = urlPath
-                };
+                var builder = new UriBuilder(baseUrl).AppendPath(urlPath);
 
                 if (HttpMethod.Get == method)
                 {

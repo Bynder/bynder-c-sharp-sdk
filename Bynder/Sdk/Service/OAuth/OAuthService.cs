@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
+using Bynder.Sdk.Extensions;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Query;
 using Bynder.Sdk.Settings;
@@ -48,7 +49,6 @@ namespace Bynder.Sdk.Service.OAuth
 
             return new UriBuilder(_configuration.BaseUrl)
             {
-                Path = AuthPath,
                 Query = Utils.Url.ConvertToQuery(
                     new Dictionary<string, string>
                     {
@@ -59,7 +59,7 @@ namespace Bynder.Sdk.Service.OAuth
                         { "state", state }
                     }
                 )
-            }.ToString();
+            }.AppendPath(AuthPath).ToString();
         }
 
         /// <summary>
