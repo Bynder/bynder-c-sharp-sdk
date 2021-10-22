@@ -81,7 +81,7 @@ namespace Bynder.Sdk.Service
             if (!_credentials.AreValid() && !_credentials.CanRefresh)
             {
                 throw new MissingTokenException("Access token expired and refresh token is missing. " +
-                                                "Either pass a not expited access token through configuration or login through OAuth2");
+                                                "Either pass a not expired access token through configuration or login through OAuth2");
             }
 
             return _assetService ?? (_assetService = new AssetService(_requestSender));
@@ -96,7 +96,7 @@ namespace Bynder.Sdk.Service
             if (!_credentials.AreValid() && !_credentials.CanRefresh)
             {
                 throw new MissingTokenException("Access token expired and refresh token is missing. " +
-                                                "Either pass a not expited access token through configuration or login through OAuth2");
+                                                "Either pass a not expired access token through configuration or login through OAuth2");
             }
 
             return _collectionService ?? (_collectionService = new CollectionService(_requestSender));

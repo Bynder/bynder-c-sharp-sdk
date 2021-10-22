@@ -94,6 +94,31 @@ namespace Bynder.Sdk.Service.OAuth
             token.SetAccessTokenExpiration();
             _credentials.Update(token);
         }
+        
+        /// <summary>
+        /// Check <see cref="IOAuthService"/>.
+        /// </summary>
+        /// <returns>Check <see cref="IOAuthService"/>.</returns>
+        /// <param name="scopes">Check <see cref="IOAuthService"/>.</param>
+        public async Task GetAccessTokenAsync(string scopes)
+        {
+            var token = await _requestSender.SendRequestAsync(
+                new OAuthRequest<Token>
+                {
+                    Path = TokenPath,
+                    HTTPMethod = HttpMethod.Post,
+                    Query = new TokenQuery
+                    {
+                        ClientId = _configuration.ClientId,
+                        ClientSecret = _configuration.ClientSecret,
+                        GrantType = "client_credentials",
+                        Scopes = scopes
+                    },
+                }
+            ).ConfigureAwait(false);
+            token.SetAccessTokenExpiration();
+            _credentials.Update(token);
+        }
 
         /// <summary>
         /// Check <see cref="IOAuthService"/>.
