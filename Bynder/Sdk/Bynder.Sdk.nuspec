@@ -15,4 +15,7 @@
     <copyright>Copyright © Bynder</copyright>
     <tags>Bynder API C# SDK</tags>
   </metadata>
+  <files>
+    <file src=".\**" target="lib/{framework name}[{version}]" />
+  </files>
 </package>

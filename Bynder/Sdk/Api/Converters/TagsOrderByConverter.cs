@@ -22,7 +22,8 @@ namespace Bynder.Sdk.Api.Converters
         /// <returns>converted string</returns>
         public string Convert(object value)
         {
-            switch (value) {
+            switch (value)
+            {
                 case TagsOrderBy.TagAscending:
                     return "tag asc";
                 case TagsOrderBy.TagDescending:
