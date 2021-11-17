@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
 using Bynder.Sdk.Query.Decoder;
+using Bynder.Sdk.Service;
 using Bynder.Sdk.Service.OAuth;
 using Bynder.Sdk.Settings;
 using Moq;
@@ -27,6 +28,7 @@ namespace Bynder.Test.Api.RequestSender
         private const string _queryString = "Item1=" + _queryValue;
 
         private Mock<IOAuthService> _oAuthServiceMock;
+        private Mock<IBynderClient> _bynderClientMock;
         private Mock<IHttpRequestSender> _httpSenderMock;
         private StubQuery _query;
         private IList<string> _expectedResponseBody;
@@ -34,6 +36,10 @@ namespace Bynder.Test.Api.RequestSender
         public ApiRequestSenderTest()
         {
             _oAuthServiceMock = new Mock<IOAuthService>();
+            _bynderClientMock = new Mock<IBynderClient>();
+            _bynderClientMock
+                .Setup(bynderClient => bynderClient.GetOAuthService())
+                .Returns(_oAuthServiceMock.Object);
             _httpSenderMock = new Mock<IHttpRequestSender>();
             _query = new StubQuery
             {
@@ -133,16 +139,16 @@ namespace Bynder.Test.Api.RequestSender
 
             Assert.Equal(_expectedResponseBody, responseBody);
 
-            _oAuthServiceMock.Verify(oAuthService => oAuthService.GetRefreshTokenAsync(), Times.Once);
+            _oAuthServiceMock.Verify(oAuthService => oAuthService.GetRefreshTokenAsync());
 
             _httpSenderMock.Verify(sender => sender.SendHttpRequest(
-                It.Is<HttpRequestMessage>(
-                    req => req.RequestUri.PathAndQuery.Contains(_path)
+                It.Is<HttpRequestMessage>(req =>
+                    req.RequestUri.PathAndQuery.Contains(_path)
                     && req.Method == HttpMethod.Get
                     && req.Headers.Authorization.ToString() == _authHeader
                     && req.RequestUri.Query.Contains(_queryString)
                 )
-            ), Times.Once);
+            ));
         }
 
         private async Task<T> SendRequestAsync<T>(
@@ -200,7 +206,7 @@ namespace Bynder.Test.Api.RequestSender
                     BaseUrl = new Uri("https://example.bynder.com"),
                 },
                 GetCredentials(hasValidCredentials),
-                _oAuthServiceMock.Object,
+                _bynderClientMock.Object,
                 _httpSenderMock.Object
             );
         }

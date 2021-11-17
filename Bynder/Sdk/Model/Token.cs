@@ -47,23 +47,20 @@ namespace Bynder.Sdk.Model
         [JsonProperty("refresh_token")]
         public string RefreshToken { get; set; }
 
-        private DateTimeOffset AccessTokenExpiration;
+        private DateTimeOffset _accessTokenExpiration;
 
         /// <summary>
-        /// Gets the access token expiration.
+        /// The access token expiration.
         /// </summary>
-        /// <returns>The access token expiration.</returns>
-        public DateTimeOffset GetAccessTokenExpiration()
+        public DateTimeOffset AccessTokenExpiration
         {
-            return AccessTokenExpiration;
+            get { return _accessTokenExpiration; }
         }
 
-        /// <summary>
-        /// Sets the access token expiration according to its ExpiresIn value.
-        /// </summary>
         public void SetAccessTokenExpiration()
         {
-            AccessTokenExpiration = DateTimeOffset.Now.AddSeconds(ExpiresIn);
+            _accessTokenExpiration = DateTimeOffset.Now.AddSeconds(ExpiresIn);
         }
+
     }
 }

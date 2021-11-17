@@ -1,10 +1,9 @@
 // Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using Bynder.Sdk.Model;
-using Newtonsoft.Json;
 using System;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Bynder.Sdk.Settings
 {
@@ -32,23 +31,21 @@ namespace Bynder.Sdk.Settings
         public string ClientSecret { get; set; }
 
         /// <summary>
-        /// Gets or sets the redirect URI. Optional: It is
-        /// only needed if trying to login through OAuth
+        /// Gets or sets the redirect URI.
+        /// Optional: It is only needed if trying to login with OAuth using
+        /// an authorization code.
         /// </summary>
-        /// <value>The redirect URI.</value>
         [JsonProperty("redirect_uri")]
         public string RedirectUri { get; set; }
 
         /// <summary>
-        /// OAuth token
+        /// List of scopes to request to be granted to the access token. Can
+        /// only be a subset of the scopes requested in the Authorize
+        /// application request.
+        /// Optional: When not passed, all the scopes will be requested.
         /// </summary>
-        public Token Token { get; set; }
-
-        /// <summary>
-        /// Permanent token
-        /// </summary>
-        [JsonProperty("permanent_token")]
-        public string PermanentToken { get; set; }
+        [JsonProperty("scopes")]
+        public string Scopes { get; set; }
 
         /// <summary>
         /// Create a <see cref="Configuration"/> using the given filepath

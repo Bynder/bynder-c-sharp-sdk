@@ -11,15 +11,15 @@ namespace Bynder.Test.Model
     {
         [Fact]
         public void SetAccessTokenExpirationAddsExpiresInToCurrentDate() {
-            var token = new Token() {
+            var token = new Token
+            {
                 AccessToken = string.Empty,
                 ExpiresIn = 3600
             };
             token.SetAccessTokenExpiration();
-            var currentDate = DateTimeOffset.Now;
 
-            var expirationDate = token.GetAccessTokenExpiration();
-            expirationDate = expirationDate.AddSeconds(-3600);
+            var currentDate = DateTimeOffset.Now;
+            var expirationDate = token.AccessTokenExpiration.AddSeconds(-3600);
             Assert.Equal(currentDate.Date, expirationDate.Date);
         }
     }

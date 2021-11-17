@@ -3,5 +3,5 @@
   "client_id": "your oauth app client id",
   "client_secret": "your oauth app client secret",
   "redirect_uri": "your oauth app redirect uri",
-  "permanent_token": "your permanent token"
+  "scopes": "offline asset:read asset:write collection:read"
 }
