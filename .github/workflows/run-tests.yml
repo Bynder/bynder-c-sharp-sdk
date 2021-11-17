@@ -25,4 +25,4 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./Bynder/Test/coverage.info
-
+        continue-on-error: true

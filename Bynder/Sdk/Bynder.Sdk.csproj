@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net48</TargetFrameworks>
-    <AssemblyVersion>2.2.7.0</AssemblyVersion>
-    <FileVersion>2.2.7.0</FileVersion>
+    <AssemblyVersion>2.2.8.0</AssemblyVersion>
+    <FileVersion>2.2.8.0</FileVersion>
     <Company>Bynder</Company>
     <Product>Bynder.Sdk</Product>
     <Copyright>Copyright © Bynder</Copyright>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>2.2.7</PackageVersion>
+    <PackageVersion>2.2.8</PackageVersion>
     <Authors>BynderDevops</Authors>
     <Description>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Description>
     <PackageIconUrl>https://bynder.com/static/3.0/img/favicon-black.ico</PackageIconUrl>
@@ -16,7 +16,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Owners>BynderDevops</Owners>
     <PackageProjectUrl>https://github.com/Bynder/bynder-c-sharp-sdk</PackageProjectUrl>
-    <PackageReleaseNotes>Resolved an issue regarding the construction of API urls.</PackageReleaseNotes>
+    <PackageReleaseNotes>Removed support for oAuth1 authentication with permanent tokens. Added support for oAuth2 authentication with client credentials.</PackageReleaseNotes>
     <Summary>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Summary>
     <PackageTags>Bynder API C# SDK</PackageTags>
     <Title>Bynder.Sdk</Title>

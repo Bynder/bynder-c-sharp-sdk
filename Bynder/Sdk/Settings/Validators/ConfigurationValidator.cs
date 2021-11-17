@@ -2,8 +2,6 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using Bynder.Sdk.Exceptions;
-using Bynder.Sdk.Service;
-using Bynder.Sdk.Settings;
 
 namespace Bynder.Sdk.Settings.Validators
 {
@@ -20,6 +18,11 @@ namespace Bynder.Sdk.Settings.Validators
         /// <param name="configuration">Configuration.</param>
         public void Validate(Configuration configuration)
         {
+            if (configuration.BaseUrl == null)
+            {
+                throw new InvalidConfigurationException("Missing Base URL");
+            }
+
             if (configuration.ClientId == null)
             {
                 throw new InvalidConfigurationException("Missing Client Id");
@@ -28,12 +31,6 @@ namespace Bynder.Sdk.Settings.Validators
             if (configuration.ClientSecret == null)
             {
                 throw new InvalidConfigurationException("Missing Client Secret");
-            }
-
-            if (configuration.Token == null
-                && configuration.RedirectUri == null)
-            {
-                throw new InvalidConfigurationException("Either Token or Redirect Uri need to be passed");
             }
         }
     }

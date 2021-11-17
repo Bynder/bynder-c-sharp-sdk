@@ -8,6 +8,9 @@ using Bynder.Sdk.Query.Asset;
 using Bynder.Sdk.Query.Collection;
 using Bynder.Sdk.Settings;
 using System.Threading.Tasks;
+using System.Linq;
+using Bynder.Sdk.Model;
+using Bynder.Sdk.Query.Upload;
 
 namespace Bynder.Sample
 {
@@ -17,51 +20,109 @@ namespace Bynder.Sample
     /// </summary>
     public class ApiSample
     {
+        private IBynderClient _bynderClient;
+
         /// <summary>
         /// Main function
         /// </summary>
         /// <param name="args">arguments to main</param>
         public static async Task Main(string[] args)
         {
-            Configuration configuration = Configuration.FromJson("Config.json");
-            using var client = ClientFactory.Create(configuration);
-            if (configuration.PermanentToken != null)
+            var configuration = Configuration.FromJson("Config.json");
+            var apiSample = new ApiSample(configuration);
+            await apiSample.AuthenticateWithOAuth2Async(
+                useClientCredentials: configuration.RedirectUri == null
+            );
+            await apiSample.ListItemsAsync();
+            await apiSample.UploadFileAsync("/path/to/file.ext");
+        }
+
+        private ApiSample(Configuration configuration) {
+            _bynderClient = ClientFactory.Create(configuration);
+        }
+
+        private async Task ListItemsAsync()
+        {
+            var brands = await _bynderClient.GetAssetService().GetBrandsAsync();
+            Console.WriteLine($"Brands: [{string.Join(", ", brands.Select(m => m.Name))}]");
+
+            var mediaList = await _bynderClient.GetAssetService().GetMediaListAsync(
+                new MediaQuery
+                {
+                    Type = AssetType.Image,
+                    Limit = 10,
+                    Page = 1,
+                }
+            );
+            Console.WriteLine($"Assets: [{string.Join(", ", mediaList.Select(m => m.Name))}]");
+
+            var collectionList = await _bynderClient.GetCollectionService().GetCollectionsAsync(
+                new GetCollectionsQuery
+                {
+                    Limit = 10,
+                    Page = 1,
+                }
+            );
+            Console.WriteLine($"Collections: [{string.Join(", ", mediaList.Select(m => m.Name))}]");
+        }
+
+        private async Task UploadFileAsync(string uploadPath)
+        {
+            var assetService = _bynderClient.GetAssetService();
+
+            var brands = await assetService.GetBrandsAsync();
+            if (!brands.Any())
             {
-                await QueryBynder(client);
+                Console.Error.WriteLine("No brands found in this account.");
+                return;
+            }
+
+            await assetService.UploadFileAsync(new UploadQuery { Filepath = uploadPath, BrandId = brands.First().Id });
+
+            //TODO: This can be done instead when UploadFileToNewAssetAsync gets the correct response type
+            //var saveMediaResponse = await assetService.UploadFileToNewAssetAsync(uploadPath, brands.First().Id);
+            //Console.WriteLine($"Asset uploaded: {saveMediaResponse.MediaId}");
+            //
+            //Media media = null;
+            //for (int iterations = 10; iterations > 0; --iterations)
+            //{
+            //    try
+            //    {
+            //        media = await assetService.GetMediaInfoAsync(
+            //            new MediaInformationQuery
+            //            {
+            //                MediaId = saveMediaResponse.MediaId,
+            //            }
+            //        );
+
+            //    }
+            //    catch (HttpRequestException)
+            //    {
+            //        await Task.Delay(1000).ConfigureAwait(false);
+            //    }
+            //}
+            //if (media == null)
+            //{
+            //    Console.Error.WriteLine("The asset could not be retrieved");
+            //    return;
+            //}
+
+            //var saveMediaVersionResponse = await assetService.UploadFileToExistingAssetAsync(uploadPath, media.Id);
+            //Console.WriteLine($"New asset version uploaded: {saveMediaVersionResponse.MediaId}");
+        }
+
+        private async Task AuthenticateWithOAuth2Async(bool useClientCredentials)
+        {
+            if (useClientCredentials)
+            {
+                await _bynderClient.GetOAuthService().GetAccessTokenAsync();
             }
             else
             {
-                await QueryBynderUsingOAuth(client);
-            }
-        }
-
-        private static async Task QueryBynder(IBynderClient client)
-        {
-            var mediaList = await client.GetAssetService().GetMediaListAsync(new MediaQuery());
-            foreach (var media in mediaList)
-            {
-                Console.WriteLine(media.Name);
-            }
-
-            var collectionList = await client.GetCollectionService().GetCollectionsAsync(new GetCollectionsQuery());
-            foreach (var collection in collectionList)
-            {
-                Console.WriteLine(collection.Name);
-            }
-        }
-
-        private static async Task QueryBynderUsingOAuth(IBynderClient client)
-        {
-            using var waitForToken = new WaitForToken();
-            using var listener = new UrlHttpListener("http://localhost:8888/", waitForToken);
-
-            Browser.Launch(client.GetOAuthService().GetAuthorisationUrl("state example", "offline asset:read collection:read"));
-            waitForToken.WaitHandle.WaitOne(50000);
-
-            if (waitForToken.Success)
-            {
-                client.GetOAuthService().GetAccessTokenAsync(waitForToken.Token, "offline asset:read collection:read").Wait();
-                await QueryBynder(client);
+                Browser.Launch(_bynderClient.GetOAuthService().GetAuthorisationUrl("state example"));
+                Console.WriteLine("Insert the code: ");
+                var code = Console.ReadLine();
+                await _bynderClient.GetOAuthService().GetAccessTokenAsync(code);
             }
         }
 

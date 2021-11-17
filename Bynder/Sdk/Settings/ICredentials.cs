@@ -34,12 +34,6 @@ namespace Bynder.Sdk.Settings
         string RefreshToken { get; }
 
         /// <summary>
-        /// Gets a value indicating whether this <see cref="ICredentials"/> can be refreshed.
-        /// </summary>
-        /// <value><c>true</c> if can be refreshed; otherwise, <c>false</c>.</value>
-        bool CanRefresh { get; }
-
-        /// <summary>
         /// Checks if credentials are valid or expired
         /// </summary>
         /// <returns><c>true</c>, if credentials are valid, <c>false</c> otherwise.</returns>
