@@ -13,7 +13,7 @@
     <PackageIcon>BynderLogo.png</PackageIcon>
     <PackageIconUrl>https://bynder.com/static/3.0/img/favicon-black.ico</PackageIconUrl>
     <NeutralLanguage>en</NeutralLanguage>
-    <PackageLicenseUrl>https://github.com/Bynder/bynder-c-sharp-sdk/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Owners>BynderDevops</Owners>
     <PackageProjectUrl>https://github.com/Bynder/bynder-c-sharp-sdk</PackageProjectUrl>
@@ -37,6 +37,7 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
+    <None Include="PackageResources\LICENSE" Pack="true" PackagePath=""/>
     <None Include="PackageResources\BynderLogo.png" Pack="true" PackagePath=""/>
   </ItemGroup>
 </Project>
