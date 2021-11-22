@@ -34,7 +34,7 @@ Task<Metaproperty> GetMetapropertyAsync(MetapropertiesQuery query);
 Task<List<String>> GetMetapropertyDependenciesAsync(MetapropertiesQuery query);
 Task<Media> GetMediaInfoAsync(MediaInformationQuery query);
 Task<IList<Media>> GetMediaListAsync(MediaQuery query);
-Task UploadFileAsync(UploadQuery query);
+Task<SaveMediaResponse> UploadFileAsync(UploadQuery query);
 Task<Status> ModifyMediaAsync(ModifyMediaQuery query);
 Task<List<Tag>> GetTagsAsync(TagsQuery query);
 Task<Status> AddTagToMediaAsync(AddTagToMediaQuery query);
