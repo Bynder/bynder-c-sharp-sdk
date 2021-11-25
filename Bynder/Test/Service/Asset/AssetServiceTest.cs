@@ -1,6 +1,7 @@
 // Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -220,5 +221,41 @@ namespace Bynder.Test.Service.Asset
             ));
         }
 
+        [Fact]
+        public async Task CreateAssetUsageCallsRequestSenderWithValidRequest()
+        {
+            var result = new Status { Message = "Accepted", StatusCode = 200 };
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
+                .ReturnsAsync(result);
+            var query = new AssetUsageQuery("integrationId", "assetId");
+            await _assetService.CreateAssetUsage(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest>(req =>
+                    req.Path == $"/api/media/usage/"
+                    && req.HTTPMethod == HttpMethod.Post
+                    && req.Query == query
+                )
+            ));
+        }
+
+        [Fact]
+        public async Task DeleteAssetUsageCallsRequestSenderWithValidRequest()
+        {
+            var result = new Status { Message = "Accepted", StatusCode = 204 };
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
+                .ReturnsAsync(result);
+
+            var query = new AssetUsageQuery("integrationId", "assetId", "/test/test.jpg");
+            await _assetService.DeleteAssetUsage(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest>(req =>
+                    req.Path == $"/api/media/usage/"
+                    && req.HTTPMethod == HttpMethod.Delete
+                    && req.Query == query
+                )
+            ));
+        }
     }
 }

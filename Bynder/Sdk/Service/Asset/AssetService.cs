@@ -200,5 +200,37 @@ namespace Bynder.Sdk.Service.Asset
                 Query = query,
             }).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Create an asset usage operation to track usage of Bynder assets in third party applications.
+        /// </summary>
+        /// <param name="query">Information about the asset usage</param>
+        /// <returns>Task representing the operation</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        public async Task<Status> CreateAssetUsage(AssetUsageQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest
+            {
+                Path = $"/api/media/usage/",
+                HTTPMethod = HttpMethod.Post,
+                Query = query,
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Delete an asset usage operation to track usage of Bynder assets in third party applications.
+        /// </summary>
+        /// <param name="query">Information about the asset usage</param>
+        /// <returns>Task representing the operation</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        public async Task<Status> DeleteAssetUsage(AssetUsageQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest
+            {
+                Path = $"/api/media/usage/", //?integration_id={query.IntegrationId}&asset_id={query.AssetId}&uri={Uri.EscapeDataString(query.Uri)}",
+                HTTPMethod = HttpMethod.Delete,
+                Query = query
+            }).ConfigureAwait(false);
+        }
     }
 }

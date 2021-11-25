@@ -105,5 +105,22 @@ namespace Bynder.Sdk.Service.Asset
         /// <returns>Task representing the upload</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         Task<Status> AddTagToMediaAsync(AddTagToMediaQuery query);
+
+        /// <summary>
+        /// Create an asset usage operation to track usage of Bynder assets in third party applications.
+        /// </summary>
+        /// <param name="query">Information about the asset usage</param>
+        /// <returns>Task representing the operation</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<Status> CreateAssetUsage(AssetUsageQuery query);
+
+        /// <summary>
+        /// Delete an asset usage operation to track usage of Bynder assets in third party applications.
+        /// </summary>
+        /// <param name="query">Information about the asset usage</param>
+        /// <returns>Task representing the operation</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<Status> DeleteAssetUsage(AssetUsageQuery query);
+
     }
 }
