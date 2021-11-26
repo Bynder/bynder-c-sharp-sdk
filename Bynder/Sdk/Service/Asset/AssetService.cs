@@ -227,7 +227,7 @@ namespace Bynder.Sdk.Service.Asset
         {
             return await _requestSender.SendRequestAsync(new ApiRequest
             {
-                Path = $"/api/media/usage/", //?integration_id={query.IntegrationId}&asset_id={query.AssetId}&uri={Uri.EscapeDataString(query.Uri)}",
+                Path = $"/api/media/usage/",
                 HTTPMethod = HttpMethod.Delete,
                 Query = query
             }).ConfigureAwait(false);
