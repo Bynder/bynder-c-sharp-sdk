@@ -15,14 +15,10 @@ namespace Bynder.Sdk.Query.Asset
         /// </summary>
         /// <param name="integrationId">ID of the integration that the usage applies to.</param>
         /// <param name="assetId">ID of the asset that the usage applies to.</param>
-        /// <param name="uri">Location of the asset usage.</param>
-        /// <param name="additional">Additional information.</param>
-        public AssetUsageQuery(string integrationId, string assetId, string uri = null, string additional = null)
+        public AssetUsageQuery(string integrationId, string assetId)
         {
             IntegrationId = integrationId;
             AssetId = assetId;
-            Uri = uri;
-            Additional = additional;
         }
 
         /// <summary>
