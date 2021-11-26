@@ -40,8 +40,8 @@ namespace Bynder.Sdk.Query.Asset
         /// <summary>
         /// Timestamp of the operation.
         /// </summary>
-        [ApiField("timestamp")]
-        public string Timestamp => DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
+        [ApiField("timestamp", Converter = typeof(DateTimeOffsetConverter))]
+        public DateTimeOffset? Timestamp { get; set; }
 
         /// <summary>
         /// Location of the asset usage.
