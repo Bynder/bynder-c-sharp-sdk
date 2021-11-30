@@ -1,3 +1,4 @@
+using Bynder.Sdk.Api.Converters;
 using Bynder.Sdk.Query.Decoder;
 using System;
 using System.Collections.Generic;
