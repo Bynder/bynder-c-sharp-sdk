@@ -246,7 +246,7 @@ namespace Bynder.Test.Service.Asset
             _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
                 .ReturnsAsync(result);
 
-            var query = new AssetUsageQuery("integrationId", "assetId", "/test/test.jpg");
+            var query = new AssetUsageQuery("integrationId", "assetId") { Uri = "/test/test.jpg" };
             await _assetService.DeleteAssetUsage(query);
 
             _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
