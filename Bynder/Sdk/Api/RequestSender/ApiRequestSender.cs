@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -135,7 +135,7 @@ namespace Bynder.Sdk.Api.RequestSender
             {
                 var builder = new UriBuilder(baseUrl).AppendPath(urlPath);
 
-                if (HttpMethod.Get == method)
+                if (HttpMethod.Get == method || HttpMethod.Delete == method)
                 {
                     builder.Query = Utils.Url.ConvertToQuery(requestParams);
                 }

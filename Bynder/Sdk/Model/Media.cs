@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -206,6 +206,12 @@ namespace Bynder.Sdk.Model
         /// </summary>
         [JsonProperty("original")]
         public string Original { get; set; }
+
+        /// <summary>
+        /// Dynamic Asset Transformation base URL.
+        /// </summary>
+        [JsonProperty("transformBaseUrl")]
+        public string TransformBaseUrl { get; set; }
 
         /// <summary>
         /// A dictionary representation of properties
