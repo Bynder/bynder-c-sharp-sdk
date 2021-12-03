@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net48</TargetFrameworks>
-    <AssemblyVersion>2.2.9.0</AssemblyVersion>
-    <FileVersion>2.2.9.0</FileVersion>
+    <AssemblyVersion>2.2.10.0</AssemblyVersion>
+    <FileVersion>2.2.10.0</FileVersion>
     <Company>Bynder</Company>
     <Product>Bynder.Sdk</Product>
     <Copyright>Copyright © Bynder</Copyright>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>2.2.9</PackageVersion>
+    <PackageVersion>2.2.10</PackageVersion>
     <Authors>BynderDevops</Authors>
     <Description>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Description>
     <PackageIcon>BynderLogo.png</PackageIcon>
@@ -17,7 +17,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Owners>BynderDevops</Owners>
     <PackageProjectUrl>https://github.com/Bynder/bynder-c-sharp-sdk</PackageProjectUrl>
-    <PackageReleaseNotes>The UploadFile call now returns data about the created asset.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added "transformBaseUrl" field to Media model. Added functionality to create and delete asset usage records. Added functionality to pass metaproperty options during save &amp; modify media.</PackageReleaseNotes>
     <Summary>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Summary>
     <PackageTags>Bynder API C# SDK</PackageTags>
     <Title>Bynder.Sdk</Title>
@@ -37,7 +37,7 @@
     </AssemblyAttribute>
   </ItemGroup>
   <ItemGroup>
-    <None Include="PackageResources\LICENSE" Pack="true" PackagePath=""/>
-    <None Include="PackageResources\BynderLogo.png" Pack="true" PackagePath=""/>
+    <None Include="PackageResources\LICENSE" Pack="true" PackagePath="" />
+    <None Include="PackageResources\BynderLogo.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>
