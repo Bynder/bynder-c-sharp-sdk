@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Bynder.Sdk.Api.Converters;
 using Bynder.Sdk.Query.Decoder;
 
 namespace Bynder.Sdk.Query.Asset
@@ -52,6 +52,22 @@ namespace Bynder.Sdk.Query.Asset
         /// </summary>
         [ApiField("isPublic")]
         public bool IsPublic { get; set; }
+
+        /// <summary>
+        /// Metaproperty options to set on the asset.
+        /// </summary>
+        [ApiField("metaproperty", Converter = typeof(MetapropertyOptionsConverter))]
+        public IDictionary<string, IList<string>> MetapropertyOptions { get; set; }
+
+        /// <summary>
+        /// Add a set of options to a metaproperty
+        /// </summary>
+        /// <param name="metapropertyId">metaproperty ID</param>
+        /// <param name="optionIds">set of options</param>
+        public void AddMetapropertyOptions(string metapropertyId, IList<string> optionIds)
+        {
+            MetapropertyOptions.Add(metapropertyId, optionIds);
+        }
     }
 }
 
