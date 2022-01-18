@@ -1,34 +1,32 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyVersion>2.1.0</AssemblyVersion>
-    <FileVersion>2.1.0</FileVersion>
+    <TargetFrameworks>netstandard2.1;net48</TargetFrameworks>
+    <AssemblyVersion>2.2.10.0</AssemblyVersion>
+    <FileVersion>2.2.10.0</FileVersion>
     <Company>Bynder</Company>
     <Product>Bynder.Sdk</Product>
     <Copyright>Copyright © Bynder</Copyright>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>2.2.3</PackageVersion>
+    <PackageVersion>2.2.10</PackageVersion>
     <Authors>BynderDevops</Authors>
     <Description>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Description>
+    <PackageIcon>BynderLogo.png</PackageIcon>
     <PackageIconUrl>https://bynder.com/static/3.0/img/favicon-black.ico</PackageIconUrl>
     <NeutralLanguage>en</NeutralLanguage>
-    <PackageLicenseUrl>https://github.com/Bynder/bynder-c-sharp-sdk/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Owners>BynderDevops</Owners>
     <PackageProjectUrl>https://github.com/Bynder/bynder-c-sharp-sdk</PackageProjectUrl>
-    <PackageReleaseNotes>General improvements for stability.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added "transformBaseUrl" field to Media model. Added functionality to create and delete asset usage records. Added functionality to pass metaproperty options during save &amp; modify media.</PackageReleaseNotes>
     <Summary>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Summary>
     <PackageTags>Bynder API C# SDK</PackageTags>
     <Title>Bynder.Sdk</Title>
     <PackageId>Bynder.Sdk</PackageId>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
@@ -37,5 +35,9 @@
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PackageResources\LICENSE" Pack="true" PackagePath="" />
+    <None Include="PackageResources\BynderLogo.png" Pack="true" PackagePath="" />
   </ItemGroup>
 </Project>

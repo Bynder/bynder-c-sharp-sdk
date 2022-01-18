@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -74,7 +74,7 @@ namespace Bynder.Sdk.Service.Upload
         /// </summary>
         /// <param name="query">Upload query information to upload a file</param>
         /// <returns>Task representing the upload</returns>
-        public async Task UploadFileAsync(UploadQuery query)
+        public async Task<SaveMediaResponse> UploadFileAsync(UploadQuery query)
         {
             var uploadRequest = await RequestUploadInformationAsync(new RequestUploadQuery { Filename = query.Filepath }).ConfigureAwait(false);
 
@@ -97,12 +97,13 @@ namespace Bynder.Sdk.Service.Upload
 
             if (await HasFinishedSuccessfullyAsync(finalizeResponse).ConfigureAwait(false))
             {
-                await SaveMediaAsync(new SaveMediaQuery
+                return await SaveMediaAsync(new SaveMediaQuery
                 {
                     Filename = query.Filepath,
                     BrandId = query.BrandId,
                     ImportId = finalizeResponse.ImportId,
-                    MediaId = query.MediaId
+                    MediaId = query.MediaId,
+                    Tags = query.Tags
                 }).ConfigureAwait(false);
             }
             else
@@ -137,7 +138,7 @@ namespace Bynder.Sdk.Service.Upload
         /// </summary>
         /// <param name="query">Query with necessary information to save the asset</param>
         /// <returns>Task that represents the save</returns>
-        private async Task SaveMediaAsync(SaveMediaQuery query)
+        private async Task<SaveMediaResponse> SaveMediaAsync(SaveMediaQuery query)
         {
             query.Filename = Path.GetFileName(query.Filename);
 
@@ -151,7 +152,7 @@ namespace Bynder.Sdk.Service.Upload
                 path = $"/api/v4/media/{query.MediaId}/save/{query.ImportId}/";
             }
 
-            var request = new ApiRequest
+            var request = new ApiRequest<SaveMediaResponse>
             {
                 Path = path,
                 HTTPMethod = HttpMethod.Post,
@@ -159,7 +160,7 @@ namespace Bynder.Sdk.Service.Upload
             };
 
             // No need to check response. It will only gets here if SaveMedia call gets a success code response
-            await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
+            return await _requestSender.SendRequestAsync(request).ConfigureAwait(false);
         }
 
         /// <summary>

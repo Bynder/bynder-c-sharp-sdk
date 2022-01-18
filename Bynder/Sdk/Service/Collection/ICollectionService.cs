@@ -34,7 +34,7 @@ namespace Bynder.Sdk.Service.Collection
         /// <param name="query">information of the collection to be created</param>
         /// <returns>Task with the Uri of the created Collection</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task CreateCollectionAsync(CreateCollectionQuery query);
+        Task<Status> CreateCollectionAsync(CreateCollectionQuery query);
 
         /// <summary>
         /// Deletes a specific colection
@@ -42,7 +42,7 @@ namespace Bynder.Sdk.Service.Collection
         /// <param name="id">The uuid of the specific <see cref="Collection"/></param>
         /// <returns>Task</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task DeleteCollectionAsync(string id);
+        Task<Status> DeleteCollectionAsync(string id);
 
         /// <summary>
         /// Gets Media of Collection Async
@@ -58,7 +58,7 @@ namespace Bynder.Sdk.Service.Collection
         /// <param name="query">information needed to add media to a Collection</param>
         /// <returns>Task with the Uri of the created Collection</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task AddMediaAsync(AddMediaQuery query);
+        Task<Status> AddMediaAsync(AddMediaQuery query);
 
         /// <summary>
         /// Removes Media from Colection
@@ -66,7 +66,7 @@ namespace Bynder.Sdk.Service.Collection
         /// <param name="query">information needed in order to remove media from a Collection</param>
         /// <returns>Task</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task RemoveMediaAsync(RemoveMediaQuery query);
+        Task<Status> RemoveMediaAsync(RemoveMediaQuery query);
 
         /// <summary>
         /// Shares a Colection
@@ -74,6 +74,6 @@ namespace Bynder.Sdk.Service.Collection
         /// <param name="query">information required for sharing a collection</param>
         /// <returns>Task</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task ShareCollectionAsync(ShareQuery query);
+        Task<Status> ShareCollectionAsync(ShareQuery query);
     }
 }

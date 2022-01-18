@@ -1,6 +1,7 @@
 // Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -61,6 +62,46 @@ namespace Bynder.Test.Service.Asset
             ));
 
             Assert.Equal(result, metaproperties);
+        }
+
+        [Fact]
+        public async Task GetMetapropertyCallsRequestSenderWithValidRequest()
+        {
+            var result = new Metaproperty();
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<Metaproperty>>()))
+                .ReturnsAsync(result);
+            var query = new MetapropertyQuery("metapropertyId");
+            var metaproperty = await _assetService.GetMetapropertyAsync(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<Metaproperty>>(req =>
+                    req.Path == $"/api/v4/metaproperties/{query.MetapropertyId}"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == null
+                )
+            ));
+
+            Assert.Equal(result, metaproperty);
+        }
+
+        [Fact]
+        public async Task GetMetapropertyDependenciesCallsRequestSenderWithValidRequest()
+        {
+            var result = new List<string>();
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<IList<string>>>()))
+                .ReturnsAsync(result);
+            var query = new MetapropertyQuery("metapropertyId");
+            var dependencies = await _assetService.GetMetapropertyDependenciesAsync(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<IList<string>>>(req =>
+                    req.Path == $"api/v4/metaproperties/{query.MetapropertyId}/dependencies/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == null
+                )
+            ));
+
+            Assert.Equal(result, dependencies);
         }
 
         [Fact]
@@ -129,7 +170,7 @@ namespace Bynder.Test.Service.Asset
         [Fact]
         public async Task ModifyMediaCallsRequestSenderWithValidRequest()
         {
-            var result = new { message = "Accepted", statuscode = 202 };
+            var result = new Status { Message = "Accepted", StatusCode = 202 };
             _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
                 .ReturnsAsync(result);
             var modifyMediaQuery = new ModifyMediaQuery("mediaId");
@@ -140,6 +181,79 @@ namespace Bynder.Test.Service.Asset
                     req => req.Path == $"/api/v4/media/{modifyMediaQuery.MediaId}/"
                     && req.HTTPMethod == HttpMethod.Post
                     && req.Query == modifyMediaQuery
+                )
+            ));
+        }
+
+        [Fact]
+        public async Task GetTagsCallsRequestSenderWithValidRequest()
+        {
+            var result = new Status { Message = "Accepted", StatusCode = 202 };
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
+                .ReturnsAsync(result);
+            var query = new GetTagsQuery { };
+            await _assetService.GetTagsAsync(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<IList<Tag>>>(req =>
+                    req.Path == "/api/v4/tags/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == query
+                )
+            ));
+        }
+
+        [Fact]
+        public async Task AddTagToMediaCallsRequestSenderWithValidRequest()
+        {
+            var result = new Status { Message = "Accepted", StatusCode = 202 };
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
+                .ReturnsAsync(result);
+            var query = new AddTagToMediaQuery("tagId", new List<string>());
+            await _assetService.AddTagToMediaAsync(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest>(req =>
+                    req.Path == $"/api/v4/tags/{query.TagId}/media/"
+                    && req.HTTPMethod == HttpMethod.Post
+                    && req.Query == query
+                )
+            ));
+        }
+
+        [Fact]
+        public async Task CreateAssetUsageCallsRequestSenderWithValidRequest()
+        {
+            var result = new Status { Message = "Accepted", StatusCode = 200 };
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
+                .ReturnsAsync(result);
+            var query = new AssetUsageQuery("integrationId", "assetId");
+            await _assetService.CreateAssetUsage(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest>(req =>
+                    req.Path == $"/api/media/usage/"
+                    && req.HTTPMethod == HttpMethod.Post
+                    && req.Query == query
+                )
+            ));
+        }
+
+        [Fact]
+        public async Task DeleteAssetUsageCallsRequestSenderWithValidRequest()
+        {
+            var result = new Status { Message = "Accepted", StatusCode = 204 };
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
+                .ReturnsAsync(result);
+
+            var query = new AssetUsageQuery("integrationId", "assetId") { Uri = "/test/test.jpg" };
+            await _assetService.DeleteAssetUsage(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest>(req =>
+                    req.Path == $"/api/media/usage/"
+                    && req.HTTPMethod == HttpMethod.Delete
+                    && req.Query == query
                 )
             ));
         }

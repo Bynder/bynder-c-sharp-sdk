@@ -2,14 +2,13 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
-using Bynder.Sdk.Exceptions;
 using Bynder.Sdk.Api.RequestSender;
+using Bynder.Sdk.Model;
 using Bynder.Sdk.Service.Asset;
 using Bynder.Sdk.Service.Collection;
 using Bynder.Sdk.Service.OAuth;
-using Bynder.Sdk.Settings.Validators;
-using Bynder.Sdk.Model;
 using Bynder.Sdk.Settings;
+using Bynder.Sdk.Settings.Validators;
 
 namespace Bynder.Sdk.Service
 {
@@ -20,10 +19,10 @@ namespace Bynder.Sdk.Service
     {
         private readonly Configuration _configuration;
         private readonly IApiRequestSender _requestSender;
-        private ICredentials _credentials;
-        private IOAuthService _oauthService;
-        private IAssetService _assetService;
-        private ICollectionService _collectionService;
+        private readonly ICredentials _credentials;
+        private readonly IAssetService _assetService;
+        private readonly ICollectionService _collectionService;
+        private readonly IOAuthService _oauthService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sdk.Service.Client"/> class.
@@ -33,15 +32,11 @@ namespace Bynder.Sdk.Service
         {
             new ConfigurationValidator().Validate(configuration);
             _configuration = configuration;
-            if (configuration.PermanentToken != null)
-            {
-                _credentials = new Credentials(configuration.PermanentToken);
-            }
-            else
-            {
-                _credentials = new Credentials(configuration.Token);
-            }
-            _requestSender = ApiRequestSender.Create(_configuration, _credentials, _oauthService);
+            _credentials = new Credentials();
+            _requestSender = ApiRequestSender.Create(_configuration, _credentials, this);
+            _assetService = new AssetService(_requestSender);
+            _collectionService = new CollectionService(_requestSender);
+            _oauthService = new OAuthService(_configuration, _credentials, _requestSender);
         }
 
         /// <summary>
@@ -78,13 +73,7 @@ namespace Bynder.Sdk.Service
         /// <returns>Check <see cref="t:Sdk.Service.IClient"/></returns>
         public IAssetService GetAssetService()
         {
-            if (!_credentials.AreValid() && !_credentials.CanRefresh)
-            {
-                throw new MissingTokenException("Access token expired and refresh token is missing. " +
-                                                "Either pass a not expited access token through configuration or login through OAuth2");
-            }
-
-            return _assetService ?? (_assetService = new AssetService(_requestSender));
+            return _assetService;
         }
 
         /// <summary>
@@ -93,13 +82,7 @@ namespace Bynder.Sdk.Service
         /// <returns>Check <see cref="t:Sdk.Service.IClient"/></returns>
         public ICollectionService GetCollectionService()
         {
-            if (!_credentials.AreValid() && !_credentials.CanRefresh)
-            {
-                throw new MissingTokenException("Access token expired and refresh token is missing. " +
-                                                "Either pass a not expited access token through configuration or login through OAuth2");
-            }
-
-            return _collectionService ?? (_collectionService = new CollectionService(_requestSender));
+            return _collectionService;
         }
 
         /// <summary>
@@ -108,7 +91,8 @@ namespace Bynder.Sdk.Service
         /// <returns>Check <see cref="t:Sdk.Service.IClient"/></returns>
         public IOAuthService GetOAuthService()
         {
-            return _oauthService ?? (_oauthService = new OAuthService(_configuration, _credentials, _requestSender));
+            return _oauthService;
         }
+
     }
 }

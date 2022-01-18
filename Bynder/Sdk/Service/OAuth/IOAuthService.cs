@@ -15,16 +15,20 @@ namespace Bynder.Sdk.Service.OAuth
         /// </summary>
         /// <returns>The authorisation URL.</returns>
         /// <param name="state">State string to be checked to avoid CSRF. https://auth0.com/docs/protocols/oauth2/oauth-state</param>
-        /// <param name="scopes">Scopes to request authorization for</param>
-        string GetAuthorisationUrl(string state, string scopes);
+        string GetAuthorisationUrl(string state);
+
+        /// <summary>
+        /// Gets an access token using client credentials.
+        /// </summary>
+        /// <returns>The task to get the access token and update the credentials with it.</returns>
+        Task GetAccessTokenAsync();
 
         /// <summary>
         /// Gets an access token using the code authorization grant.
         /// </summary>
         /// <returns>The task to get the access token and update the credentials with it.</returns>
         /// <param name="code">Code received after the redirect</param>
-        /// <param name="scopes">The authorization scopes</param>
-        Task GetAccessTokenAsync(string code, string scopes);
+        Task GetAccessTokenAsync(string code);
 
         /// <summary>
         /// Gets a refresh token.

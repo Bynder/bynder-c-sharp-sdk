@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Bynder.Sdk.Model;
+
 namespace Bynder.Sdk.Api.Requests
 {
     /// <summary>
@@ -14,7 +16,7 @@ namespace Bynder.Sdk.Api.Requests
     /// <summary>
     /// API request where the response has an empty body, or a body with an unknown structure.
     /// </summary>
-    internal class ApiRequest : Request<object>
+    internal class ApiRequest : Request<Status>
     {
     }
 }

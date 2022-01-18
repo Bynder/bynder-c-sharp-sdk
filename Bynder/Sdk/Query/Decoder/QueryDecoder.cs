@@ -41,21 +41,33 @@ namespace Bynder.Sdk.Query.Decoder
         /// <param name="propertyInfo">property type information</param>
         /// <param name="query">query object</param>
         /// <param name="collection">collection to add the converted values</param>
-        private void ConvertProperty(PropertyInfo propertyInfo, object query, IDictionary<string, string> collection)
+        private void ConvertProperty(PropertyInfo propertyInfo, object query, IDictionary<string, string> parameters)
         {
-            var attributes = propertyInfo.GetCustomAttributes(true);
-            foreach (var attribute in attributes)
+            foreach (var attribute in propertyInfo.GetCustomAttributes(true))
             {
-                ApiField nameAttr = attribute as ApiField;
-                if (nameAttr != null)
+                if (attribute is ApiField apiField)
                 {
                     object value = propertyInfo.GetValue(query);
-                    if (value != null)
+                    if (value == null)
                     {
-                        var convertedValue = ConvertPropertyValue(nameAttr, propertyInfo.PropertyType, value);
-                        if (!string.IsNullOrEmpty(convertedValue))
+                        return;
+                    }
+
+                    if (apiField.Converter == null)
+                    {
+                        AddParam(parameters, apiField.ApiName, value.ToString());
+                    }
+                    else if (Activator.CreateInstance(apiField.Converter) is ITypeToStringConverter stringConverter
+                        && stringConverter.CanConvert(propertyInfo.PropertyType))
+                    {
+                        AddParam(parameters, apiField.ApiName, stringConverter.Convert(value));
+                    }
+                    else if (Activator.CreateInstance(apiField.Converter) is ITypeToDictionaryConverter dictConverter
+                        && dictConverter.CanConvert(propertyInfo.PropertyType))
+                    {
+                        foreach (var item in dictConverter.Convert(value))
                         {
-                            collection.Add(nameAttr.ApiName, convertedValue);
+                            AddParam(parameters, $"{apiField.ApiName}.{item.Key}", item.Value);
                         }
                     }
 
@@ -65,36 +77,13 @@ namespace Bynder.Sdk.Query.Decoder
             }
         }
 
-        /// <summary>
-        /// Function called to convert property values to string. If no converter is
-        /// specified, then .ToString is called.
-        /// </summary>
-        /// <param name="apiField">API field attribute</param>
-        /// <param name="propertyType">property type information</param>
-        /// <param name="value">current value</param>
-        /// <returns>converted value</returns>
-        private string ConvertPropertyValue(ApiField apiField, Type propertyType, object value)
+        private void AddParam(IDictionary<string, string> parameters, string key, string value)
         {
-            string convertedValue = null;
-            bool isConverted = false;
-            if (apiField.Converter != null)
+            if (!string.IsNullOrEmpty(value))
             {
-                ITypeToStringConverter converter = Activator.CreateInstance(apiField.Converter) as ITypeToStringConverter;
-
-                if (converter != null
-                    && converter.CanConvert(propertyType))
-                {
-                    convertedValue = converter.Convert(value);
-                    isConverted = true;
-                }
+                parameters.Add(key, value);
             }
-
-            if (!isConverted)
-            {
-                convertedValue = value.ToString();
-            }
-
-            return convertedValue;
         }
+
     }
 }

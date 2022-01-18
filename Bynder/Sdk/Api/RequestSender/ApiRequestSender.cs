@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -8,8 +8,9 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
+using Bynder.Sdk.Extensions;
 using Bynder.Sdk.Query.Decoder;
-using Bynder.Sdk.Service.OAuth;
+using Bynder.Sdk.Service;
 using Bynder.Sdk.Settings;
 using Newtonsoft.Json;
 
@@ -23,7 +24,7 @@ namespace Bynder.Sdk.Api.RequestSender
         private readonly Configuration _configuration;
         private readonly QueryDecoder _queryDecoder = new QueryDecoder();
         private readonly ICredentials _credentials;
-        private readonly IOAuthService _oauthService;
+        private readonly IBynderClient _bynderClient;
         private SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
         private IHttpRequestSender _httpSender;
 
@@ -34,11 +35,11 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <param name="credentials">Credentials to use in authorized requests and to refresh tokens</param>
         /// <param name="oauthService">OAuthService.</param>
         /// <param name="httpSender">HTTP instance to send API requests</param>
-        internal ApiRequestSender(Configuration configuration, ICredentials credentials, IOAuthService oauthService, IHttpRequestSender httpSender)
+        internal ApiRequestSender(Configuration configuration, ICredentials credentials, IBynderClient bynderClient, IHttpRequestSender httpSender)
         {
             _configuration = configuration;
             _credentials = credentials;
-            _oauthService = oauthService;
+            _bynderClient = bynderClient;
             _httpSender = httpSender;
         }
 
@@ -49,9 +50,9 @@ namespace Bynder.Sdk.Api.RequestSender
         /// <param name="configuration">Configuration.</param>
         /// <param name="credentials">Credentials.</param>
         /// <param name="oauthService">OAuthService.</param>
-        public static IApiRequestSender Create(Configuration configuration, ICredentials credentials, IOAuthService oauthService)
+        public static IApiRequestSender Create(Configuration configuration, ICredentials credentials, IBynderClient bynderClient)
         {
-            return new ApiRequestSender(configuration, credentials, oauthService, new HttpRequestSender());
+            return new ApiRequestSender(configuration, credentials, bynderClient, new HttpRequestSender());
         }
 
         /// <summary>
@@ -110,7 +111,7 @@ namespace Bynder.Sdk.Api.RequestSender
                     await _semaphore.WaitAsync().ConfigureAwait(false);
                     try
                     {
-                        await _oauthService.GetRefreshTokenAsync().ConfigureAwait(false);
+                        await _bynderClient.GetOAuthService().GetRefreshTokenAsync().ConfigureAwait(false);
                     }
                     finally
                     {
@@ -132,12 +133,9 @@ namespace Bynder.Sdk.Api.RequestSender
             internal static HttpRequestMessage Create(
                 string baseUrl, HttpMethod method, IDictionary<string, string> requestParams, string urlPath)
             {
-                var builder = new UriBuilder(baseUrl)
-                {
-                    Path = urlPath
-                };
+                var builder = new UriBuilder(baseUrl).AppendPath(urlPath);
 
-                if (HttpMethod.Get == method)
+                if (HttpMethod.Get == method || HttpMethod.Delete == method)
                 {
                     builder.Query = Utils.Url.ConvertToQuery(requestParams);
                 }
