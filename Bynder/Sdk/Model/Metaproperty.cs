@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -71,5 +71,17 @@ namespace Bynder.Sdk.Model
         /// </summary>
         [JsonProperty("zindex")]
         public int ZIndex { get; set; }
+
+        /// <summary>
+        /// Type of the metaproperty
+        /// </summary>
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        /// <summary>
+        /// Returns label translation by culture (e.g. 'en_US', 'de_DE' and etc)
+        /// </summary>
+        [JsonProperty("labels")]
+        public IDictionary<string, string> Labels { get; set; } = new Dictionary<string, string>();
     }
 }
