@@ -125,6 +125,26 @@ namespace Bynder.Test.Service.Asset
         }
 
         [Fact]
+        public async Task GetMediaListItemsCallsRequestSenderWithValidRequest()
+        {
+            var result = new MediaList();
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<MediaList>>()))
+                .ReturnsAsync(result);
+            var mediaListQuery = new MediaListQuery();
+            var mediaList = await _assetService.GetMediaListAsync(mediaListQuery);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<MediaList>>(
+                    req => req.Path == "/api/v4/media/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == mediaListQuery
+                )
+            ));
+
+            Assert.Equal(result, mediaList);
+        }
+
+        [Fact]
         public async Task GetDownloadFileUrlCallsRequestSenderWithValidRequest()
         {
             var result = new DownloadFileUrl();
