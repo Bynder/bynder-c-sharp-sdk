@@ -1,3 +1,4 @@
+using Bynder.Sdk.Api.Converters;
 using Bynder.Sdk.Query.Decoder;
 
 namespace Bynder.Sdk.Query.Asset
@@ -5,10 +6,10 @@ namespace Bynder.Sdk.Query.Asset
     public class MediaListQuery : MediaQuery
     {
         /// <summary>
-        /// Indicating whether or not the response should include the total count of results. Example: 1. Default: 0.
+        /// Indicating whether or not the response should include the total count of results.
         /// </summary>
-        [ApiField("total")]
-        public int Total { get; set; }
+        [ApiField("total", Converter = typeof(BoolConverter))]
+        public bool IncludeTotal { get; set; }
 
         /// <summary>
         /// <para>Desired order of returned assets.</para>
