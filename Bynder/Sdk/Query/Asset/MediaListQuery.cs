@@ -11,7 +11,8 @@ namespace Bynder.Sdk.Query.Asset
         public int Total { get; set; }
 
         /// <summary>
-        /// Order of the returned list of assets
+        /// <para>Desired order of returned assets.</para>
+        /// <para>See <see cref="Model.AssetOrderBy"/> for possible values.</para>
         /// </summary>
         [ApiField("orderBy")]
         public string OrderBy { get; set; }
