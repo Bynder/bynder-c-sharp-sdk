@@ -7,9 +7,9 @@ using Newtonsoft.Json;
 namespace Bynder.Sdk.Model
 {
     /// <summary>
-    /// Media list model returned by API /media
+    /// Media items returned by API /media including the total count
     /// </summary>
-    public class MediaList
+    public class MediaWithTotal
     {
         /// <summary>
         /// Media items

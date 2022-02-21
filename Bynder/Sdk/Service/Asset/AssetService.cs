@@ -113,9 +113,9 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public async Task<MediaList> GetMediaListAsync(MediaListQuery query)
+        public async Task<MediaWithTotal> GetMediaWithTotalAsync(MediaWithTotalQuery query)
         {
-            return await _requestSender.SendRequestAsync(new ApiRequest<MediaList>
+            return await _requestSender.SendRequestAsync(new ApiRequest<MediaWithTotal>
             {
                 Path = "/api/v4/media/",
                 HTTPMethod = HttpMethod.Get,

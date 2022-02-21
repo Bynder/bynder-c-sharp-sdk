@@ -3,7 +3,7 @@ using Bynder.Sdk.Query.Decoder;
 
 namespace Bynder.Sdk.Query.Asset
 {
-    public class MediaListQuery : MediaQuery
+    public class MediaWithTotalQuery : MediaQuery
     {
         /// <summary>
         /// Indicating whether or not the response should include the total count of results.
