@@ -83,6 +83,15 @@ namespace Bynder.Sdk.Service.Asset
         Task<MediaWithTotal> GetMediaWithTotalAsync(MediaWithTotalQuery query);
 
         /// <summary>
+        /// Gets a list of media using query information including the individual counts. The media information is not complete, for example
+        /// media items for media returned are not present. For that client needs to call <see cref="RequestMediaInfoAsync(string)"/>
+        /// </summary>
+        /// <param name="query">information to correctly filter/paginate media list</param>
+        /// <returns>Task with List of media.</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<MediaWithCount> GetMediaWithCountAsync(MediaWithCountQuery query);
+
+        /// <summary>
         /// Uploads a file async.
         /// </summary>
         /// <param name="query">Information to upload a file</param>
