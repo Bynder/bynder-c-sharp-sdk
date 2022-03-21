@@ -56,11 +56,15 @@ namespace Bynder.Sdk.Service.Asset
         /// Check <see cref="IAssetService"/> for more information
         /// </summary>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public async Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync()
+        public async Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync(bool includeOptions)
         {
+            var path = includeOptions
+                ? "/api/v4/metaproperties/"
+                : "/api/v4/metaproperties/?options=0";
+
             return await _requestSender.SendRequestAsync(new ApiRequest<IDictionary<string, Metaproperty>>
             {
-                Path = "/api/v4/metaproperties/",
+                Path = path,
                 HTTPMethod = HttpMethod.Get,
             }).ConfigureAwait(false);
         }
