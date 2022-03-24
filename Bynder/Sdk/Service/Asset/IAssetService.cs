@@ -106,7 +106,7 @@ namespace Bynder.Sdk.Service.Asset
         /// <param name="query">query containing the metaproperty ID, name of the option, limit and page number</param>
         /// <returns>Task with List of MetapropertyOption.</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task<IList<MetapropertyOption>> GetMetapropertyOptionsByNameAsync(MetapropertyOptionSearchQuery query);
+        Task<IList<MetapropertyOption>> GetMetapropertyOptionsAsync(MetapropertyOptionSearchQuery query);
 
         /// <summary>
         /// Uploads a file async.
