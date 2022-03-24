@@ -20,12 +20,12 @@ namespace Bynder.Sdk.Query.Asset
         /// Maximum number of results
         /// </summary>
         [ApiField("limit")]
-        public int Limit { get; } = 50;
+        public int Limit { get; set; } = 50;
 
         /// <summary>
         /// Offset page for results: return the N-th set of limit-results
         /// </summary>
         [ApiField("page")]
-        public int Page { get; } = 1;
+        public int Page { get; set; } = 1;
     }
 }
