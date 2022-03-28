@@ -172,6 +172,35 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<IList<MetapropertyOption>> GetMetapropertyOptionsByIdsAsync(MetapropertyOptionByIdsQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<MetapropertyOption>>
+            {
+                Path = $"/api/v4/metaproperties/options/",
+                HTTPMethod = HttpMethod.Get,
+                Query = query
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<IList<MetapropertyOption>> GetMetapropertyOptionsAsync(MetapropertyOptionSearchQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<MetapropertyOption>>
+            {
+                Path = $"/api/v4/metaproperties/{query.MetapropertyId}/options/?name={query.Name}&limit={query.Limit}&page={query.Page}",
+                HTTPMethod = HttpMethod.Get
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
         public async Task<SaveMediaResponse> UploadFileAsync(UploadQuery query)
         {
             return await _uploader.UploadFileAsync(query).ConfigureAwait(false);
