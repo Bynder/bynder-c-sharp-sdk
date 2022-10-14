@@ -43,6 +43,12 @@ namespace Bynder.Sdk.Model
         public bool IsMultiSelect { get; set; }
 
         /// <summary>
+        /// Returns true if Multifilter is selected for the metaproperty
+        /// </summary>
+        [JsonProperty("isMultiFilter", ItemConverterType = typeof(BooleanJsonConverter))]
+        public bool IsMultiFilter { get; set; }
+
+        /// <summary>
         /// Returns true if Required is selected for the metaproperty
         /// </summary>
         [JsonProperty("isRequired", ItemConverterType = typeof(BooleanJsonConverter))]
