@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Api.Converters;
 using Bynder.Sdk.Query.Decoder;
+using System;
 
 namespace Bynder.Sdk.Query.Asset
 {
@@ -72,5 +73,11 @@ namespace Bynder.Sdk.Query.Asset
         /// </summary>
         [ApiField("propertyOptionId", Converter = typeof(ListConverter))]
         public IList<string> PropertyOptionId { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Retrieve assets modified after this date.
+        /// </summary>
+        [ApiField("dateModified", Converter = typeof(DateTimeOffsetConverter))]
+        public DateTimeOffset DateModified { get; set; }
     }
 }

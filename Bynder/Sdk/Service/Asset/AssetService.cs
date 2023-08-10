@@ -232,5 +232,37 @@ namespace Bynder.Sdk.Service.Asset
                 Query = query
             }).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Sync an asset usage operation to track usage of Bynder assets in third party applications.
+        /// </summary>
+        /// <param name="query">Information about the asset usage</param>
+        /// <returns>Task representing the operation</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        public async Task<Status> SyncAssetUsage(SyncAssetUsageQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest
+            {
+                Path = $"/api/media/usage/sync",
+                HTTPMethod = HttpMethod.Post,
+                Query = query
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Retrieve assets usages
+        /// </summary>
+        /// <param name="query">Information about the asset usage</param>
+        /// <returns>Task representing the operation</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        public async Task<IList<AssetUsage>> RetrieveAssetUsage(AssetUsageQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<AssetUsage>>
+            {
+                Path = $"/api/media/usage/",
+                HTTPMethod = HttpMethod.Post,
+                Query = query
+            }).ConfigureAwait(false);
+        }
     }
 }
