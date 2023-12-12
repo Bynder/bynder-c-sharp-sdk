@@ -121,7 +121,7 @@ Methods Used:
 
 #### Media Sample
 
-Execute `MediaSample.cs` file with comman
+Execute `MediaSample.cs` file with command
 
 ```bash
 dotnet run -- MediaSample
@@ -136,7 +136,7 @@ Methods Used:
 
 #### Metaproperties Sample
 
-Execute `MetapropertiesSample.cs` file with comman
+Execute `MetapropertiesSample.cs` file with command
 
 ```bash
 dotnet run -- MetapropertiesSample
@@ -149,7 +149,7 @@ Methods Used:
 
 #### Tags Sample
 
-Execute `TagsSample.cs` file with comman
+Execute `TagsSample.cs` file with command
 
 ```bash
 dotnet run -- TagsSample
@@ -161,7 +161,7 @@ Methods Used:
 
 #### Upload Sample
 
-Execute `UploadSample.cs` file with comman
+Execute `UploadSample.cs` file with command
 
 ```bash
 dotnet run -- UploadSample
@@ -172,7 +172,7 @@ Methods Used:
 
 #### Asset Usage Sample
 
-Execute `AssetUsage.cs` file with comman
+Execute `AssetUsage.cs` file with command
 
 ```bash
 dotnet run -- AssetUsage
