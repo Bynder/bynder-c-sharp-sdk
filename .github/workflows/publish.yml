@@ -6,12 +6,12 @@ on:
 jobs:
   build-tests:
     name: Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v4
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '5.0.x'
       - name: Build
@@ -29,13 +29,13 @@ jobs:
 
   publish-nuget:
     name: Release
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build-tests
-    
+
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '5.0.x'
 
@@ -46,7 +46,7 @@ jobs:
         run: dotnet build --configuration Release --no-restore
 
       - name: Publish to NuGet
-        uses: brandedoutcast/publish-nuget@v2
+        uses: brandedoutcast/publish-nuget@v2.5.5
         with:
           PROJECT_FILE_PATH: Bynder/Sdk/Bynder.Sdk.csproj
           VERSION_REGEX: '^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$'
