@@ -1,7 +1,12 @@
 name: Publish
+
 on:
   release:
     types: [ published ]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   build-tests:
