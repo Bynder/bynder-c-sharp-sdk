@@ -28,103 +28,56 @@ namespace Bynder.Sample
         /// <param name="args">arguments to main</param>
         public static async Task Main(string[] args)
         {
-            var configuration = Configuration.FromJson("Config.json");
-            var apiSample = new ApiSample(configuration);
-            await apiSample.AuthenticateWithOAuth2Async(
-                useClientCredentials: configuration.RedirectUri == null
-            );
-            await apiSample.ListItemsAsync();
-            await apiSample.UploadFileAsync("/path/to/file.ext");
-        }
-
-        private ApiSample(Configuration configuration) {
-            _bynderClient = ClientFactory.Create(configuration);
-        }
-
-        private async Task ListItemsAsync()
-        {
-            var brands = await _bynderClient.GetAssetService().GetBrandsAsync();
-            Console.WriteLine($"Brands: [{string.Join(", ", brands.Select(m => m.Name))}]");
-
-            var mediaList = await _bynderClient.GetAssetService().GetMediaListAsync(
-                new MediaQuery
-                {
-                    Type = AssetType.Image,
-                    Limit = 10,
-                    Page = 1,
-                }
-            );
-            Console.WriteLine($"Assets: [{string.Join(", ", mediaList.Select(m => m.Name))}]");
-
-            var collectionList = await _bynderClient.GetCollectionService().GetCollectionsAsync(
-                new GetCollectionsQuery
-                {
-                    Limit = 10,
-                    Page = 1,
-                }
-            );
-            Console.WriteLine($"Collections: [{string.Join(", ", mediaList.Select(m => m.Name))}]");
-        }
-
-        private async Task UploadFileAsync(string uploadPath)
-        {
-            var assetService = _bynderClient.GetAssetService();
-
-            var brands = await assetService.GetBrandsAsync();
-            if (!brands.Any())
+            if (args.Length == 0)
             {
-                Console.Error.WriteLine("No brands found in this account.");
+                Console.WriteLine("Please enter the sample Class to run.");
+                Console.WriteLine("Usage: dotnet run -- BrandsSample");
                 return;
             }
 
-            await assetService.UploadFileAsync(new UploadQuery { Filepath = uploadPath, BrandId = brands.First().Id });
-
-            //TODO: This can be done instead when UploadFileToNewAssetAsync gets the correct response type
-            //var saveMediaResponse = await assetService.UploadFileToNewAssetAsync(uploadPath, brands.First().Id);
-            //Console.WriteLine($"Asset uploaded: {saveMediaResponse.MediaId}");
-            //
-            //Media media = null;
-            //for (int iterations = 10; iterations > 0; --iterations)
-            //{
-            //    try
-            //    {
-            //        media = await assetService.GetMediaInfoAsync(
-            //            new MediaInformationQuery
-            //            {
-            //                MediaId = saveMediaResponse.MediaId,
-            //            }
-            //        );
-
-            //    }
-            //    catch (HttpRequestException)
-            //    {
-            //        await Task.Delay(1000).ConfigureAwait(false);
-            //    }
-            //}
-            //if (media == null)
-            //{
-            //    Console.Error.WriteLine("The asset could not be retrieved");
-            //    return;
-            //}
-
-            //var saveMediaVersionResponse = await assetService.UploadFileToExistingAssetAsync(uploadPath, media.Id);
-            //Console.WriteLine($"New asset version uploaded: {saveMediaVersionResponse.MediaId}");
-        }
-
-        private async Task AuthenticateWithOAuth2Async(bool useClientCredentials)
-        {
-            if (useClientCredentials)
-            {
-                await _bynderClient.GetOAuthService().GetAccessTokenAsync();
+            Console.WriteLine(args[0]);
+            // Run samples related to brands
+            if (args[0].Equals("BrandsSample")) {
+                Console.WriteLine("Running samples for brands...");
+                await BrandsSample.BrandsSampleAsync();
+                return;
             }
-            else
-            {
-                Browser.Launch(_bynderClient.GetOAuthService().GetAuthorisationUrl("state example"));
-                Console.WriteLine("Insert the code: ");
-                var code = Console.ReadLine();
-                await _bynderClient.GetOAuthService().GetAccessTokenAsync(code);
+            // Run samples related to metaproperties
+            if (args[0].Equals("MetapropertiesSample")) {
+                Console.WriteLine("Running samples for metaproperties...");
+                await MetapropertiesSample.MetapropertiesSampleAsync();
+                return;
+            }
+            // Run samples related to media
+            if (args[0].Equals("MediaSample")) {
+                Console.WriteLine("Running samples for media...");
+                await MediaSample.MediaSampleAsync();
+                return;
+            }
+            // Run samples related to collections
+            if (args[0].Equals("CollectionsSample")) {
+                Console.WriteLine("Running samples for collections...");
+                await CollectionsSample.CollectionsSampleAsync();
+                return;
+            }
+            // Run samples related to tags
+            if (args[0].Equals("TagsSample")) {
+                Console.WriteLine("Running samples for tags...");
+                await TagsSample.TagsSampleAsync();
+                return;
+            }
+            // Run samples related to upload
+            if (args[0].Equals("UploadSample")) {
+                Console.WriteLine("Running samples for upload...");
+                await UploadSample.UploadSampleAsync();
+                return;
+            }
+            // Run samples related to asset usage
+            if (args[0].Equals("AssetUsageSample")) {
+                Console.WriteLine("Running samples for asset usage...");
+                await AssetUsageSample.AssetUsageSampleAsync();
+                return;
             }
         }
-
     }
 }
