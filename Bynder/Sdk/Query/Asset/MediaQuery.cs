@@ -88,10 +88,10 @@ namespace Bynder.Sdk.Query.Asset
         /// <summary>
         /// Properties values by key
         /// Examples
-        /// key: property_Name value: Amsterdam
+        /// key: property_NAME value: Amsterdam
         /// or
-        /// key: property_Name value: 00000000-0000-0000-0000000000000000
-        /// key property_Languages value: 00000000-0000-0000-0000000000000001
+        /// key: property_NAME value: 00000000-0000-0000-0000000000000000
+        /// key property_SomethingElse value: 00000000-0000-0000-0000000000000001
         /// </summary>
         [ApiField("property_", Converter = typeof(MetapropertyOptionsConverter))]
         public IDictionary<string, IList<string>> PropertiesByKey { get; set; }
