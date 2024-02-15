@@ -35,9 +35,10 @@ namespace Bynder.Sdk.Service.Asset
         /// Gets a dictionary of the metaproperties async. The key of the dictionary
         /// returned is the name of the metaproperty.
         /// </summary>
+        /// <param name="query">information whether to include methoproperties options</param>
         /// <returns>Task with dictionary of metaproperties</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
-        Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync();
+        Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync(bool includeOptions);
 
         /// <summary>
         /// Retrieve specific Metaproperty
@@ -72,6 +73,40 @@ namespace Bynder.Sdk.Service.Asset
         /// <returns>Task with List of media.</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         Task<IList<Media>> GetMediaListAsync(MediaQuery query);
+
+        /// <summary>
+        /// Gets a list of media using query information including the total count. The media information is not complete, for example
+        /// media items for media returned are not present. For that client needs to call <see cref="RequestMediaInfoAsync(string)"/>
+        /// </summary>
+        /// <param name="query">information to correctly filter/paginate media list</param>
+        /// <returns>Task with List of media.</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<MediaWithTotal> GetMediaWithTotalAsync(MediaWithTotalQuery query);
+
+        /// <summary>
+        /// Gets a list of media using query information including the individual counts. The media information is not complete, for example
+        /// media items for media returned are not present. For that client needs to call <see cref="RequestMediaInfoAsync(string)"/>
+        /// </summary>
+        /// <param name="query">information to correctly filter/paginate media list</param>
+        /// <returns>Task with List of media.</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<MediaWithCount> GetMediaWithCountAsync(MediaWithCountQuery query);
+
+        /// <summary>
+        /// Retrieve a list of metaproperty options by ids
+        /// </summary>
+        /// <param name="query">query containing the metaproperty options ids</param>
+        /// <returns>Task with List of MetapropertyOption.</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<IList<MetapropertyOption>> GetMetapropertyOptionsByIdsAsync(MetapropertyOptionByIdsQuery query);
+
+        /// <summary>
+        /// Retrieve a list of metaproperty options by meta property identifier and metaproperty option name
+        /// </summary>
+        /// <param name="query">query containing the metaproperty ID, name of the option, limit and page number</param>
+        /// <returns>Task with List of MetapropertyOption.</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<IList<MetapropertyOption>> GetMetapropertyOptionsAsync(MetapropertyOptionSearchQuery query);
 
         /// <summary>
         /// Uploads a file async.

@@ -56,11 +56,15 @@ namespace Bynder.Sdk.Service.Asset
         /// Check <see cref="IAssetService"/> for more information
         /// </summary>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public async Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync()
+        public async Task<IDictionary<string, Metaproperty>> GetMetapropertiesAsync(bool includeOptions)
         {
+            var path = includeOptions
+                ? "/api/v4/metaproperties/"
+                : "/api/v4/metaproperties/?options=0";
+
             return await _requestSender.SendRequestAsync(new ApiRequest<IDictionary<string, Metaproperty>>
             {
-                Path = "/api/v4/metaproperties/",
+                Path = path,
                 HTTPMethod = HttpMethod.Get,
             }).ConfigureAwait(false);
         }
@@ -113,6 +117,36 @@ namespace Bynder.Sdk.Service.Asset
         /// </summary>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<MediaWithTotal> GetMediaWithTotalAsync(MediaWithTotalQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<MediaWithTotal>
+            {
+                Path = "/api/v4/media/",
+                HTTPMethod = HttpMethod.Get,
+                Query = query,
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<MediaWithCount> GetMediaWithCountAsync(MediaWithCountQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<MediaWithCount>
+            {
+                Path = "/api/v4/media/",
+                HTTPMethod = HttpMethod.Get,
+                Query = query,
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
         public async Task<Uri> GetDownloadFileUrlAsync(DownloadMediaQuery query)
         {
             string path;
@@ -131,6 +165,35 @@ namespace Bynder.Sdk.Service.Asset
                 HTTPMethod = HttpMethod.Get,
             }).ConfigureAwait(false);
             return downloadFileInformation.S3File;
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<IList<MetapropertyOption>> GetMetapropertyOptionsByIdsAsync(MetapropertyOptionByIdsQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<MetapropertyOption>>
+            {
+                Path = $"/api/v4/metaproperties/options/",
+                HTTPMethod = HttpMethod.Get,
+                Query = query
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<IList<MetapropertyOption>> GetMetapropertyOptionsAsync(MetapropertyOptionSearchQuery query)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<IList<MetapropertyOption>>
+            {
+                Path = $"/api/v4/metaproperties/{query.MetapropertyId}/options/?name={query.Name}&limit={query.Limit}&page={query.Page}",
+                HTTPMethod = HttpMethod.Get
+            }).ConfigureAwait(false);
         }
 
         /// <summary>

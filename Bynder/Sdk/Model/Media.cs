@@ -30,7 +30,7 @@ namespace Bynder.Sdk.Model
         /// by an x,y coordinate.
         /// </summary>
         [JsonProperty("activeOriginalFocusPoint")]
-        public IDictionary<string, int> ActiveOriginalFocusPoint { get; set; }
+        public IDictionary<string, decimal> ActiveOriginalFocusPoint { get; set; }
 
         /// <summary>
         /// Number of times the media has been downloaded
