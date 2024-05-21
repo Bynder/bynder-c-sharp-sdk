@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -46,7 +46,7 @@ namespace Bynder.Sdk.Query.Upload
         /// <summary>
         /// Metaproperty options to set on the asset.
         /// </summary>
-        [ApiField("metaproperty", Converter = typeof(MetapropertyOptionsConverter))]
+        [ApiField("metaproperty.", Converter = typeof(MetapropertyOptionsConverter))]
         public IDictionary<string, IList<string>> MetapropertyOptions { get; set; } = new Dictionary<string, IList<string>>();
 
         /// <summary>

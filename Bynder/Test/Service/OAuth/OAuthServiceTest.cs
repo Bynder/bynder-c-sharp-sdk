@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -33,9 +33,13 @@ namespace Bynder.Test.Service.OAuth
         private Mock<IApiRequestSender> _apiRequestSenderMock;
         private OAuthService _oauthServiceClientCreds;
         private OAuthService _oauthServiceAuthCode;
+        private string _accessToken = Guid.NewGuid().ToString();
 
         public OAuthServiceTest() {
-            _token = new Token();
+            _token = new Token
+            {
+                AccessToken = _accessToken
+            };
 
             _credentialsMock = new Mock<ICredentials>();
             _credentialsMock
@@ -91,7 +95,7 @@ namespace Bynder.Test.Service.OAuth
         {
             _credentialsMock.Verify(cred => cred.Update(
                 It.Is<Token>(
-                    token => token == _token
+                    token => token.AccessToken == _token.AccessToken
                 )
             ));
         }
@@ -168,5 +172,24 @@ namespace Bynder.Test.Service.OAuth
             CheckTokenIsUpdated();
         }
 
+        [Fact]
+        public void SetAccessTokenWithValue()
+        {
+            _oauthServiceAuthCode.SetAccessToken(_accessToken);
+
+            CheckTokenIsUpdated();
+        }
+
+        [Fact]
+        public void SetAccessTokenWithNullValue()
+        {
+            Assert.Throws<ArgumentNullException>(() => _oauthServiceAuthCode.SetAccessToken(accessToken: null));
+        }
+
+        [Fact]
+        public void SetAccessTokenWithEmptyValue()
+        {
+            Assert.Throws<ArgumentNullException>(() => _oauthServiceAuthCode.SetAccessToken(accessToken: string.Empty));
+        }
     }
 }

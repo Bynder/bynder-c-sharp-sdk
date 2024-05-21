@@ -64,13 +64,36 @@ namespace Bynder.Sdk.Query.Asset
         /// <summary>
         /// The type of the asset
         /// </summary>
-        [ApiField("type", Converter = typeof(LowerCaseEnumConverter))]
-        public AssetType? Type { get; set; }
+        [ApiField("type")]
+        public string Types { get; set; }
+
+        /// <summary>
+        /// The tags of the asset
+        /// </summary>
+        [ApiField("tags")]
+        public string Tags { get; set; }
+
+        /// <summary>
+        /// The tags of the asset
+        /// </summary>
+        [ApiField("orientation")]
+        public string Orientations { get; set; }
 
         /// <summary>
         /// Metaproperty option ids that the asset has to have
         /// </summary>
         [ApiField("propertyOptionId", Converter = typeof(ListConverter))]
         public IList<string> PropertyOptionId { get; set; } = new List<string>();
+
+        /// <summary>
+        /// Properties values by key
+        /// Examples
+        /// key: property_NAME value: Amsterdam
+        /// or
+        /// key: property_NAME value: 00000000-0000-0000-0000000000000000
+        /// key property_SomethingElse value: 00000000-0000-0000-0000000000000001
+        /// </summary>
+        [ApiField("property_", Converter = typeof(MetapropertyOptionsConverter))]
+        public IDictionary<string, IList<string>> PropertiesByKey { get; set; }
     }
 }
