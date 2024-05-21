@@ -150,6 +150,12 @@ namespace Bynder.Sdk.Model
         /// <summary>
         /// Current active version
         /// </summary>
+        [JsonProperty("version")]
+        public int? Version { get; set; }
+
+        /// <summary>
+        /// Current active version
+        /// </summary>
         [JsonProperty("activeVersion")]
         public int ActiveVersion { get; set; }
 
