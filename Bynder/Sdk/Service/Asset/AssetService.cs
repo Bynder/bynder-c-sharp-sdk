@@ -179,11 +179,17 @@ namespace Bynder.Sdk.Service.Asset
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
         public async Task<IList<Tag>> GetTagsAsync(GetTagsQuery query)
         {
+            var queryToUse = string.IsNullOrEmpty(query.Keyword) ? query : new GetTagsQuerySimple() { 
+                Keyword = query.Keyword, 
+                Limit = query.Limit,
+                OrderBy = query.OrderBy,
+                Page = query.Page
+            };
             return await _requestSender.SendRequestAsync(new ApiRequest<IList<Tag>>
             {
                 Path = "/api/v4/tags/",
                 HTTPMethod = HttpMethod.Get,
-                Query = query
+                Query = queryToUse
             }).ConfigureAwait(false);
         }
 

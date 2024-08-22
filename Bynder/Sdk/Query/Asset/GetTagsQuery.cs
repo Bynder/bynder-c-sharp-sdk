@@ -4,7 +4,7 @@ using Bynder.Sdk.Query.Decoder;
 
 namespace Bynder.Sdk.Query.Asset
 {
-    public class GetTagsQuery
+    public class GetTagsQuerySimple
     {
         /// <summary>
         /// Maximum number of results.
@@ -30,6 +30,9 @@ namespace Bynder.Sdk.Query.Asset
         /// </summary>
         [ApiField("keyword")]
         public string Keyword { get; set; }
+    }
+    public class GetTagsQuery : GetTagsQuerySimple
+    {
 
         /// <summary>
         /// Minimum media count that the returned tags should have.
