@@ -15,3 +15,6 @@ packages/*
 
 # Visual Studio code coverage results
 coverage.opencover.xml
+
+# Visual studio *.csproj.user files (which keep track of which files have been opened etc)
+*.csproj.user
