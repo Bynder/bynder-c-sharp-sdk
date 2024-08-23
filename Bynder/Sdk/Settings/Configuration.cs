@@ -54,6 +54,7 @@ namespace Bynder.Sdk.Settings
         /// <returns><see cref="Configuration"/> instance</returns>
         public static Configuration FromJson(string filepath)
         {
+            Console.WriteLine("Read config from " + filepath);
             return JsonConvert.DeserializeObject<Configuration>(File.ReadAllText(filepath));
         }
     }

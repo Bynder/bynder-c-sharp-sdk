@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -67,7 +67,7 @@ namespace Bynder.Sdk.Query.Decoder
                     {
                         foreach (var item in dictConverter.Convert(value))
                         {
-                            AddParam(parameters, $"{apiField.ApiName}.{item.Key}", item.Value);
+                            AddParam(parameters, $"{apiField.ApiName}{item.Key}", item.Value);
                         }
                     }
 
@@ -76,6 +76,7 @@ namespace Bynder.Sdk.Query.Decoder
                 }
             }
         }
+
 
         private void AddParam(IDictionary<string, string> parameters, string key, string value)
         {

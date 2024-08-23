@@ -3,12 +3,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Query.Asset;
+using Bynder.Sdk.Query.Decoder;
 using Bynder.Sdk.Service.Asset;
 using Moq;
 using Xunit;
@@ -123,6 +125,46 @@ namespace Bynder.Test.Service.Asset
 
             Assert.Equal(result, mediaList);
         }
+
+        [Fact]
+        public async Task GetMediaListWithMetaPropertiesCallsRequestSenderWithValidRequest()
+        {
+            var result = new List<Media>();
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<IList<Media>>>()))
+                .ReturnsAsync(result);
+            var mediaQuery = new MediaQuery() {  
+                MetaProperties = new Dictionary<string, IList<string>> { { "City", new[] { "Amsterdam", "Rotterdam" } } } 
+            };
+            var mediaList = await _assetService.GetMediaListAsync(mediaQuery);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<IList<Media>>>(
+                    req => req.Path == "/api/v4/media/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == mediaQuery
+                )
+            ));
+
+            Assert.Equal(result, mediaList);
+        }
+
+        [Fact]
+        public async Task GetMediaListWithMetaPropertiesHasCorrectParameters()
+        {
+            var mediaQuery = new MediaQuery()
+            {
+                MetaProperties = new Dictionary<string, IList<string>> { { "City", new[] { "Amsterdam", "Rotterdam" } } }
+            };
+            var mediaList = await _assetService.GetMediaListAsync(mediaQuery);
+
+            QueryDecoder queryDecoder = new QueryDecoder();
+            var parameters = queryDecoder.GetParameters(mediaQuery);
+
+            Assert.True(parameters.ContainsKey("property_City"));
+            Assert.DoesNotContain(".", parameters["property_City"]);
+            Assert.Equal("Rotterdam", parameters["property_City"].Split(',').Last());
+        }
+
 
         [Fact]
         public async Task GetDownloadFileUrlCallsRequestSenderWithValidRequest()
