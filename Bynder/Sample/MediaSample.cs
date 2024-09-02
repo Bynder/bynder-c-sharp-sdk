@@ -40,6 +40,10 @@ namespace Bynder.Sample
                 Console.WriteLine($"Media Name: {media.Name}");
             }
 
+            // Get ths same list as a full result
+            var mediaFullResult = await _bynderClient.GetAssetService().GetMediaFullResultAsync(new MediaQuery { Limit = 10 });
+            Console.WriteLine($"Retrieving full result based on same query, total number of matching assets is {mediaFullResult.Total.Count}");
+
             // Get the media info
             Console.WriteLine("Enter the media ID to get the media info for: ");
             var mediaIdForInfo = Console.ReadLine();

@@ -122,5 +122,13 @@ namespace Bynder.Sdk.Service.Asset
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         Task<Status> DeleteAssetUsage(AssetUsageQuery query);
 
+        /// <summary>
+        /// Get a full list of Bynder assets including the total number of matching results
+        /// </summary>
+        /// <param name="query">Information to correctly filter/paginate media</param>
+        /// <returns>Task representing the full result, including the total number of matches</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        /// <remarks>This method can be used to implement pagination in your app. The MediaFullResult that gets returned has a Total.Count property, which contains the total number of matching assets, not just the number of assets in the current result page</remarks>
+        Task<MediaFullResult> GetMediaFullResultAsync(MediaQuery query);
     }
 }

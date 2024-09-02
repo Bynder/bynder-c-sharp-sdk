@@ -232,5 +232,39 @@ namespace Bynder.Sdk.Service.Asset
                 Query = query
             }).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<MediaFullResult> GetMediaFullResultAsync(MediaQuery query)
+        {
+            var mediaQueryFull = query is MediaQueryFull ? query as MediaQueryFull : CloneIntoFullMediaQuery(query);
+            return await _requestSender.SendRequestAsync(new ApiRequest<MediaFullResult>
+            {
+                Path = "/api/v4/media/",
+                HTTPMethod = HttpMethod.Get,
+                Query = mediaQueryFull,
+            }).ConfigureAwait(false);
+        }
+
+        private static MediaQueryFull CloneIntoFullMediaQuery(MediaQuery query)
+        {
+            return new MediaQueryFull()
+            {
+                BrandId = query.BrandId,
+                CategoryId = query.CategoryId,  
+                CollectionId = query.CollectionId,
+                Ids = query.Ids,
+                Keyword = query.Keyword,
+                Limit = query.Limit,
+                MetaProperties = query.MetaProperties,
+                Page = query.Page,
+                PropertyOptionId = query.PropertyOptionId,
+                SubBrandId = query.SubBrandId,
+                Type = query.Type,
+                Total = true
+            };
+        }
     }
 }

@@ -264,6 +264,28 @@ namespace Bynder.Test.Service.Asset
         }
 
         [Fact]
+        public async Task GetMediaFullResultAsyncCallsRequestSenderWithValidRequest()
+        {
+            var result = new MediaFullResult() { Media = [ new Media() {  Id = "SomeId", Name = "SomeName"} ] };
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<MediaFullResult>>()))
+                .ReturnsAsync(() =>
+                {
+                    return result;
+                });
+            var mediaQuery = new MediaQuery();
+            var mediaFullResult = await _assetService.GetMediaFullResultAsync(mediaQuery);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<MediaFullResult>>(
+                    req => req.Path == "/api/v4/media/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query is MediaQueryFull
+                )
+            ));
+            Assert.Equal(result, mediaFullResult);
+        }
+
+        [Fact]
         public async Task CreateAssetUsageCallsRequestSenderWithValidRequest()
         {
             var result = new Status { Message = "Accepted", StatusCode = 200 };
