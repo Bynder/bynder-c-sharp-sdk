@@ -10,6 +10,8 @@ using Bynder.Sdk.Api.Requests;
 using Bynder.Sdk.Api.RequestSender;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Query.Upload;
+using System.Linq;
+using System.Web;
 
 namespace Bynder.Sdk.Service.Upload
 {
@@ -72,48 +74,81 @@ namespace Bynder.Sdk.Service.Upload
         /// <summary>
         /// Uploads a file with the data specified in query parameter
         /// </summary>
+        /// <param name="fileStream">Stream of the file to upload</param>
+        /// <param name="query">Upload query information to upload a file</param>
+        /// <returns>Task representing the upload</returns>
+        public async Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, UploadQuery query)
+        {
+            return await UploadFileAsync(fileStream, query, query.OriginalFileName ?? Path.GetFileName(query.Filepath));
+        }
+
+        /// <summary>
+        /// Uploads a file with the data specified in query parameter
+        /// </summary>
         /// <param name="query">Upload query information to upload a file</param>
         /// <returns>Task representing the upload</returns>
         public async Task<SaveMediaResponse> UploadFileAsync(UploadQuery query)
         {
-            var uploadRequest = await RequestUploadInformationAsync(new RequestUploadQuery { Filename = query.Filepath }).ConfigureAwait(false);
+            var filename = !string.IsNullOrEmpty(query.OriginalFileName) ? query.OriginalFileName : Path.GetFileName(query.Filepath);
+            var uploadRequest = await RequestUploadInformationAsync(new RequestUploadQuery { Filename = filename }).ConfigureAwait(false);
 
             uint chunkNumber = 0;
 
-            using (var file = File.Open(query.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete))
+            var fileStream = File.Open(query.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            return await UploadFileAsync(fileStream, query, filename);
+
+            
+        }
+
+        private async Task<UploadRequest> GetUploadRequest(string fileName)
+        {
+            return await RequestUploadInformationAsync(new RequestUploadQuery { Filename = fileName }).ConfigureAwait(false);
+        }
+
+
+        private async Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, UploadQuery query, string filename)
+        {
+            uint chunkNumber = 0;
+            var uploadRequest = await GetUploadRequest(filename);
+            using (fileStream)
             {
                 int bytesRead = 0;
                 var buffer = new byte[CHUNK_SIZE];
-                long numberOfChunks = (file.Length + CHUNK_SIZE - 1) / CHUNK_SIZE;
+                long numberOfChunks = (fileStream.Length + CHUNK_SIZE - 1) / CHUNK_SIZE;
 
-                while ((bytesRead = file.Read(buffer, 0, buffer.Length)) > 0)
+                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) > 0)
                 {
                     ++chunkNumber;
                     await UploadPartAsync(Path.GetFileName(query.Filepath), buffer, bytesRead, chunkNumber, uploadRequest, (uint)numberOfChunks).ConfigureAwait(false);
                 }
             }
 
-            var finalizeResponse = await FinalizeUploadAsync(uploadRequest, chunkNumber).ConfigureAwait(false);
+            var finalizeResponse = await FinalizeUploadAsync(uploadRequest, chunkNumber, query.CustomParameters).ConfigureAwait(false);
 
             if (await HasFinishedSuccessfullyAsync(finalizeResponse).ConfigureAwait(false))
             {
                 return await SaveMediaAsync(new SaveMediaQuery
                 {
-                    Filename = query.Filepath,
+                    Filename = query.Name ?? query.Filepath,
                     BrandId = query.BrandId,
                     ImportId = finalizeResponse.ImportId,
                     MediaId = query.MediaId,
-                    Tags = query.Tags
+                    Tags = query.Tags,
+                    Description = query.Description,
+                    Copyright = query.Copyright,
+                    IsPublic = query.IsPublic,
+                    MetapropertyOptions = query.MetapropertyOptions,
+                    PublishedDate = query.PublishedDate
                 }).ConfigureAwait(false);
             }
             else
             {
-                throw new BynderUploadException("Converter did not finished. Upload not completed");
+                throw new BynderUploadException("Converter did not finish. Upload not completed");
             }
         }
 
         /// <summary>
-        /// Gets the closes s3 endpoint. This is needed to know to which bucket Url it uploads chunks
+        /// Gets the closest s3 endpoint. This is needed to know to which bucket Url it uploads chunks
         /// </summary>
         /// <returns>Task containting string with the Url</returns>
         private async Task<string> GetClosestS3EndpointAsync()
@@ -243,7 +278,7 @@ namespace Bynder.Sdk.Service.Upload
         }
 
         /// <summary>
-        /// Registers a chunk in Bynder using <see cref="UploadRequest"/>.
+        /// Registers a chunk in Bynder using <see cref="GetUploadRequest"/>.
         /// </summary>
         /// <param name="uploadRequest">Upload request information</param>
         /// <param name="chunkNumber">Current chunk number</param>
@@ -274,7 +309,7 @@ namespace Bynder.Sdk.Service.Upload
         /// Requests information to start a new upload
         /// </summary>
         /// <param name="query">Contains the information needed to request upload information</param>
-        /// <returns>Task containing <see cref="UploadRequest"/> information</returns>
+        /// <returns>Task containing <see cref="GetUploadRequest"/> information</returns>
         private async Task<UploadRequest> RequestUploadInformationAsync(RequestUploadQuery query)
         {
             var request = new ApiRequest<UploadRequest>
@@ -288,12 +323,12 @@ namespace Bynder.Sdk.Service.Upload
         }
 
         /// <summary>
-        /// Finalizes an upload using <see cref="UploadRequest"/>.
+        /// Finalizes an upload using <see cref="GetUploadRequest"/>.
         /// </summary>
         /// <param name="uploadRequest">Upload request information</param>
         /// <param name="chunkNumber">chunk number</param>
         /// <returns>Task with <see cref="FinalizeResponse"/> information</returns>
-        private async Task<FinalizeResponse> FinalizeUploadAsync(UploadRequest uploadRequest, uint chunkNumber)
+        private async Task<FinalizeResponse> FinalizeUploadAsync(UploadRequest uploadRequest, uint chunkNumber, IEnumerable<KeyValuePair<string, string>> customParameters)
         {
             var query = new FinalizeUploadQuery
             {
@@ -302,9 +337,18 @@ namespace Bynder.Sdk.Service.Upload
                 S3Filename = $"{uploadRequest.S3Filename}/p{chunkNumber}",
                 Chunks = chunkNumber.ToString()
             };
+            var requestParameters = "";
+            if (customParameters != null)
+            {
+                requestParameters = string.Join('&', customParameters.Select(p => HttpUtility.UrlEncode(p.Key) + "=" + HttpUtility.UrlEncode(p.Value)));
+                if (!string.IsNullOrEmpty(requestParameters))
+                {
+                    requestParameters = "?" + requestParameters;
+                }
+            }
             var request = new ApiRequest<FinalizeResponse>
             {
-                Path = $"/api/v4/upload/{query.UploadId}/",
+                Path = $"/api/v4/upload/{query.UploadId}/{requestParameters}",
                 HTTPMethod = HttpMethod.Post,
                 Query = query
             };
