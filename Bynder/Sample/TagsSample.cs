@@ -95,6 +95,7 @@ namespace Bynder.Sample
 
             asset = await assetService.GetMediaInfoAsync(new MediaInformationQuery() { MediaId = mediaId });
             ShowTags(asset);
+
         }
 
         private async void ShowTags(Media asset)
