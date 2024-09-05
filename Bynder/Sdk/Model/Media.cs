@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Bynder.Sdk.Api.Converters;
+using System;
+using System.Linq;
 
 namespace Bynder.Sdk.Model
 {
@@ -23,7 +25,15 @@ namespace Bynder.Sdk.Model
         /// Property asset types assigned to media
         /// </summary>
         [JsonProperty("property_assettype")]
-        public IList<string> PropertyAssetType { get; set; }
+        [JsonIgnore]
+        [Obsolete("Use PropertyOptionsDictionary?[\"property_assettype\"] instead")]
+        public IList<string> PropertyAssetType
+        {
+            get
+            {
+                return PropertyOptionsDictionary?["property_assettype"].Values().Select(v => v.ToString()).ToList() ?? null;
+            }
+        }
 
         /// <summary>
         /// Active focus point in the original media item, defined
