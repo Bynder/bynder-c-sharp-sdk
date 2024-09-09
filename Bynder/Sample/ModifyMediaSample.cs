@@ -55,11 +55,38 @@ namespace Bynder.Sample
             var mediaInfo = await assetService.GetMediaInfoAsync(mediaInformationQuery);
             Console.WriteLine($"ID: {mediaInfo.Id}");
             Console.WriteLine($"Name: {mediaInfo.Name}");
+
+
+            // datePublished
+            Console.WriteLine($"---\r\nTest with datePublished");
+            Console.WriteLine($"datePublished is currently set to: {mediaInfo.DatePublished}");
+            Console.WriteLine("New value (use ISO8601 format: yyyy-mm-ddThh:mm:ssZ, or n = now, or leave empty to erase): ");
+            var cmd = Console.ReadLine();
+            var query = new ModifyMediaQuery(mediaId);
+            if (cmd.ToLower().StartsWith("n"))
+            {
+                query.PublishedDate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ssZ");
+            }
+            else if (string.IsNullOrEmpty(cmd))
+            {
+                query.PublishedDate = "";
+            } 
+            else
+            {
+                query.PublishedDate = cmd;
+            }
+            await assetService.ModifyMediaAsync(query);
+            Console.WriteLine("The asset has been modified. It takes a few seconds for changes come through. Hit enter when you want to retrieve the asset again.");
+            Console.ReadLine();
+            mediaInfo = await assetService.GetMediaInfoAsync(mediaInformationQuery);
+            Console.WriteLine($"datePublished is now set to: {mediaInfo.DatePublished}");
+
+            // isArchived (boolean)
             Console.WriteLine($"---\r\nTest with boolean value (isArchived)");
             Console.WriteLine($"isArchived is currently set to: {mediaInfo.IsArchived}");
             Console.WriteLine("New value (t=true, f=false, n=not set): ");
-            var cmd = Console.ReadLine();
-            var query = new ModifyMediaQuery(mediaId);
+            cmd = Console.ReadLine();
+            query = new ModifyMediaQuery(mediaId);
             if (cmd.ToLower().StartsWith("t"))
             {
                 query.Archive = true;
@@ -71,8 +98,6 @@ namespace Bynder.Sample
             await assetService.ModifyMediaAsync(query);
             Console.WriteLine("The asset has been modified. It takes a few seconds for changes come through. Hit enter when you want to retrieve the asset again.");
             Console.ReadLine();
-
-
             mediaInfo = await assetService.GetMediaInfoAsync(mediaInformationQuery);
             Console.WriteLine($"isArchived is now set to: {mediaInfo.IsArchived}");
 
