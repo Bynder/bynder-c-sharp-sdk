@@ -1,8 +1,9 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Bynder.Sdk.Api.Converters;
 
@@ -43,46 +44,41 @@ namespace Bynder.Sdk.Query.Decoder
         /// <param name="collection">collection to add the converted values</param>
         private void ConvertProperty(PropertyInfo propertyInfo, object query, IDictionary<string, string> parameters)
         {
-            foreach (var attribute in propertyInfo.GetCustomAttributes(true))
+            var apiField = propertyInfo.GetCustomAttributes(true).FirstOrDefault(a => a is ApiField) as ApiField;
+            if (apiField == null)
             {
-                if (attribute is ApiField apiField)
+                return;
+            }
+
+            object value = propertyInfo.GetValue(query);
+            if (value == null)
+            {
+                return;
+            }
+
+            if (apiField.Converter == null)
+            {
+                AddParam(parameters, apiField.ApiName, value.ToString());
+            }
+            else if (Activator.CreateInstance(apiField.Converter) is ITypeToStringConverter stringConverter
+                && stringConverter.CanConvert(propertyInfo.PropertyType))
+            {
+                AddParam(parameters, apiField.ApiName, stringConverter.Convert(value));
+            }
+            else if (Activator.CreateInstance(apiField.Converter) is ITypeToDictionaryConverter dictConverter
+                && dictConverter.CanConvert(propertyInfo.PropertyType))
+            {
+                foreach (var item in dictConverter.Convert(value))
                 {
-                    object value = propertyInfo.GetValue(query);
-                    if (value == null)
-                    {
-                        return;
-                    }
-
-                    if (apiField.Converter == null)
-                    {
-                        AddParam(parameters, apiField.ApiName, value.ToString());
-                    }
-                    else if (Activator.CreateInstance(apiField.Converter) is ITypeToStringConverter stringConverter
-                        && stringConverter.CanConvert(propertyInfo.PropertyType))
-                    {
-                        AddParam(parameters, apiField.ApiName, stringConverter.Convert(value));
-                    }
-                    else if (Activator.CreateInstance(apiField.Converter) is ITypeToDictionaryConverter dictConverter
-                        && dictConverter.CanConvert(propertyInfo.PropertyType))
-                    {
-                        foreach (var item in dictConverter.Convert(value))
-                        {
-                            AddParam(parameters, $"{apiField.ApiName}.{item.Key}", item.Value);
-                        }
-                    }
-
-                    // No need to continue. Only one ApiField attribute per property
-                    return;
+                    AddParam(parameters, $"{apiField.ApiName}.{item.Key}", item.Value);
                 }
             }
+
         }
 
         private void AddParam(IDictionary<string, string> parameters, string key, string value)
         {
-            if (!string.IsNullOrEmpty(value))
-            {
-                parameters.Add(key, value);
-            }
+            parameters.Add(key, value);
         }
 
     }

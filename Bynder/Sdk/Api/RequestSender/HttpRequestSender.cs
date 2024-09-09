@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Net.Http;
@@ -33,6 +33,10 @@ namespace Bynder.Sdk.Api.RequestSender
         {
             httpRequest.Headers.Add("User-Agent", UserAgent);
             var response = await _httpClient.SendAsync(httpRequest).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = response.Content.ReadAsStringAsync().Result;
+            }
             response.EnsureSuccessStatusCode();
             return response;
         }

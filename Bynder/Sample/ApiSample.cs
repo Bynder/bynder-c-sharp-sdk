@@ -54,6 +54,15 @@ namespace Bynder.Sample
                 await MediaSample.MediaSampleAsync();
                 return;
             }
+
+            // Run samples related to modifying media
+            if (args[0].Equals("ModifyMediaSample"))
+            {
+                Console.WriteLine("Running samples for the modification of media...");
+                await ModifyMediaSample.ModifyMediaSampleAsync();
+                return;
+            }
+
             // Run samples related to collections
             if (args[0].Equals("CollectionsSample")) {
                 Console.WriteLine("Running samples for collections...");
