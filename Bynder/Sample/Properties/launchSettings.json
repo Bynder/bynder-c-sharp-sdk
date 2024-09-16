@@ -1,0 +1,40 @@
+{
+  "profiles": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "Run MediaSample": {
+      "commandName": "Project",
+      "commandLineArgs": "MediaSample"
+    },
+    "Run MetapropertyToMediaSample": {
+      "commandName": "Project",
+      "commandLineArgs": "MetapropertyToMediaSample"
+    },
+    "Run BrandsSample": {
+      "commandName": "Project",
+      "commandLineArgs": "BrandsSample"
+    },
+    "Run MetapropertiesSample": {
+      "commandName": "Project",
+      "commandLineArgs": "MetapropertiesSample"
+    },
+    "Run CollectionsSample": {
+      "commandName": "Project",
+      "commandLineArgs": "CollectionsSample"
+    },
+    "Run TagsSample": {
+      "commandName": "Project",
+      "commandLineArgs": "TagsSample"
+    },
+    "Run UploadSample": {
+      "commandName": "Project",
+      "commandLineArgs": "UploadSample"
+    },
+    "Run AssetUsageSample": {
+      "commandName": "Project",
+      "commandLineArgs": "AssetUsageSample"
+    },
+  }
+}
