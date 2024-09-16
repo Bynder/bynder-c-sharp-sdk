@@ -70,6 +70,13 @@ namespace Bynder.Sample
                 Description = updatedDescription
             };
             await _bynderClient.GetAssetService().ModifyMediaAsync(modifyMediaQuery);
+
+
+            // Modify a media with a new description
+            Console.WriteLine("Enter the media ID to delete: ");
+            var mediaIdForDelete = Console.ReadLine();
+            await _bynderClient.GetAssetService().DeleteAssetAsync(mediaIdForDelete);
+
         }
             
         private async Task AuthenticateWithOAuth2Async(bool useClientCredentials)
