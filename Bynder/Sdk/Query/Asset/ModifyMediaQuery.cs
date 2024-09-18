@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Bynder.Sdk.Api.Converters;
 using Bynder.Sdk.Query.Decoder;
 
@@ -68,6 +68,13 @@ namespace Bynder.Sdk.Query.Asset
         {
             MetapropertyOptions.Add(metapropertyId, optionIds);
         }
+
+        /// <summary>
+        /// Tags that will be added to the asset
+        /// </summary>
+        [ApiField("tags", Converter = typeof(ListConverter))]
+        public IList<string> Tags { get; set; }
+
     }
 }
 
