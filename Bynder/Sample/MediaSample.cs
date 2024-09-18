@@ -50,6 +50,15 @@ namespace Bynder.Sample
             Console.WriteLine($"ID: {mediaInfo.Id}");
             Console.WriteLine($"Name: {mediaInfo.Name}");
             Console.WriteLine($"Brand Id: {mediaInfo.BrandId}");
+            Console.WriteLine($"Asset type: {string.Join(',', mediaInfo.PropertyAssetType)}");
+            if (mediaInfo.PropertyOptionsDictionary != null)
+            {
+                foreach (var propertyKey in mediaInfo.PropertyOptionsDictionary.Keys)
+                {
+                    Console.Write($"Property option in dictionary: {propertyKey}: {mediaInfo.PropertyOptionsDictionary[propertyKey].ToString()}");
+                }
+            }
+
 
             // Get the media download URL
             Console.WriteLine("Enter the media ID to get the media download URL for: ");
@@ -70,6 +79,13 @@ namespace Bynder.Sample
                 Description = updatedDescription
             };
             await _bynderClient.GetAssetService().ModifyMediaAsync(modifyMediaQuery);
+
+
+            // Modify a media with a new description
+            Console.WriteLine("Enter the media ID to delete: ");
+            var mediaIdForDelete = Console.ReadLine();
+            await _bynderClient.GetAssetService().DeleteAssetAsync(mediaIdForDelete);
+
         }
             
         private async Task AuthenticateWithOAuth2Async(bool useClientCredentials)

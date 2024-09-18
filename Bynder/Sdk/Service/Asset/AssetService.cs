@@ -253,5 +253,18 @@ namespace Bynder.Sdk.Service.Asset
                 Query = query
             }).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<Status> DeleteAssetAsync(string assetId)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<Status>
+            {
+                Path = "/api/v4/media/" + assetId,
+                HTTPMethod = HttpMethod.Delete,
+            }).ConfigureAwait(false);
+        }
     }
 }
