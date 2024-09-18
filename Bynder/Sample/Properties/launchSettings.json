@@ -36,5 +36,9 @@
       "commandName": "Project",
       "commandLineArgs": "AssetUsageSample"
     },
+    "Run ModifyMediaSample": {
+      "commandName": "Project",
+      "commandLineArgs": "ModifyMediaSample"
+    }
   }
 }

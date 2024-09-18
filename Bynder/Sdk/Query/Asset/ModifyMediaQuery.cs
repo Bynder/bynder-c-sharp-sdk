@@ -42,16 +42,22 @@ namespace Bynder.Sdk.Query.Asset
         public string Copyright { get; set; }
 
         /// <summary>
+        /// Published date for the media
+        /// </summary>
+        [ApiField("datePublished")]
+        public string PublishedDate { get; set; }
+
+        /// <summary>
         /// Indicates if the media is archived
         /// </summary>
         [ApiField("archive")]
-        public bool Archive { get; set; }
+        public bool? Archive { get; set; }
 
         /// <summary>
         /// Indicates if the media is public
         /// </summary>
         [ApiField("isPublic")]
-        public bool IsPublic { get; set; }
+        public bool? IsPublic { get; set; }
 
         /// <summary>
         /// Metaproperty options to set on the asset.
