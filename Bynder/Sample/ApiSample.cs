@@ -63,6 +63,13 @@ namespace Bynder.Sample
                 return;
             }
 
+            // Run samples related to finding media
+            if (args[0].Equals("FindMediaSample"))
+            {
+                Console.WriteLine("Running samples for find media...");
+                await FindMediaSample.MediaSampleAsync();
+                return;
+            }
             // Run samples related to modifying media
             if (args[0].Equals("ModifyMediaSample"))
             {
