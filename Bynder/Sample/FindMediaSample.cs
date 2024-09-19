@@ -48,8 +48,9 @@ namespace Bynder.Sample
         private async Task PerformSearch(IDictionary<string, Metaproperty> metaProperties)
         {
             Console.WriteLine("You have the following meta properties in your Bynder environment: ");
+            var mpKeys = metaProperties.Keys.OrderBy(k => k);
             var counter = 1;
-            foreach (var metaProperty in metaProperties)
+            foreach (var metaProperty in metaProperties.OrderBy(mp => mp.Key))
             {
                 var extraInfo = metaProperty.Value.Options?.Any() ?? false ? $"[with {metaProperty.Value.Options.Count()} options]" : "[without options]";
                 Console.WriteLine($"{counter++}) {metaProperty.Key} {extraInfo}");
@@ -60,7 +61,8 @@ namespace Bynder.Sample
             {
                 mpNr = 1;
             }
-            var selectedMetaProperty = metaProperties.Skip(mpNr - 1).FirstOrDefault().Value;
+            var selectedMetaPropertyKey = mpKeys.Skip(mpNr - 1).FirstOrDefault();
+            var selectedMetaProperty = metaProperties[selectedMetaPropertyKey];
             if (selectedMetaProperty == null)
             {
                 Console.WriteLine("No meta property found, stopping execution");
@@ -72,7 +74,8 @@ namespace Bynder.Sample
             if (selectedMetaProperty.Options?.Any() ?? false)
             {
                 counter = 1;
-                foreach (var option in selectedMetaProperty.Options)
+                var sortedOptions = selectedMetaProperty.Options.OrderBy(o => o.Label);
+                foreach (var option in sortedOptions)
                 {
                     Console.WriteLine($"{counter++}) {option.Label}");
                 }
@@ -82,10 +85,10 @@ namespace Bynder.Sample
                 {
                     mpNr = 1;
                 }
-                var selectedOption = selectedMetaProperty.Options.Skip(mpNr - 1).FirstOrDefault();
+                var selectedOption = sortedOptions.Skip(mpNr - 1).FirstOrDefault();
                 searchString = selectedOption.Name;
 
-                Console.WriteLine("Searching via the meta property");
+                Console.WriteLine($"Searching via the meta property named {selectedMetaProperty.Name} and option named {searchString}");
                 var assets = await _bynderClient.GetAssetService().GetMediaListAsync(new MediaQuery()
                 {
                     MetaProperties = new Dictionary<string, IList<string>>
@@ -111,8 +114,33 @@ namespace Bynder.Sample
                 }
                 else
                 {
-                    Console.WriteLine("No assets found by metaproperty");
+                    Console.WriteLine("No assets found by metaproperty name / option name");
                 }
+
+                Console.WriteLine($"Searching via the meta property option ID {selectedOption.Id}");
+                assets = await _bynderClient.GetAssetService().GetMediaListAsync(new MediaQuery()
+                {
+                    PropertyOptionId = [ selectedOption.Id ]
+                });
+
+                if (assets?.Any() ?? false)
+                {
+                    Console.WriteLine($"Found {assets.Count} assets, showing first 5");
+                    counter = 1;
+                    foreach (var asset in assets)
+                    {
+                        Console.WriteLine($"{counter++}) {asset.Name}");
+                        if (counter == 6)
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("No assets found by metaproperty option id");
+                }
+
             }
             else
             {
