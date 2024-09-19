@@ -11,6 +11,7 @@ using Bynder.Sdk.Api.RequestSender;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Query.Asset;
 using Bynder.Sdk.Query.Upload;
+using System.IO;
 
 namespace Bynder.Sdk.Service.Asset
 {
@@ -142,6 +143,18 @@ namespace Bynder.Sdk.Service.Asset
         {
             return await _uploader.UploadFileAsync(query).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <param name="fileStream">Check <see cref="IAssetService"/> for more information</param>
+        /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<SaveMediaResponse> UploadFileAsync(FileStream fileStream, UploadQuery query)
+        {
+            return await _uploader.UploadFileAsync(fileStream, query).ConfigureAwait(false);
+        }
+
 
         /// <summary>
         /// Check <see cref="IAssetService"/> for more information

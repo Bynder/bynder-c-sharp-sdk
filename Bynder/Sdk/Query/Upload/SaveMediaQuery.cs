@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Collections.Generic;
@@ -42,6 +42,31 @@ namespace Bynder.Sdk.Query.Upload
         /// </summary>
         [ApiField("tags", Converter = typeof(ListConverter))]
         public IList<string> Tags { get; set; }
+
+
+        /// <summary>
+        /// Description of the media
+        /// </summary>
+        [ApiField("description")]
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Published date of the media
+        /// </summary>
+        [ApiField("ISOPublicationDate")]
+        public string PublishedDate { get; set; }
+
+        /// <summary>
+        /// Copyright information for the media
+        /// </summary>
+        [ApiField("copyright")]
+        public string Copyright { get; set; }
+
+        /// <summary>
+        /// Indicates if the media is public
+        /// </summary>
+        [ApiField("isPublic")]
+        public bool IsPublic { get; set; }
 
         /// <summary>
         /// Metaproperty options to set on the asset.
