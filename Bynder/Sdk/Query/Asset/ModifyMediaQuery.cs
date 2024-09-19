@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Bynder.Sdk.Api.Converters;
 using Bynder.Sdk.Query.Decoder;
 
@@ -42,16 +42,22 @@ namespace Bynder.Sdk.Query.Asset
         public string Copyright { get; set; }
 
         /// <summary>
+        /// Published date for the media
+        /// </summary>
+        [ApiField("datePublished")]
+        public string PublishedDate { get; set; }
+
+        /// <summary>
         /// Indicates if the media is archived
         /// </summary>
         [ApiField("archive")]
-        public bool Archive { get; set; }
+        public bool? Archive { get; set; }
 
         /// <summary>
         /// Indicates if the media is public
         /// </summary>
         [ApiField("isPublic")]
-        public bool IsPublic { get; set; }
+        public bool? IsPublic { get; set; }
 
         /// <summary>
         /// Metaproperty options to set on the asset.
@@ -68,6 +74,13 @@ namespace Bynder.Sdk.Query.Asset
         {
             MetapropertyOptions.Add(metapropertyId, optionIds);
         }
+
+        /// <summary>
+        /// Tags that will be added to the asset
+        /// </summary>
+        [ApiField("tags", Converter = typeof(ListConverter))]
+        public IList<string> Tags { get; set; }
+
     }
 }
 

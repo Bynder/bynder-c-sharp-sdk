@@ -120,6 +120,15 @@ namespace Bynder.Sdk.Service.Asset
         Task<Status> AddTagToMediaAsync(AddTagToMediaQuery query);
 
         /// <summary>
+        /// Remove tags from asset
+        /// </summary>
+        /// <param name="tagId">Id of the tag to remove</param>
+        /// <param name="assetIds">Ids of the assets from which the tag should be removed</param>
+        /// <returns>Task representing the upload</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        Task<Status> RemoveTagFromMediaAsync(string tagId, IEnumerable<string> assetIds);
+
+        /// <summary>
         /// Create an asset usage operation to track usage of Bynder assets in third party applications.
         /// </summary>
         /// <param name="query">Information about the asset usage</param>
