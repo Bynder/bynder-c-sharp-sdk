@@ -78,6 +78,12 @@ namespace Bynder.Sample
                 query.Description = description;
             }
 
+           
+            query.MetapropertyOptions = new Dictionary<string,IList<string>>()
+            {
+                { "a", [ "b" ]}
+            };
+
             FileStream fileStream = null;
             if (passAsStream)
             {

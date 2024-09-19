@@ -84,7 +84,7 @@ namespace Bynder.Sdk.Query.Asset
         /// - If the metaproperty is of type text, the values refer to the text itself
         /// </remarks>
         /// 
-        [ApiField("property_", Converter = typeof(MetapropertyOptionsConverter))]
+        [ApiField("property_", Converter = typeof(MetapropertyOptionsConverter), OmitSeparator = true)]
         public IDictionary<string, IList<string>> MetaProperties { get; set; }
 
     }

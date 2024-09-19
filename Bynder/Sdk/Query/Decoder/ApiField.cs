@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -30,5 +30,10 @@ namespace Bynder.Sdk.Query.Decoder
         /// Name of the property in the API documentation.
         /// </summary>
         public string ApiName { get; private set; }
+
+        /// <summary>
+        /// Indicates whether or not the separator (usually a dot) must be omitted when converting
+        /// </summary>
+        public bool OmitSeparator { get; set; }
     }
 }
