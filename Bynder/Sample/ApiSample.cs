@@ -48,6 +48,14 @@ namespace Bynder.Sample
                 await MetapropertiesSample.MetapropertiesSampleAsync();
                 return;
             }
+            
+            // Run samples related to the relation between metaproperties and media items
+            if (args[0].Equals("MetapropertyToMediaSample")) {
+                Console.WriteLine("Running samples for metaproperties and related media...");
+                await MetaPropertyToMediaSample.MetaPropertyToMediaSampleAsync();
+                return;
+            }
+
             // Run samples related to media
             if (args[0].Equals("MediaSample")) {
                 Console.WriteLine("Running samples for media...");
@@ -55,6 +63,13 @@ namespace Bynder.Sample
                 return;
             }
 
+            // Run samples related to finding media
+            if (args[0].Equals("FindMediaSample"))
+            {
+                Console.WriteLine("Running samples for find media...");
+                await FindMediaSample.MediaSampleAsync();
+                return;
+            }
             // Run samples related to modifying media
             if (args[0].Equals("ModifyMediaSample"))
             {

@@ -68,12 +68,12 @@ namespace Bynder.Sdk.Query.Decoder
             else if (Activator.CreateInstance(apiField.Converter) is ITypeToDictionaryConverter dictConverter
                 && dictConverter.CanConvert(propertyInfo.PropertyType))
             {
+                var separator = apiField.OmitSeparator ? string.Empty : ".";
                 foreach (var item in dictConverter.Convert(value))
                 {
-                    AddParam(parameters, $"{apiField.ApiName}.{item.Key}", item.Value);
+                    AddParam(parameters, $"{apiField.ApiName}{separator}{item.Key}", item.Value);
                 }
             }
-
         }
 
         private void AddParam(IDictionary<string, string> parameters, string key, string value)
