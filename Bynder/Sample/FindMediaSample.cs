@@ -45,8 +45,37 @@ namespace Bynder.Sample
             }
         }
 
+        private async Task SearchCustom()
+        {
+            Console.WriteLine("Enter metaproperty name: ");
+            var mpName = Console.ReadLine();
+            Console.WriteLine("Enter option name: ");
+            var optionName = Console.ReadLine();
+            Console.WriteLine($"Searching via the meta property named {mpName} and option named {optionName}");
+            var assets = await _bynderClient.GetAssetService().GetMediaListAsync(new MediaQuery()
+            {
+                MetaProperties = new Dictionary<string, IList<string>>
+                    {
+                        {
+                            mpName, [ optionName ]
+                        }
+                    }
+            });
+
+            Console.WriteLine($"Found {assets.Count()} assets");
+            Console.WriteLine("Do you want to search again? (y/N)");
+            var again = Console.ReadLine();
+            if (again.ToLower().StartsWith("y"))
+            {
+                await SearchCustom();
+            }
+        }
+
         private async Task PerformSearch(IDictionary<string, Metaproperty> metaProperties)
         {
+            await SearchCustom();
+
+
             Console.WriteLine("You have the following meta properties in your Bynder environment: ");
             var mpKeys = metaProperties.Keys.OrderBy(k => k);
             var counter = 1;
@@ -67,7 +96,7 @@ namespace Bynder.Sample
             {
                 Console.WriteLine("No meta property found, stopping execution");
 
-                return ;
+                return;
             }
 
             string searchString = null;
@@ -120,7 +149,7 @@ namespace Bynder.Sample
                 Console.WriteLine($"Searching via the meta property option ID {selectedOption.Id}");
                 assets = await _bynderClient.GetAssetService().GetMediaListAsync(new MediaQuery()
                 {
-                    PropertyOptionId = [ selectedOption.Id ]
+                    PropertyOptionId = [selectedOption.Id]
                 });
 
                 if (assets?.Any() ?? false)
