@@ -11,6 +11,7 @@ using Bynder.Sdk.Api.RequestSender;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Query.Asset;
 using Bynder.Sdk.Query.Upload;
+using System.Web;
 
 namespace Bynder.Sdk.Service.Asset
 {
@@ -179,11 +180,17 @@ namespace Bynder.Sdk.Service.Asset
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
         public async Task<IList<Tag>> GetTagsAsync(GetTagsQuery query)
         {
+            var queryToUse = string.IsNullOrEmpty(query.Keyword) ? query : new GetTagsQuerySimple() { 
+                Keyword = query.Keyword, 
+                Limit = query.Limit,
+                OrderBy = query.OrderBy,
+                Page = query.Page
+            };
             return await _requestSender.SendRequestAsync(new ApiRequest<IList<Tag>>
             {
                 Path = "/api/v4/tags/",
                 HTTPMethod = HttpMethod.Get,
-                Query = query
+                Query = queryToUse
             }).ConfigureAwait(false);
         }
 
@@ -198,6 +205,20 @@ namespace Bynder.Sdk.Service.Asset
                 Path = $"/api/v4/tags/{query.TagId}/media/",
                 HTTPMethod = HttpMethod.Post,
                 Query = query,
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<Status> RemoveTagFromMediaAsync(string tagId, IEnumerable<string> assetIds)
+        {
+            var encodedIdList = HttpUtility.UrlEncode(string.Join(",", assetIds));
+            return await _requestSender.SendRequestAsync(new ApiRequest
+            {
+                Path = $"/api/v4/tags/{tagId}/media/?deleteIds={encodedIdList}",
+                HTTPMethod = HttpMethod.Delete,
             }).ConfigureAwait(false);
         }
 
@@ -230,6 +251,19 @@ namespace Bynder.Sdk.Service.Asset
                 Path = $"/api/media/usage/",
                 HTTPMethod = HttpMethod.Delete,
                 Query = query
+            }).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Check <see cref="IAssetService"/> for more information
+        /// </summary>
+        /// <returns>Check <see cref="IAssetService"/> for more information</returns>
+        public async Task<Status> DeleteAssetAsync(string assetId)
+        {
+            return await _requestSender.SendRequestAsync(new ApiRequest<Status>
+            {
+                Path = "/api/v4/media/" + assetId,
+                HTTPMethod = HttpMethod.Delete,
             }).ConfigureAwait(false);
         }
     }

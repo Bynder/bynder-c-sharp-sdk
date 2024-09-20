@@ -204,6 +204,25 @@ namespace Bynder.Test.Service.Asset
         }
 
         [Fact]
+        public async Task GetTagsByKeywordCallsRequestSenderWithValidRequest()
+        {
+            var result = new Status { Message = "Accepted", StatusCode = 202 };
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest>()))
+                .ReturnsAsync(result);
+            var query = new GetTagsQuery { Keyword = "test" };
+            await _assetService.GetTagsAsync(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<IList<Tag>>>(req =>
+                    req.Path == "/api/v4/tags/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query is GetTagsQuerySimple
+                    && (req.Query as GetTagsQuerySimple).Keyword == query.Keyword
+                )
+            ));
+        }
+
+        [Fact]
         public async Task AddTagToMediaCallsRequestSenderWithValidRequest()
         {
             var result = new Status { Message = "Accepted", StatusCode = 202 };
@@ -254,6 +273,24 @@ namespace Bynder.Test.Service.Asset
                     req.Path == $"/api/media/usage/"
                     && req.HTTPMethod == HttpMethod.Delete
                     && req.Query == query
+                )
+            ));
+        }
+
+        [Fact]
+        public async Task DeleteAssetCallsRequestSenderWithValidRequest()
+        {
+            var result = new Status { Message = "Accepted", StatusCode = 204 };
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<Status>>()))
+                .ReturnsAsync(result);
+
+            var assetId = "asset-id";
+            await _assetService.DeleteAssetAsync(assetId);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<Status>>(req =>
+                    req.Path == $"/api/v4/media/" + assetId
+                    && req.HTTPMethod == HttpMethod.Delete
                 )
             ));
         }
