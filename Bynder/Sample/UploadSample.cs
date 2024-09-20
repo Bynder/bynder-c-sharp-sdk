@@ -78,11 +78,15 @@ namespace Bynder.Sample
                 query.Description = description;
             }
 
-           
-            query.MetapropertyOptions = new Dictionary<string,IList<string>>()
+            Console.WriteLine("Next, we're going to select some meta properties and options to add to this asset. Do you want to specify the options as a name (n) or as an id (i)?");
+            var optionMode = Console.ReadLine();
+
+            var metaPropertiesToAdd = await CollectMetaPropertiesAndOptions(optionMode.ToLower().StartsWith("n"));
+            query.MetapropertyOptions = new Dictionary<string, IList<string>>();
+            foreach (var mp in metaPropertiesToAdd) 
             {
-                { "a", [ "b" ]}
-            };
+                query.MetapropertyOptions.Add(mp.Key, [mp.Value]);
+            }
 
             FileStream fileStream = null;
             if (passAsStream)
@@ -94,6 +98,65 @@ namespace Bynder.Sample
             var ms = Math.Round((DateTime.Now - before).TotalMilliseconds);
             Console.WriteLine($"Uploaded file as media with id {response.MediaId} (time elapsed: {ms})");
 
+        }
+
+        private async Task<List<KeyValuePair<string, string>>> CollectMetaPropertiesAndOptions(bool useOptionName = false)
+        {
+            var metaProperties = await _bynderClient.GetAssetService().GetMetapropertiesAsync();
+            Console.WriteLine("You have the following meta properties in your Bynder environment: ");
+            var mpKeys = metaProperties.Keys.OrderBy(k => k);
+            var counter = 1;
+            foreach (var metaProperty in metaProperties.OrderBy(mp => mp.Key))
+            {
+                var extraInfo = metaProperty.Value.Options?.Any() ?? false ? $"[with {metaProperty.Value.Options.Count()} options]" : "[without options]";
+                Console.WriteLine($"{counter++}) {metaProperty.Key} {extraInfo}");
+            }
+            Console.WriteLine("Type the number of the meta property to attach to the asset: ");
+
+            var mpNrInput = Console.ReadLine();
+            if (!int.TryParse(mpNrInput, out int mpNr))
+            {
+                mpNr = 1;
+            }
+            var selectedMetaPropertyKey = mpKeys.Skip(mpNr - 1).FirstOrDefault();
+            var selectedMetaProperty = metaProperties[selectedMetaPropertyKey];
+            if (selectedMetaProperty == null)
+            {
+                Console.WriteLine("No meta property found, stopping execution");
+                return [];
+            }
+
+            if (selectedMetaProperty.Options?.Any() ?? false)
+            {
+                counter = 1;
+                var sortedOptions = selectedMetaProperty.Options.OrderBy(o => o.Label);
+                foreach (var option in sortedOptions)
+                {
+                    Console.WriteLine($"{counter++}) {option.Label}");
+                }
+                Console.WriteLine("Type the number of the option to attach to the asset: ");
+                mpNrInput = Console.ReadLine();
+                if (!int.TryParse(mpNrInput, out mpNr))
+                {
+                    mpNr = 1;
+                }
+                var selectedOption = sortedOptions.Skip(mpNr - 1).FirstOrDefault();
+
+                var list = new List<KeyValuePair<string, string>>();
+                list.Add(new KeyValuePair<string, string>(selectedMetaProperty.Id, useOptionName ? selectedOption.Name : selectedOption.Id));
+                Console.WriteLine("Do you want to add another meta property? (y/N)");
+                var again = Console.ReadLine();
+                if (again.ToLower().StartsWith("y"))
+                {
+                    list.AddRange(await CollectMetaPropertiesAndOptions());
+                }
+                return list;
+            }
+            else
+            {
+                Console.WriteLine("The metaproperty you selected does not contain options and cannot be used during upload");
+            }
+            return [];
         }
 
         private Dictionary<string,string> GetCustomParameters()
