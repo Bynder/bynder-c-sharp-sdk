@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Bynder.Sdk.Model;
 using Bynder.Sdk.Query.Asset;
@@ -74,13 +75,25 @@ namespace Bynder.Sdk.Service.Asset
         Task<IList<Media>> GetMediaListAsync(MediaQuery query);
 
         /// <summary>
-        /// Uploads a file async.
+        /// Uploads a file based on a filepath in the query
         /// </summary>
         /// <param name="query">Information to upload a file</param>
         /// <returns>Task representing the upload</returns>
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         /// <exception cref="BynderUploadException">Can be thrown when upload does not finish within expected time</exception>
         Task<SaveMediaResponse> UploadFileAsync(UploadQuery query);
+
+        /// <summary>
+        /// Uploads a file as a stream
+        /// </summary>
+        /// <param name="fileStream">Stream representing the file to be uploaded</param>
+        /// <param name="query">Information to upload a file</param>
+        /// <returns>Task representing the upload</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        /// <exception cref="BynderUploadException">Can be thrown when upload does not finish within expected time</exception>
+
+        Task<SaveMediaResponse> UploadFileAsync(FileStream fileStream, UploadQuery query);
+
 
         /// <summary>
         /// Modifies a media
@@ -132,6 +145,14 @@ namespace Bynder.Sdk.Service.Asset
         Task<Status> DeleteAssetUsage(AssetUsageQuery query);
 
         /// <summary>
+        /// Get a full list of Bynder assets including the total number of matching results
+        /// </summary>
+        /// <param name="query">Information to correctly filter/paginate media</param>
+        /// <returns>Task representing the full result, including the total number of matches</returns>
+        /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
+        /// <remarks>This method can be used to implement pagination in your app. The MediaFullResult that gets returned has a Total.Count property, which contains the total number of matching assets, not just the number of assets in the current result page</remarks>
+        Task<MediaFullResult> GetMediaFullResultAsync(MediaQuery query);
+
         /// Delete an asset 
         /// </summary>
         /// <param name="assetId">Id of the asset to remove</param>

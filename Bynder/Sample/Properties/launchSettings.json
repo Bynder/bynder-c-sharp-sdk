@@ -39,6 +39,10 @@
     "Run ModifyMediaSample": {
       "commandName": "Project",
       "commandLineArgs": "ModifyMediaSample"
+    },
+    "Run FindMediaSample": {
+      "commandName": "Project",
+      "commandLineArgs": "FindMediaSample"
     }
   }
 }
