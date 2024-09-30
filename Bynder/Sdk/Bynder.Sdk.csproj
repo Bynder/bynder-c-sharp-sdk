@@ -17,7 +17,7 @@
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Owners>BynderDevops</Owners>
     <PackageProjectUrl>https://github.com/Bynder/bynder-c-sharp-sdk</PackageProjectUrl>
-    <PackageReleaseNotes>Fixes the data-type for property representing active focus point in the original media item.</PackageReleaseNotes>
+    <PackageReleaseNotes>Support for .NET 8. Added ability to delete assets, view/modify tags, modify date published and remove metaproperty values for assets and find assets. Bug fixes for asset type, width/height for Powerpoint files and unintentional archive/isPublic changes.</PackageReleaseNotes>
     <Summary>The main goal of this SDK is to speed up the integration of Bynder customers who use C# making it easier to connect to the Bynder API (http://docs.bynder.apiary.io/) and executing requests on it.</Summary>
     <PackageTags>Bynder API C# SDK</PackageTags>
     <Title>Bynder.Sdk</Title>
