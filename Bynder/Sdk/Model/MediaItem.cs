@@ -1,4 +1,4 @@
-﻿// Copyright (c) Bynder. All rights reserved.
+// Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.ComponentModel;
@@ -46,13 +46,13 @@ namespace Bynder.Sdk.Model
         /// Width
         /// </summary>
         [JsonProperty("width")]
-        public int Width { get; set; }
+        public int? Width { get; set; }
 
         /// <summary>
         /// Height
         /// </summary>
         [JsonProperty("height")]
-        public int Height { get; set; }
+        public int? Height { get; set; }
 
         /// <summary>
         /// true if it is corresponds to the current version of the asset
