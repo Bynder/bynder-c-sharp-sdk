@@ -92,7 +92,7 @@ namespace Bynder.Sdk.Service.Asset
         /// <exception cref="HttpRequestException">Can be thrown when requests to server can't be completed or HTTP code returned by server is an error</exception>
         /// <exception cref="BynderUploadException">Can be thrown when upload does not finish within expected time</exception>
 
-        Task<SaveMediaResponse> UploadFileAsync(FileStream fileStream, UploadQuery query);
+        Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, UploadQuery query);
 
 
         /// <summary>
