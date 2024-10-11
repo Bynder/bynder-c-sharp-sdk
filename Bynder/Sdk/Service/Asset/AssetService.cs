@@ -151,7 +151,7 @@ namespace Bynder.Sdk.Service.Asset
         /// <param name="fileStream">Check <see cref="IAssetService"/> for more information</param>
         /// <param name="query">Check <see cref="IAssetService"/> for more information</param>
         /// <returns>Check <see cref="IAssetService"/> for more information</returns>
-        public async Task<SaveMediaResponse> UploadFileAsync(FileStream fileStream, UploadQuery query)
+        public async Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, UploadQuery query)
         {
             return await _uploader.UploadFileAsync(fileStream, query).ConfigureAwait(false);
         }
