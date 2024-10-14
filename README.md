@@ -80,7 +80,7 @@ Access code is then provided to terminal prompt to retrieve an access token for 
 
 #### Setting up .NET (dotnet) and building the project
 
-Make sure you have .NET 5.0 set up and installed. If you are developing on a Mac OS, the fastest method is to download the C# Dev Kit in Visual Studio Code and download .NET 5.0 from https://dotnet.microsoft.com/en-us/download/dotnet/5.0.
+Make sure you have .NET 8.0 set up and installed. If you are developing on a Mac OS, the fastest method is to download the C# Dev Kit in Visual Studio Code and download .NET 8.0 from https://dotnet.microsoft.com/en-us/download/dotnet/8.0.
 
 From `Bynder/Sample` directory, the project can be built using command from `Bynder.Sample.csproj`:
 ```bash
