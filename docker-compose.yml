@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  bynder-sdk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    network_mode: host 
+    volumes:
+      - .:/app
+      - ~/.nuget:/root/.nuget
+    environment:
+      - DOTNET_ENVIRONMENT=Development
