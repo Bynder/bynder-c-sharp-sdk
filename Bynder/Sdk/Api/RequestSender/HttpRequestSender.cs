@@ -1,9 +1,12 @@
 // Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using Bynder.Sdk.Model;
+using Newtonsoft.Json;
 
 namespace Bynder.Sdk.Api.RequestSender
 {
@@ -36,6 +39,43 @@ namespace Bynder.Sdk.Api.RequestSender
             if (!response.IsSuccessStatusCode)
             {
                 var content = response.Content.ReadAsStringAsync().Result;
+
+                if (!string.IsNullOrEmpty(content))
+                {
+                    // dispose the content
+
+                    response.Dispose();
+
+                    if (!string.IsNullOrEmpty(content))
+                    {
+                        try
+                        {
+                            var status = JsonConvert.DeserializeObject<Status>(content);
+
+                            var message = status.Message;
+
+                            if (!string.IsNullOrEmpty(message))
+                            {
+                                throw new HttpRequestException($"Error reported by Bynder: {response.StatusCode} - {message}");
+                            }
+                        }
+                        catch (HttpRequestException)
+                        {
+                            throw;
+                        }
+                        catch (Exception)
+                        {
+                            // ignore...
+                        }                        
+                    }
+
+                    if (!string.IsNullOrEmpty(response.ReasonPhrase))
+                    {
+                        throw new HttpRequestException($"Error reported by Bynder: {response.StatusCode} - {response.ReasonPhrase}");
+                    }
+
+                    throw new HttpRequestException($"Error reported by Bynder: {response.StatusCode}");
+                }
             }
             response.EnsureSuccessStatusCode();
             return response;
