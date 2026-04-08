@@ -94,6 +94,14 @@ namespace Bynder.Sdk.Service.Asset
 
         Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, UploadQuery query);
 
+        /// <summary>
+        /// Uploads a file as a stream
+        /// </summary>
+        /// <param name="fileStream">Stream representing the file to be uploaded</param>
+        /// <param name="fileStreamLength">Length of the file stream, to be used if the stream doesn't define it</param>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, long fileStreamLength, UploadQuery query);
 
         /// <summary>
         /// Modifies a media

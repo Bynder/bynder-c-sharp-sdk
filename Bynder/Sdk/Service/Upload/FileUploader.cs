@@ -1,6 +1,7 @@
 // Copyright (c) Bynder. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
@@ -79,7 +80,19 @@ namespace Bynder.Sdk.Service.Upload
         /// <returns>Task representing the upload</returns>
         public async Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, UploadQuery query)
         {
-            return await UploadFileAsync(fileStream, query, query.OriginalFileName ?? Path.GetFileName(query.Filepath));
+            return await UploadFileAsync(fileStream, fileStream.Length, query);
+        }
+
+        /// <summary>
+        /// Uploads a file with the data specified in query parameter
+        /// </summary>
+        /// <param name="fileStream">Stream of the file to upload</param>
+        /// <param name="fileStreamLength">Length of the file stream</param>
+        /// <param name="query">Upload query information to upload a file</param>
+        /// <returns>Task representing the upload</returns>
+        public async Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, long fileStreamLength, UploadQuery query)
+        {
+            return await UploadFileAsync(fileStream, fileStreamLength, query, query.OriginalFileName ?? Path.GetFileName(query.Filepath));
         }
 
         /// <summary>
@@ -95,9 +108,7 @@ namespace Bynder.Sdk.Service.Upload
             uint chunkNumber = 0;
 
             var fileStream = File.Open(query.Filepath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-            return await UploadFileAsync(fileStream, query, filename);
-
-            
+            return await UploadFileAsync(fileStream, fileStream.Length, query, filename);
         }
 
         private async Task<UploadRequest> GetUploadRequest(string fileName)
@@ -105,21 +116,24 @@ namespace Bynder.Sdk.Service.Upload
             return await RequestUploadInformationAsync(new RequestUploadQuery { Filename = fileName }).ConfigureAwait(false);
         }
 
-
-        private async Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, UploadQuery query, string filename)
+        private async Task<SaveMediaResponse> UploadFileAsync(Stream fileStream, long fileStreamLength, UploadQuery query, string filename)
         {
             uint chunkNumber = 0;
             var uploadRequest = await GetUploadRequest(filename);
-            using (fileStream)
-            {
-                int bytesRead = 0;
-                var buffer = new byte[CHUNK_SIZE];
-                long numberOfChunks = (fileStream.Length + CHUNK_SIZE - 1) / CHUNK_SIZE;
 
-                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) > 0)
+            await using (fileStream)
+            {
+                byte[] buffer = new byte[CHUNK_SIZE];
+                long numberOfChunks = (fileStreamLength + buffer.Length - 1) / buffer.Length;
+                long totalBytesRead = 0;
+
+                while (totalBytesRead < fileStreamLength)
                 {
-                    ++chunkNumber;
-                    await UploadPartAsync(Path.GetFileName(query.Filepath), buffer, bytesRead, chunkNumber, uploadRequest, (uint)numberOfChunks).ConfigureAwait(false);
+                    int bytesToRead = (int)Math.Min(buffer.Length, fileStreamLength - totalBytesRead);
+
+                    await UploadChunkAsync(uploadRequest, filename, fileStream, buffer, bytesToRead, numberOfChunks, ++chunkNumber);
+
+                    totalBytesRead += bytesToRead;
                 }
             }
 
@@ -145,6 +159,25 @@ namespace Bynder.Sdk.Service.Upload
             {
                 throw new BynderUploadException("Converter did not finish. Upload not completed");
             }
+        }
+
+        private async Task UploadChunkAsync(UploadRequest uploadRequest, string fileName, Stream fileStream, byte[] buffer, int bytesToRead, long numberOfChunks, uint chunkNumber)
+        {
+            int bytesReadForChunk = 0;
+
+            while (bytesReadForChunk < bytesToRead)
+            {
+                int bytesRead = await fileStream.ReadAsync(buffer, bytesReadForChunk, bytesToRead - bytesReadForChunk);
+
+                if (bytesRead == 0)
+                {
+                    throw new EndOfStreamException();
+                }
+
+                bytesReadForChunk += bytesRead;
+            }
+
+            await UploadPartAsync(fileName, buffer, bytesReadForChunk, chunkNumber, uploadRequest, (uint)numberOfChunks).ConfigureAwait(false);
         }
 
         /// <summary>
