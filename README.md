@@ -180,3 +180,58 @@ dotnet run -- AssetUsage
 Methods Used:
 * CreateAssetUsage(AssetUsageQuery)
 * DeleteAssetUsage(AssetUsageQuery)
+
+## Running Sample Files Using Docker
+
+If you want to avoid .NET version compatibility issues or simplify the setup process, you can use Docker to run the sample files.
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/get-started) installed on your machine
+- [Docker Compose](https://docs.docker.com/compose/install/) installed on your machine
+
+### Setting up Docker Environment
+
+##### 1. Create a `Config.json` file in the repository root with your Bynder credentials:
+
+```json
+{
+  "base_url": "https://example.bynder.com",
+  "client_id": "your oauth app client id",
+  "client_secret": "your oauth app client secret",
+  "redirect_uri": "your oauth app redirect uri",
+  "scopes": "offline asset:read asset:write collection:read collection:write asset.usage:read asset.usage:write meta.assetbank:read meta.assetbank:write meta.workflow:read"
+}
+```
+
+##### 2. Start the Docker container:
+
+`make run-docker`
+
+##### 3. Run any sample using the make command:
+
+`make executeSdkSample sample-name=BrandsSample`
+
+Available sample names:
+
+* BrandsSample
+* MetapropertiesSample
+* MetapropertyToMediaSample
+* MediaSample
+* FindMediaSample
+* ModifyMediaSample
+* CollectionsSample
+* TagsSample
+* UploadSample
+* AssetUsageSample
+
+##### 4. When you're done, stop the Docker container:
+`make stop-docker`
+
+If you make changes to the code, you can rebuild the project within the container:
+
+`make rebuild-project`
+
+Or rebuild the entire container if needed:
+
+`make rebuild-container`

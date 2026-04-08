@@ -3,5 +3,5 @@
   "client_id": "your oauth app client id",
   "client_secret": "your oauth app client secret",
   "redirect_uri": "your oauth app redirect uri",
-  "scopes": "offline asset:read asset:write collection:read"
+  "scopes": "offline asset:read asset:write collection:read collection:write asset.usage:read asset.usage:write meta.assetbank:read meta.assetbank:write meta.workflow:read"
 }
