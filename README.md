@@ -12,6 +12,8 @@ The main goal of this SDK is to speed up the integration of Bynder customers who
 
 You can download and use Bynder SDK from Nuget. https://www.nuget.org/packages/Bynder.Sdk/
 
+> **Breaking change (v4.0.0):** `Bynder.Sdk` now targets `net10.0` only, dropping `net8.0` support. Consumers on `net8.0` should stay on the `3.x` package line.
+
 ## Current status
 
 At the moment this SDK provides a library with the following methods:
@@ -80,7 +82,7 @@ Access code is then provided to terminal prompt to retrieve an access token for 
 
 #### Setting up .NET (dotnet) and building the project
 
-Make sure you have .NET 8.0 set up and installed. If you are developing on a Mac OS, the fastest method is to download the C# Dev Kit in Visual Studio Code and download .NET 8.0 from https://dotnet.microsoft.com/en-us/download/dotnet/8.0.
+Make sure you have .NET 10.0 set up and installed. If you are developing on a Mac OS, the fastest method is to download the C# Dev Kit in Visual Studio Code and download .NET 10.0 from https://dotnet.microsoft.com/en-us/download/dotnet/10.0.
 
 From `Bynder/Sample` directory, the project can be built using command from `Bynder.Sample.csproj`:
 ```bash
