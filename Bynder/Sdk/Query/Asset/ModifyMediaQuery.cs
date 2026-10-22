@@ -62,7 +62,7 @@ namespace Bynder.Sdk.Query.Asset
         /// <summary>
         /// Metaproperty options to set on the asset.
         /// </summary>
-        [ApiField("metaproperty", Converter = typeof(MetapropertyOptionsConverter))]
+        [ApiField("metaproperty.", Converter = typeof(MetapropertyOptionsConverter))]
         public IDictionary<string, IList<string>> MetapropertyOptions { get; set; }
 
         /// <summary>

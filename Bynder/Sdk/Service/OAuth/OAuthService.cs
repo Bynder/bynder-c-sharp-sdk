@@ -36,6 +36,12 @@ namespace Bynder.Sdk.Service.OAuth
         }
 
         /// <summary>
+        /// Gets the access token.
+        /// </summary>
+        /// <value>The access token.</value>
+        public string AccessToken => _credentials.AccessToken;
+
+        /// <summary>
         /// Check <see cref="IOAuthService"/>.
         /// </summary>
         /// <returns>Check <see cref="IOAuthService"/>.</returns>
@@ -151,5 +157,23 @@ namespace Bynder.Sdk.Service.OAuth
             }
         }
 
+        /// <summary>
+        /// Explicitly set access token.
+        /// </summary>
+        public void SetAccessToken(string accessToken)
+        {
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                throw new ArgumentNullException(nameof(accessToken));
+            }
+
+            var token = new Token
+            {
+                AccessToken = accessToken,
+                ExpiresIn = 3600
+            };
+
+            _credentials.Update(token);
+        }
     }
 }

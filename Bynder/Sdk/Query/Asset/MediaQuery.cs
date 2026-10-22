@@ -64,8 +64,20 @@ namespace Bynder.Sdk.Query.Asset
         /// <summary>
         /// The type of the asset
         /// </summary>
-        [ApiField("type", Converter = typeof(LowerCaseEnumConverter))]
-        public AssetType? Type { get; set; }
+        [ApiField("type")]
+        public string Types { get; set; }
+
+        /// <summary>
+        /// The tags of the asset
+        /// </summary>
+        [ApiField("tags")]
+        public string Tags { get; set; }
+
+        /// <summary>
+        /// The tags of the asset
+        /// </summary>
+        [ApiField("orientation")]
+        public string Orientations { get; set; }
 
         /// <summary>
         /// Metaproperty option ids that the asset has to have
