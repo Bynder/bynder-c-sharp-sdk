@@ -35,14 +35,23 @@ namespace Bynder.Sample
             var createAssetUsageMediaId = Console.ReadLine();
             Console.WriteLine("Enter the integration ID to create the asset usage for: ");
             var createAssetUsageIntegrationId = Console.ReadLine();
-            await _bynderClient.GetAssetService().CreateAssetUsage(new AssetUsageQuery(createAssetUsageIntegrationId, createAssetUsageMediaId));
+            Console.WriteLine("Enter the URI (location) of the asset usage: ");
+            var createAssetUsageUri = Console.ReadLine();
+            await _bynderClient.GetAssetService().CreateAssetUsage(new AssetUsageQuery(createAssetUsageIntegrationId, createAssetUsageMediaId)
+            {
+                Uri = createAssetUsageUri
+            });
 
-            
             Console.WriteLine("Enter the media ID to create delete usage from: ");
             var deleteAssetUsageMediaId = Console.ReadLine();
             Console.WriteLine("Enter the integration ID to delete the asset usage from: ");
             var deleteAssetUsageIntegrationId = Console.ReadLine();
-             await _bynderClient.GetAssetService().DeleteAssetUsage(new AssetUsageQuery(deleteAssetUsageIntegrationId, deleteAssetUsageMediaId));
+            Console.WriteLine("Enter the URI of the asset usage to delete: ");
+            var deleteAssetUsageUri = Console.ReadLine();
+            await _bynderClient.GetAssetService().DeleteAssetUsage(new AssetUsageQuery(deleteAssetUsageIntegrationId, deleteAssetUsageMediaId)
+            {
+                Uri = deleteAssetUsageUri
+            });
         }
             
         private async Task AuthenticateWithOAuth2Async(bool useClientCredentials)

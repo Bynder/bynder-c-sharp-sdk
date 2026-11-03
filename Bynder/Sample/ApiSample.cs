@@ -102,6 +102,11 @@ namespace Bynder.Sample
                 await AssetUsageSample.AssetUsageSampleAsync();
                 return;
             }
+            if (args[0].Equals("AssetUsageSampleNonInteractive")) {
+                Console.WriteLine("Running non-interactive samples for asset usage...");
+                await AssetUsageSampleNonInteractive.AssetUsageSampleNonInteractiveAsync();
+                return;
+            }
         }
     }
 }
