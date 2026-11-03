@@ -31,7 +31,18 @@ namespace Bynder.Sdk.Model
         {
             get
             {
-                return PropertyOptionsDictionary?["property_assettype"].Values().Select(v => v.ToString()).ToList() ?? null;
+                var entry = PropertyOptionsDictionary?
+                    .FirstOrDefault(p => string.Equals(p.Key, "property_assettype", StringComparison.OrdinalIgnoreCase));
+                var assetTypes = entry?.Value;
+                if (assetTypes == null || assetTypes.Type == JTokenType.Null)
+                {
+                    return null;
+                }
+                if (assetTypes is JArray array)
+                {
+                    return array.Select(v => v.ToString()).ToList();
+                }
+                return new List<string> { assetTypes.ToString() };
             }
         }
 
