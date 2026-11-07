@@ -116,7 +116,7 @@ namespace Bynder.Sdk.Service.Upload
                 var buffer = new byte[CHUNK_SIZE];
                 long numberOfChunks = (fileStream.Length + CHUNK_SIZE - 1) / CHUNK_SIZE;
 
-                while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) > 0)
+                while ((bytesRead = await fileStream.ReadAtLeastAsync(buffer, buffer.Length, throwOnEndOfStream: false).ConfigureAwait(false)) > 0)
                 {
                     ++chunkNumber;
                     await UploadPartAsync(Path.GetFileName(query.Filepath), buffer, bytesRead, chunkNumber, uploadRequest, (uint)numberOfChunks).ConfigureAwait(false);
@@ -138,7 +138,9 @@ namespace Bynder.Sdk.Service.Upload
                     Copyright = query.Copyright,
                     IsPublic = query.IsPublic,
                     MetapropertyOptions = query.MetapropertyOptions,
-                    PublishedDate = query.PublishedDate
+                    PublishedDate = query.PublishedDate,
+                    Audit = query.Audit,
+                    AccessRequestId = query.AccessRequestId
                 }).ConfigureAwait(false);
             }
             else

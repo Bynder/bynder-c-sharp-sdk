@@ -11,6 +11,12 @@ namespace Bynder.Sdk.Service.OAuth
     public interface IOAuthService
     {
         /// <summary>
+        /// Gets the access token.
+        /// </summary>
+        /// <value>The access token.</value>
+        string AccessToken { get; }
+
+        /// <summary>
         /// Gets the authorisation URL.
         /// </summary>
         /// <returns>The authorisation URL.</returns>
@@ -35,5 +41,12 @@ namespace Bynder.Sdk.Service.OAuth
         /// </summary>
         /// <returns>The task to get the refresh token</returns>
         Task GetRefreshTokenAsync();
+
+        /// <summary>
+        /// Explicitly set access token, for integrations that obtain the token themselves.
+        /// </summary>
+        /// <param name="accessToken">The access token.</param>
+        /// <param name="expiresIn">Remaining lifetime of the token in seconds, one hour by default.</param>
+        void SetAccessToken(string accessToken, int expiresIn = 3600);
     }
 }

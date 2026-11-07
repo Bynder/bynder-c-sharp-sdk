@@ -127,6 +127,105 @@ namespace Bynder.Test.Service.Asset
         }
 
         [Fact]
+        public async Task GetMetapropertiesWithoutOptionsCallsRequestSenderWithValidRequest()
+        {
+            var result = new Dictionary<string, Metaproperty>();
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<IDictionary<string, Metaproperty>>>()))
+                .ReturnsAsync(result);
+            var metaproperties = await _assetService.GetMetapropertiesAsync(includeOptions: false);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<IDictionary<string, Metaproperty>>>(
+                    req => req.Path == "/api/v4/metaproperties/?options=0"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == null
+                )
+            ));
+
+            Assert.Equal(result, metaproperties);
+        }
+
+        [Fact]
+        public async Task GetMediaWithTotalCallsRequestSenderWithValidRequest()
+        {
+            var result = new MediaWithTotal();
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<MediaWithTotal>>()))
+                .ReturnsAsync(result);
+            var mediaWithTotalQuery = new MediaWithTotalQuery { IncludeTotal = true };
+            var mediaWithTotal = await _assetService.GetMediaWithTotalAsync(mediaWithTotalQuery);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<MediaWithTotal>>(
+                    req => req.Path == "/api/v4/media/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == mediaWithTotalQuery
+                )
+            ));
+
+            Assert.Equal(result, mediaWithTotal);
+        }
+
+        [Fact]
+        public async Task GetMediaWithCountCallsRequestSenderWithValidRequest()
+        {
+            var result = new MediaWithCount();
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<MediaWithCount>>()))
+                .ReturnsAsync(result);
+            var mediaWithCountQuery = new MediaWithCountQuery { IncludeCount = true };
+            var mediaWithCount = await _assetService.GetMediaWithCountAsync(mediaWithCountQuery);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<MediaWithCount>>(
+                    req => req.Path == "/api/v4/media/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == mediaWithCountQuery
+                )
+            ));
+
+            Assert.Equal(result, mediaWithCount);
+        }
+
+        [Fact]
+        public async Task GetMetapropertyOptionsByIdsCallsRequestSenderWithValidRequest()
+        {
+            var result = new List<MetapropertyOption>();
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<IList<MetapropertyOption>>>()))
+                .ReturnsAsync(result);
+            var query = new MetapropertyOptionByIdsQuery { Ids = ["optionId1", "optionId2"] };
+            var metapropertyOptions = await _assetService.GetMetapropertyOptionsByIdsAsync(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<IList<MetapropertyOption>>>(
+                    req => req.Path == "/api/v4/metaproperties/options/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == query
+                )
+            ));
+
+            Assert.Equal(result, metapropertyOptions);
+        }
+
+        [Fact]
+        public async Task GetMetapropertyOptionsCallsRequestSenderWithValidRequest()
+        {
+            var result = new List<MetapropertyOption>();
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<IList<MetapropertyOption>>>()))
+                .ReturnsAsync(result);
+            var query = new MetapropertyOptionSearchQuery { MetapropertyId = "metapropertyId", Name = "option name" };
+            var metapropertyOptions = await _assetService.GetMetapropertyOptionsAsync(query);
+
+            _apiRequestSenderMock.Verify(sender => sender.SendRequestAsync(
+                It.Is<ApiRequest<IList<MetapropertyOption>>>(
+                    req => req.Path == $"/api/v4/metaproperties/{query.MetapropertyId}/options/"
+                    && req.HTTPMethod == HttpMethod.Get
+                    && req.Query == query
+                )
+            ));
+
+            Assert.Equal(result, metapropertyOptions);
+        }
+
+        [Fact]
         public async Task GetMediaListWithMetaPropertiesCallsRequestSenderWithValidRequest()
         {
             var result = new List<Media>();
@@ -302,6 +401,27 @@ namespace Bynder.Test.Service.Asset
                 )
             ));
             Assert.Equal(result, mediaFullResult);
+        }
+
+        [Fact]
+        public async Task GetMediaFullResultAsyncKeepsTypesTagsAndOrientations()
+        {
+            MediaQueryFull sentQuery = null;
+            _apiRequestSenderMock.Setup(sender => sender.SendRequestAsync(It.IsAny<ApiRequest<MediaFullResult>>()))
+                .Callback<Request<MediaFullResult>>(req => sentQuery = req.Query as MediaQueryFull)
+                .ReturnsAsync(new MediaFullResult());
+            var mediaQuery = new MediaQuery
+            {
+                Types = [AssetType.Image, AssetType.Video],
+                Tags = ["tag1", "tag2"],
+                Orientations = ["landscape"],
+            };
+            await _assetService.GetMediaFullResultAsync(mediaQuery);
+
+            Assert.Equal(mediaQuery.Types, sentQuery.Types);
+            Assert.Equal(mediaQuery.Tags, sentQuery.Tags);
+            Assert.Equal(mediaQuery.Orientations, sentQuery.Orientations);
+            Assert.True(sentQuery.Total);
         }
 
         [Fact]

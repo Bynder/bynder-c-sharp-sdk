@@ -41,5 +41,39 @@ namespace Bynder.Test.Api.RequestSender
                 await Assert.ThrowsAsync<HttpRequestException>(() => doRequest);
             }
         }
+
+        [Fact]
+        public async Task WhenErrorWithStatusMessageReceivedExceptionHasMessage()
+        {
+            using (var httpListener = new TestHttpListener(HttpStatusCode.BadRequest, "{\"message\":\"Invalid metaproperty\",\"statuscode\":400}"))
+            using (var httpRequestSender = new HttpRequestSender())
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, httpListener.ListeningUrl);
+
+                var exception = await Assert.ThrowsAsync<HttpRequestException>(() => httpRequestSender.SendHttpRequest(requestMessage));
+
+                Assert.Equal("Error reported by Bynder: BadRequest - Invalid metaproperty", exception.Message);
+                Assert.Equal(HttpStatusCode.BadRequest, exception.StatusCode);
+            }
+        }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("<html>Forbidden</html>")]
+        [InlineData("{\"statuscode\":403}")]
+        [InlineData("null")]
+        public async Task WhenErrorWithoutStatusMessageReceivedExceptionHasReasonPhrase(string responseContent)
+        {
+            using (var httpListener = new TestHttpListener(HttpStatusCode.Forbidden, responseContent))
+            using (var httpRequestSender = new HttpRequestSender())
+            {
+                var requestMessage = new HttpRequestMessage(HttpMethod.Get, httpListener.ListeningUrl);
+
+                var exception = await Assert.ThrowsAsync<HttpRequestException>(() => httpRequestSender.SendHttpRequest(requestMessage));
+
+                Assert.Equal("Error reported by Bynder: Forbidden - Forbidden", exception.Message);
+                Assert.Equal(HttpStatusCode.Forbidden, exception.StatusCode);
+            }
+        }
     }
 }

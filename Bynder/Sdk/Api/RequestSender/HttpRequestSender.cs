@@ -4,6 +4,8 @@
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using Bynder.Sdk.Model;
+using Newtonsoft.Json;
 
 namespace Bynder.Sdk.Api.RequestSender
 {
@@ -33,12 +35,45 @@ namespace Bynder.Sdk.Api.RequestSender
         {
             httpRequest.Headers.Add("User-Agent", UserAgent);
             var response = await _httpClient.SendAsync(httpRequest).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
-                var content = response.Content.ReadAsStringAsync().Result;
+                return response;
             }
-            response.EnsureSuccessStatusCode();
-            return response;
+
+            using (response)
+            {
+                var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                var message = GetStatusMessage(content);
+
+                if (string.IsNullOrEmpty(message))
+                {
+                    message = response.ReasonPhrase;
+                }
+
+                var errorMessage = !string.IsNullOrEmpty(message) ? $"Error reported by Bynder: {response.StatusCode} - {message}" : $"Error reported by Bynder: {response.StatusCode}";
+
+                throw new HttpRequestException(errorMessage, null, response.StatusCode);
+            }
+        }
+
+        private static string GetStatusMessage(string content)
+        {
+            if (string.IsNullOrEmpty(content))
+            {
+                return null;
+            }
+
+            try
+            {
+                var status = JsonConvert.DeserializeObject<Status>(content);
+
+                return status?.Message;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
         }
 
         /// <summary>
