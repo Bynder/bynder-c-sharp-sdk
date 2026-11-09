@@ -36,9 +36,6 @@ jobs:
     name: Release
     runs-on: ubuntu-22.04
     needs: build-tests
-    permissions:
-      contents: read
-      id-token: write # required for NuGet trusted publishing (OIDC)
 
     steps:
       - uses: actions/checkout@v6
@@ -50,18 +47,13 @@ jobs:
       - name: Install dependencies
         run: dotnet restore
 
-      - name: Pack
-        run: dotnet pack Bynder/Sdk/Bynder.Sdk.csproj --configuration Release --no-restore --output ./artifacts
-
-      - name: NuGet login (trusted publishing)
-        uses: NuGet/login@v1
-        id: nuget-login
-        with:
-          user: ${{ secrets.NUGET_TRUSTED_PUBLISHING_USER }}
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
 
       - name: Publish to NuGet
-        run: >
-          dotnet nuget push "./artifacts/*.nupkg"
-          --api-key ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
-          --source https://api.nuget.org/v3/index.json
-          --skip-duplicate
+        uses: brandedoutcast/publish-nuget@v2.5.5
+        with:
+          PROJECT_FILE_PATH: Bynder/Sdk/Bynder.Sdk.csproj
+          VERSION_REGEX: '^\s*<PackageVersion>(.*)<\/PackageVersion>\s*$'
+          TAG_FORMAT: '*'
+          NUGET_KEY: ${{secrets.NUGET_API_KEY}}
