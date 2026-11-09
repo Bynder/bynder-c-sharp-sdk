@@ -1,0 +1,25 @@
+# TEMPORARY - do not merge. Prints only the `iss` claim of this repo's GitHub OIDC token
+# to check whether the enterprise custom issuer is why NuGet trusted publishing returns 401.
+name: OIDC issuer debug
+
+on:
+  pull_request:
+
+permissions:
+  id-token: write
+
+jobs:
+  issuer:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Print OIDC token issuer
+        run: |
+          jwt=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=https://www.nuget.org" | jq -r .value)
+          echo "::add-mask::$jwt"
+          JWT="$jwt" python3 -c '
+          import base64, json, os
+          p = os.environ["JWT"].split(".")[1]
+          p += "=" * (-len(p) % 4)
+          print("iss:", json.loads(base64.urlsafe_b64decode(p))["iss"])
+          '
