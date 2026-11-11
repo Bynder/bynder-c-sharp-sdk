@@ -57,6 +57,19 @@ namespace Bynder.Sdk.Query.Upload
         public string PublishedDate { get; set; }
 
         /// <summary>
+        /// Flags if the asset should be sent to the waiting room.
+        /// </summary>
+        [ApiField("audit")]
+        public bool? Audit { get; set; }
+
+        /// <summary>
+        /// If audit is set to true you can specify an accessRequestId to batch uploads to the waiting room. 
+        /// The accessRequestId is retrieved in the response of this endpoint, after you save the first asset of your batch.
+        /// </summary>
+        [ApiField("accessRequestId")]
+        public string AccessRequestId { get; set; }
+
+        /// <summary>
         /// Copyright information for the media
         /// </summary>
         [ApiField("copyright")]

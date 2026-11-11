@@ -46,13 +46,13 @@ namespace Bynder.Sdk.Model
         /// Width
         /// </summary>
         [JsonProperty("width")]
-        public int Width { get; set; }
+        public int? Width { get; set; }
 
         /// <summary>
         /// Height
         /// </summary>
         [JsonProperty("height")]
-        public int Height { get; set; }
+        public int? Height { get; set; }
 
         /// <summary>
         /// true if it is corresponds to the current version of the asset

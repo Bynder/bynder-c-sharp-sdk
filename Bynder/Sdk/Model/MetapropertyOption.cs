@@ -53,5 +53,11 @@ namespace Bynder.Sdk.Model
         /// </summary>
         [JsonProperty("linkedOptionIds")]
         public List<string> LinkedOptionIds { get; set; }
+
+        /// <summary>
+        /// Returns label translation by culture (e.g. 'en_US', 'de_DE' and etc)
+        /// </summary>
+        [JsonProperty("labels")]
+        public IDictionary<string, string> Labels { get; set; } = new Dictionary<string, string>();
     }
 }
