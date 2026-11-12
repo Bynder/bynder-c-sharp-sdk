@@ -11,6 +11,12 @@ namespace Bynder.Sdk.Service.OAuth
     public interface IOAuthService
     {
         /// <summary>
+        /// Gets the access token.
+        /// </summary>
+        /// <value>The access token.</value>
+        string AccessToken { get; }
+
+        /// <summary>
         /// Gets the authorisation URL.
         /// </summary>
         /// <returns>The authorisation URL.</returns>
@@ -35,5 +41,10 @@ namespace Bynder.Sdk.Service.OAuth
         /// </summary>
         /// <returns>The task to get the refresh token</returns>
         Task GetRefreshTokenAsync();
+
+        /// <summary>
+        /// Explicitly set access token.
+        /// </summary>
+        void SetAccessToken(string accessToken);
     }
 }
